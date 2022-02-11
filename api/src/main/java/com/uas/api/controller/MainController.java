@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 public class MainController {
 
-    private PartService partService;
+    private final PartService partService;
 
     @Autowired
     public MainController(PartService partService) {
