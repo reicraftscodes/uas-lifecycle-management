@@ -1,7 +1,5 @@
 package com.uas.api.models.entities;
 
-import com.uas.api.models.entities.enums.PartName;
-import com.uas.api.models.entities.enums.PlatformType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,13 +21,15 @@ public class PartType {
     @Column(name="PartID")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
+    //TODO: fix enum
     @Column(name="PartType")
-    private PartName partName;
+    private String partName;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
+    //TODO: fix enum
     @Column(name="PlatformType")
-    private PlatformType platformType;
+    private String platformType;
 
     @Column(name="Price")
     private BigDecimal price;

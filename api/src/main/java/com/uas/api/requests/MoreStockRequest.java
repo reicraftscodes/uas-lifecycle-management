@@ -1,11 +1,9 @@
 package com.uas.api.requests;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 import java.util.ArrayList;
 
 @Getter
@@ -14,8 +12,6 @@ import java.util.ArrayList;
 public class MoreStockRequest {
     private String location;
     private double cost;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private Date orderDate;
-    private ArrayList<Integer> partTypes;
+    private ArrayList<Long> partTypes;
     private ArrayList<Integer> quantities;
 }

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Entity(name = "Orders")
 @Getter
@@ -21,9 +21,9 @@ public class Orders {
     private double totalCost;
 
     @Column(name = "OrderDateTime")
-    private Date orderDateTime;
+    private Timestamp orderDateTime;
 
-    public Orders(Location locationName, double totalCost, Date orderDateTime) {
+    public Orders(Location locationName, double totalCost, Timestamp orderDateTime) {
         this.locationName = locationName;
         this.totalCost = totalCost;
         this.orderDateTime = orderDateTime;
