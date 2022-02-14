@@ -62,4 +62,6 @@ public class PartServiceImpl implements PartService {
         int partTypeCount = partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
         return (partTypeCount*100)/maxStockCount;
     }
+
+
 }
