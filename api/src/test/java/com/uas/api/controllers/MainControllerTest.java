@@ -3,6 +3,7 @@ package com.uas.api.controllers;
 import com.uas.api.controller.MainController;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.services.PartService;
+import com.uas.api.services.StockControlService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,7 +19,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = MainController.class)
@@ -26,6 +26,9 @@ public class MainControllerTest {
 
     @MockBean
     PartService partService;
+
+    @MockBean
+    StockControlService stockControlService;
 
     @Autowired
     MockMvc mockMvc;

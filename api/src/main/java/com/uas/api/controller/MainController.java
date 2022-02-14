@@ -23,28 +23,42 @@ public class MainController {
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
-
+    /**
+     * Part service for communication between controller and DB.
+     */
     private final PartService partService;
+    /**
+     * Stock control service for communication between controller and DB.
+     */
     private final StockControlService stockControlService;
 
+    /**
+     * Constructor.
+     * @param partService required service.
+     * @param stockControlService required service.
+     */
     @Autowired
-    public MainController(PartService partService, StockControlService stockControlService) {
+    public MainController(final PartService partService, final StockControlService stockControlService) {
         this.partService = partService;
         this.stockControlService = stockControlService;
     }
 
+    /**
+     * Checks for low stock levels (40%>).
+     * @return list of parts with low stock & response entity.
+     */
     @GetMapping("/api/parts/low-stock")
     public ResponseEntity<List<PartStockLevelDTO>> getPartsAtLowStock() {
         List<PartStockLevelDTO> partLowStockLevelDTOs = partService.getPartsAtLowStock();
         return ResponseEntity.ok(partLowStockLevelDTOs);
     }
     /**
-     * A post mapping that allows a user to request more stock
-     * @param moreStockRequest
-     * @return
+     * A post mapping that allows a user to request more stock.
+     * @param moreStockRequest request body.
+     * @return response entity with response.
      */
     @PostMapping("/stockrequest")
-    public ResponseEntity<?> requestMoreStock(@RequestBody MoreStockRequest moreStockRequest) {
+    public ResponseEntity<?> requestMoreStock(@RequestBody final MoreStockRequest moreStockRequest) {
         LocalDateTime localDateTime = LocalDateTime.now();
         LOGGER.info("Request for more stock made at: " + localDateTime + " by user: user");
         boolean confirmed = stockControlService.addMoreStock(moreStockRequest);

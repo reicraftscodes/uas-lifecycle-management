@@ -15,23 +15,33 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="Locations")
+@Table(name = "Locations")
 public class Location {
-
+    /**
+     * Name of location.
+     */
     @Id
-    @Column(name="LocationName")
+    @Column(name = "LocationName")
     private String locationName;
-
-    @Column(name="AddressLine1")
+    /**
+     * Address line 1.
+     */
+    @Column(name = "AddressLine1")
     private String addressLine1;
-
-    @Column(name="AddressLine2")
+    /**
+     * Address Line 2.
+     */
+    @Column(name = "AddressLine2")
     private String addressLine2;
-
-    @Column(name="PostCode")
+    /**
+     * Postcode.
+     */
+    @Column(name = "PostCode")
     private String postcode;
-
-    @Column(name="Country")
+    /**
+     * Country.
+     */
+    @Column(name = "Country")
     private String country;
 
 }

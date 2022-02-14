@@ -5,12 +5,16 @@ public enum PlatformType {
     PLATFORM_B("Platform B"),
     BOTH("Both");
 
-    public final String name;
+    private final String name;
 
-    PlatformType(String name) {
+    PlatformType(final String name) {
         this.name = name;
     }
 
+    /**
+     * Getter for name.
+     * @return the name.
+     */
     public String getName() {
         return name;
     }

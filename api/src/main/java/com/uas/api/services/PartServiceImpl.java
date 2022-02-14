@@ -15,17 +15,32 @@ import java.util.List;
 @Service
 @Slf4j
 public class PartServiceImpl implements PartService {
-
+    /**
+     * Repository for communication between API and part table in db.
+     */
     private final PartRepository partRepository;
+    /**
+     * Repository for communication between API and location table in db.
+     */
     private final LocationRepository locationRepository;
 
     // This will probably change.
+    /**
+     * Max stock allowance.
+     */
     private final double maxStockCount = 100;
-
+    /**
+     * Percentage in which warning starts.
+     */
     private final int lowStockPercentage = 40;
 
+    /**
+     * Constructor.
+     * @param partRepository required repository.
+     * @param locationRepository required repository.
+     */
     @Autowired
-    public PartServiceImpl(PartRepository partRepository, LocationRepository locationRepository) {
+    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
     }
@@ -38,14 +53,14 @@ public class PartServiceImpl implements PartService {
     public List<PartStockLevelDTO> getPartsAtLowStock() {
         List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
         List<Location> locations = locationRepository.findAll();
-        if(locations.isEmpty()) {
+        if (locations.isEmpty()) {
             log.debug("No locations found when getting parts at low stock.");
         }
         for (Location location : locations) {
             for (PartName partName : PartName.values()) {
                 double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, location.getLocationName());
                 if (partStockLevelPercentage < lowStockPercentage) {
-                    partStockLevelDTOs.add(new PartStockLevelDTO(partName.name, location.getLocationName(), partStockLevelPercentage));
+                    partStockLevelDTOs.add(new PartStockLevelDTO(partName.name(), location.getLocationName(), partStockLevelPercentage));
                 }
             }
         }
@@ -58,9 +73,9 @@ public class PartServiceImpl implements PartService {
      * @param location name of the location
      * @return the stock level percentage for the part
      */
-    private double getPartStockPercentageAtLocation(PartName partName, String location) {
+    private double getPartStockPercentageAtLocation(final PartName partName, final String location) {
         int partTypeCount = partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
-        return (partTypeCount*100)/maxStockCount;
+        return (partTypeCount * 100) / maxStockCount;
     }
 
 

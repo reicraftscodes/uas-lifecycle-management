@@ -20,19 +20,44 @@ import java.util.Optional;
 
 @Service
 public class StockControlServiceImpl implements StockControlService {
+    /**
+     * Repository for communication between api and location table.
+     */
     private final LocationRepository locationRepository;
+    /**
+     * Repository for communication between api and orders table.
+     */
     private final OrdersRepository ordersRepository;
+    /**
+     * Repository for communication between api and part type table.
+     */
     private final PartTypeRepository partTypeRepository;
+    /**
+     * Repository for communication between api and stock to order table.
+     */
     private final StockToOrdersRepository stockToOrdersRepository;
+
+    /**
+     * Constructor.
+     * @param locationRepository required.
+     * @param ordersRepository required.
+     * @param partTypeRepository required.
+     * @param stockToOrdersRepository required.
+     */
     @Autowired
-    public StockControlServiceImpl(LocationRepository locationRepository, OrdersRepository ordersRepository, PartTypeRepository partTypeRepository, StockToOrdersRepository stockToOrdersRepository) {
+    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository) {
         this.locationRepository = locationRepository;
         this.ordersRepository = ordersRepository;
         this.partTypeRepository = partTypeRepository;
         this.stockToOrdersRepository = stockToOrdersRepository;
     }
 
-    public boolean addMoreStock(MoreStockRequest moreStockRequest) {
+    /**
+     * Add more stock when requested.
+     * @param moreStockRequest request body from controller.
+     * @return true or false for success.
+     */
+    public boolean addMoreStock(final MoreStockRequest moreStockRequest) {
         Location orderLocation = null;
         ArrayList<Long> partTypes = moreStockRequest.getPartTypes();
         ArrayList<Integer> quantities = moreStockRequest.getQuantities();
@@ -40,7 +65,7 @@ public class StockControlServiceImpl implements StockControlService {
         if (orderLocationOpt.isPresent()) {
             orderLocation = orderLocationOpt.get();
         } else {
-            //TODO: throw exception.
+            throw new IllegalArgumentException("Location does not exist!");
         }
         if (partTypes.size() != quantities.size()) {
             throw new IndexOutOfBoundsException("Missing quantity for part type in order!");
@@ -52,7 +77,6 @@ public class StockControlServiceImpl implements StockControlService {
         ordersRepository.save(newOrder);
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);
-            //This works if the sections in part type are not enums, doesn't work otherwise
             PartType partType = partTypeRepository.findPartTypeById(part);
             int quantity = quantities.get(i);
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType, quantity);

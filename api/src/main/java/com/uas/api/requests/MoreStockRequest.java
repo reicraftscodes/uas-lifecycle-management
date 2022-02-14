@@ -10,8 +10,20 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MoreStockRequest {
+    /**
+     * Location for stock request.
+     */
     private String location;
+    /**
+     * Cost of order.
+     */
     private double cost;
+    /**
+     * All the part types.
+     */
     private ArrayList<Long> partTypes;
+    /**
+     * Quantities for part types.
+     */
     private ArrayList<Integer> quantities;
 }

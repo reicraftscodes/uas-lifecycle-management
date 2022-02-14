@@ -8,8 +8,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PartStockLevelDTO {
-
+    /**
+     * Part name.
+     */
     private String partName;
+    /**
+     * Location.
+     */
     private String location;
+    /**
+     * Stock level percentage.
+     */
     private double stockLevelPercentage;
 }

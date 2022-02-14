@@ -7,6 +7,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PartRepository extends JpaRepository<Part, Long> {
-
+    /**
+     * Count all by location name and part type name.
+     * @param location location.
+     * @param partName part name.
+     * @return count.
+     */
     int countAllByLocation_LocationNameAndPartType_PartName(String location, PartName partName);
 }

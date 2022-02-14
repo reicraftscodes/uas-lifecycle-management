@@ -9,7 +9,16 @@ import java.util.Optional;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, String> {
-
+    /**
+     * Find all locations in DB.
+     * @return list of locations.
+     */
     List<Location> findAll();
+
+    /**
+     * Find a location by name, return empty if null.
+     * @param locationName location to search by name.
+     * @return optional containing location or null.
+     */
     Optional<Location> findLocationByLocationName(String locationName);
 }
