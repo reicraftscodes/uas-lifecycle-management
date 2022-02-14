@@ -1,14 +1,18 @@
-package com.uas.api.entities;
+package com.uas.api.models.entities;
 
-import com.uas.api.entities.enums.PlatformStatus;
-import com.uas.api.entities.enums.PlatformType;
+import com.uas.api.models.entities.enums.PlatformStatus;
+import com.uas.api.models.entities.enums.PlatformType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name="Aircraft")
 public class Aircraft {
