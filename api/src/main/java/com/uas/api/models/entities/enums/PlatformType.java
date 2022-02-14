@@ -10,4 +10,8 @@ public enum PlatformType {
     PlatformType(String name) {
         this.name = name;
     }
+
+    public String getName() {
+        return name;
+    }
 }
