@@ -1,7 +1,9 @@
-package com.uas.api.entities;
+package com.uas.api.models.entities;
 
-import com.uas.api.entities.enums.PartStatus;
+import com.uas.api.models.entities.enums.PartStatus;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name="Parts")
 public class Part {

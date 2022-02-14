@@ -1,8 +1,10 @@
-package com.uas.api.entities;
+package com.uas.api.models.entities;
 
-import com.uas.api.entities.enums.PartName;
-import com.uas.api.entities.enums.PlatformType;
+import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PlatformType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name="PartTypes")
 public class PartType {

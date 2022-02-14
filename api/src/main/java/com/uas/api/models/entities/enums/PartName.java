@@ -1,4 +1,4 @@
-package com.uas.api.entities.enums;
+package com.uas.api.models.entities.enums;
 
 public enum PartName {
     WING_A("Wing A"),
