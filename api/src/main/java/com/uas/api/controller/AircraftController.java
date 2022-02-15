@@ -3,6 +3,9 @@ package com.uas.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.uas.api.entities.Aircraft;
+import com.uas.api.entities.Location;
+import com.uas.api.entities.enums.PartName;
+import com.uas.api.entities.enums.PlatformStatus;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +20,29 @@ public class AircraftController {
 
     @PostMapping(value = "/add", consumes = "application/json")
     void addAircraft(@RequestBody HashMap<String, String> requestData){
-        System.out.println(requestData.get("tailNumber"));
-        System.out.println(requestData.get("location"));
-        System.out.println(requestData.get("platformStatus"));
-        System.out.println(requestData.get("platformType"));
-        
+        //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
+        // as enums weren't created from the json strings.
+
+        boolean error = false;
+
+        PlatformStatus platformStatus = PlatformStatus.DESIGN;
+        switch (requestData.get("platformStatus")) {
+            case "Design" : break;
+            case "Production" : platformStatus = PlatformStatus.PRODUCTION; break;
+            case "Operation" : platformStatus = PlatformStatus.OPERATION; break;
+            case "Repair" : platformStatus = PlatformStatus.REPAIR; break;
+            default: error = true; break;
+        }
+
+
+
+
+
+        if(!error) {
+            //Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), requestData.get("location"), platformStatus, requestData.get("platformType"));
+        }
+
+
+
     }
 }

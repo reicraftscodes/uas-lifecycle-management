@@ -2,7 +2,9 @@ package com.uas.api.entities;
 
 import com.uas.api.entities.enums.PlatformStatus;
 import com.uas.api.entities.enums.PlatformType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -10,12 +12,14 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="Aircraft")
 public class Aircraft {
 
     @Id
     @Column(name="TailNumber")
-    private Long tailNumber;
+    private String tailNumber;
 
     @ManyToOne
     @JoinColumn(name = "LocationName")
