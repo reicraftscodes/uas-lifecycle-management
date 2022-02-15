@@ -27,10 +27,6 @@ public class PartType {
     @Column(name="PartType")
     private PartName partName;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name="PlatformType")
-    private PlatformType platformType;
-
     @Column(name="Price")
     private BigDecimal price;
 
