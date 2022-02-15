@@ -6,6 +6,7 @@ import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.LocationRepository;
+import com.uas.api.services.AircraftService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +21,12 @@ import java.util.Optional;
 public class AircraftController {
 
     private final LocationRepository locationRepository;
+    private final AircraftService aircraftService;
 
     @Autowired
-    public AircraftController(LocationRepository locationRepository) {
+    public AircraftController(LocationRepository locationRepository, AircraftService aircraftService) {
         this.locationRepository = locationRepository;
+        this.aircraftService = aircraftService;
     }
 
 
@@ -48,13 +51,17 @@ public class AircraftController {
         PlatformType platformType = PlatformType.PLATFORM_A;
         switch (requestData.get("platformType")) {
             case "Platform A" : break;
-            case "Platform B" : platformType = PlatformType.PLATFORM_B;
+            case "Platform B" : platformType = PlatformType.PLATFORM_B; break;
+            case "Both" : platformType = PlatformType.BOTH; break;
             default: error = true; break;
         }
 
-
         if(!error) {
+            System.out.println(platformType);
             Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
+
+            System.out.println(aircraft.getPlatformType());
+            aircraftService.addAircraft(aircraft);
         }
 
 
