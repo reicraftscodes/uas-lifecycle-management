@@ -6,13 +6,13 @@ USE uasLifecycleManagement;
 
 #Location name could be supplier names but for now has just been set to location for ease of use
 CREATE TABLE Locations (
-                           LocationName varchar(255) NOT NULL,
-                           AddressLine1 varchar(255) NOT NULL,
-                           AddressLine2 varchar(255),
-                           PostCode varchar(255),
-                           Country varchar(255),
-                           PRIMARY KEY (LocationName),
-                           UNIQUE (LocationName)
+	LocationName varchar(255) NOT NULL,
+    AddressLine1 varchar(255) NOT NULL,
+    AddressLine2 varchar(255),
+    PostCode varchar(255),
+    Country varchar(255),
+    PRIMARY KEY (LocationName),
+    UNIQUE (LocationName)
 );
 
 #individual uas aircraft are added to this table. Identied by tail number.
@@ -31,7 +31,6 @@ CREATE TABLE Aircraft (
 CREATE TABLE PartTypes (
 	PartID int NOT NULL AUTO_INCREMENT,
     PartType SET("Wing A","Wing B","Fuselage","Tail","Propeller","Motor","Communications Radio","Payload Electo Optical","Payload Infra-Red","Gimble","Quad Arm") NOT NULL,
-    -- PlatformType SET("Platform A","Platform B","Both") NOT NULL,
 	Price decimal(10,2) NOT NULL,
     Weight int NOT NULL,
     TypicalFailureTime int NOT NULL,
@@ -68,13 +67,32 @@ CREATE TABLE Users (
 #unsure on exact design for repairs table as client never mentioned it but it stores the part number as a foreign key so the number of repairs and their costs can be looked up
 #for a specific part
 CREATE TABLE Repairs (
-                         RepairID int NOT NULL AUTO_INCREMENT,
-                         PartNumber int NOT NULL,
-                         cost decimal(10,2) NOT NULL,
-                         PRIMARY KEY(RepairID),
-                         FOREIGN KEY (PartNumber) REFERENCES Parts(PartNumber)
+	RepairID int NOT NULL AUTO_INCREMENT,
+    PartNumber int NOT NULL,
+    cost decimal(10,2) NOT NULL,
+    PRIMARY KEY(RepairID),
+    FOREIGN KEY (PartNumber) REFERENCES Parts(PartNumber)
 );
 
+# Needed to store the orders for new parts.
+CREATE TABLE Orders (
+	OrderID INT NOT NULL AUTO_INCREMENT,
+    LocationName VARCHAR(255) NOT NULL,
+    TotalCost decimal(10,2) NOT NULL,
+    OrderDateTime DATETIME NOT NULL,
+    PRIMARY KEY(OrderID),
+    FOREIGN KEY(LocationName) REFERENCES locations(LocationName)
+    );
+# Many orders could have many parts, so link from stock to orders.
+CREATE TABLE StockToOrders (
+	StockToOrderID INT NOT NULL AUTO_INCREMENT,
+	OrderID INT NOT NULL,
+    PartID INT NOT NULL,
+    Quantity INT NOT NULL,
+    PRIMARY KEY(StockToOrderID),
+    FOREIGN KEY(OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY(PartID) REFERENCES parttypes(PartID)
+);
 
 #platform a parts
 INSERT INTO PartTypes (PartType, Price, Weight, TypicalFailureTime) VALUES ("Wing A","200","50000","600");
@@ -127,7 +145,6 @@ INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("T
 INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("Bob","Smith","password","email2@email.com","CTO");
 INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("Lisa","Smith","password","email3@email.com","Logistics Officer");
 
-
 #parts that have been assigned to aircrafts
 INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus) VALUES ("1","G-001","St Athen","2022-02-09 00:00:00","Operational");
 INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus) VALUES ("2","G-001","St Athen","2022-02-09 00:00:00","Operational");
@@ -173,3 +190,7 @@ INSERT INTO Repairs (PartNumber, cost) VALUES ("1","12");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("2","100");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("3","50");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
+
+
+
+

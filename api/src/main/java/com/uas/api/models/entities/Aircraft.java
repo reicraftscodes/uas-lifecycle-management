@@ -14,22 +14,30 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="Aircraft")
+@Table(name = "Aircraft")
 public class Aircraft {
-
+    /**
+     * Aircraft ID.
+     */
     @Id
-    @Column(name="TailNumber")
+    @Column(name = "TailNumber")
     private Long tailNumber;
-
+    /**
+     * Location.
+     */
     @ManyToOne
     @JoinColumn(name = "LocationName")
     private Location location;
-
+    /**
+     * Status of platform.
+     */
     @Enumerated(EnumType.STRING)
-    @Column(name="PlatformStatus")
+    @Column(name = "PlatformStatus")
     private PlatformStatus platformStatus;
-
+    /**
+     * Type of platform.
+     */
     @Enumerated(EnumType.STRING)
-    @Column(name="PlatformType")
+    @Column(name = "PlatformType")
     private PlatformType platformType;
 }

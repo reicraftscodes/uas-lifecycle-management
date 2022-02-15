@@ -15,26 +15,36 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="PartTypes")
+@Table(name = "PartTypes")
 public class PartType {
-
+    /**
+     * Id.
+     */
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="PartID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PartID")
     private Long id;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name="PartType")
+    /**
+     * Part name.
+     */
+    @Column(name = "PartType")
     private PartName partName;
-
-    @Column(name="Price")
+    /**
+     * Cost.
+     */
+    @Column(name = "Price")
     private BigDecimal price;
-
-    @Column(name="Weight")
+    /**
+     * Weight.
+     */
+    @Column(name = "Weight")
     private Long weight;
 
     // Typical failure time in hours
-    @Column(name="TypicalFailureTime")
+    /**
+     * Failure time.
+     */
+    @Column(name = "TypicalFailureTime")
     private Long typicalFailureTime;
 
 }
