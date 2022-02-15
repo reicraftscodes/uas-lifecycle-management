@@ -4,6 +4,7 @@ package com.uas.api.controller;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
+import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,12 +45,17 @@ public class AircraftController {
 
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
 
-
+        PlatformType platformType = PlatformType.PLATFORM_A;
+        switch (requestData.get("platformType")) {
+            case "Platform A" : break;
+            case "Platform B" : platformType = PlatformType.PLATFORM_B;
+            default: error = true; break;
+        }
 
 
 
         if(!error) {
-            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, requestData.get("platformType"));
+            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
         }
 
 
