@@ -1,5 +1,6 @@
 package com.uas.api.controller;
 
+import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.services.PartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,12 @@ public class MainController {
     public ResponseEntity<List<PartStockLevelDTO>> getPartsAtLowStock() {
         List<PartStockLevelDTO> partLowStockLevelDTOs = partService.getPartsAtLowStock();
         return ResponseEntity.ok(partLowStockLevelDTOs);
+    }
+
+    @GetMapping("/api/parts/stock")
+    public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() {
+        List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
+        return ResponseEntity.ok(locationStockLevelsDTOs);
     }
 
 }

@@ -31,6 +31,7 @@ public class PartServiceImpl implements PartService {
         this.locationRepository = locationRepository;
     }
 
+    @Override
     public List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations() {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = new ArrayList<>();
         List<Location> locations = locationRepository.findAll();
