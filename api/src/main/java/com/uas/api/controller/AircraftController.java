@@ -2,17 +2,29 @@ package com.uas.api.controller;
 
 
 import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
+import com.uas.api.repositories.LocationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/aircraft")
 public class AircraftController {
+
+    private final LocationRepository locationRepository;
+
+    @Autowired
+    public AircraftController(LocationRepository locationRepository) {
+        this.locationRepository = locationRepository;
+    }
+
 
     @PostMapping(value = "/add", consumes = "application/json")
     void addAircraft(@RequestBody HashMap<String, String> requestData){
@@ -30,14 +42,14 @@ public class AircraftController {
             default: error = true; break;
         }
 
-        
+        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
 
 
 
 
 
         if(!error) {
-            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), requestData.get("location"), platformStatus, requestData.get("platformType"));
+            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, requestData.get("platformType"));
         }
 
 
