@@ -75,6 +75,26 @@ CREATE TABLE Repairs (
     FOREIGN KEY (PartNumber) REFERENCES Parts(PartNumber)
 );
 
+# Needed to store the orders for new parts. 
+CREATE TABLE Orders (
+	OrderID INT NOT NULL AUTO_INCREMENT,
+    LocationName VARCHAR(255) NOT NULL,
+    TotalCost decimal(10,2) NOT NULL,
+    OrderDateTime DATETIME NOT NULL,
+    PRIMARY KEY(OrderID),
+    FOREIGN KEY(LocationName) REFERENCES locations(LocationName)
+    );
+# Many orders could have many parts, so link from stock to orders.
+CREATE TABLE StockToOrders (
+	StockToOrderID INT NOT NULL AUTO_INCREMENT,
+	OrderID INT NOT NULL,
+    PartID INT NOT NULL,
+    Quantity INT NOT NULL,
+    PRIMARY KEY(StockToOrderID),
+    FOREIGN KEY(OrderID) REFERENCES Orders(OrderID),
+    FOREIGN KEY(PartID) REFERENCES parttypes(PartID)
+);    
+
 #platform a parts
 INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Wing A","Platform A","200","50000","600");
 INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Wing B","Platform A","250","55000","600");
