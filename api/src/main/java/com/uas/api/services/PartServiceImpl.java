@@ -31,6 +31,10 @@ public class PartServiceImpl implements PartService {
         this.locationRepository = locationRepository;
     }
 
+    /**
+     * Retrieve stock levels for parts at all locations.
+     * @return list of location part stock level dtos.
+     */
     @Override
     public List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations() {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = new ArrayList<>();
@@ -75,13 +79,19 @@ public class PartServiceImpl implements PartService {
      * Get the stock level percentage for a part at a location.
      * @param partName name of the part
      * @param location name of the location
-     * @return the stock level percentage for the part
+     * @return the stock level percentage for the part at the location
      */
     private double getPartStockPercentageAtLocation(PartName partName, String location) {
         int partTypeCount = getPartStockLevelAtLocation(partName, location);
         return (partTypeCount*100)/maxStockCount;
     }
 
+    /**
+     * Get the Stock level count for a part at a location.
+     * @param partName name of the part
+     * @param location name of the location
+     * @return the stock level count for the part at the location
+     */
     private int getPartStockLevelAtLocation(PartName partName, String location) {
         return partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
     }
