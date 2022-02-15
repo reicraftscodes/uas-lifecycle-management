@@ -1,4 +1,4 @@
-package com.uas.api.entities.enums;
+package com.uas.api.models.entities.enums;
 
 public enum PartName {
     WING_A("Wing A"),
@@ -13,9 +13,18 @@ public enum PartName {
     GIMBLE("Gimble"),
     QUAD_ARM("Quad Arm");
 
-    public final String name;
+    private final String name;
 
-    PartName(String name) {
+    PartName(final String name) {
         this.name = name;
     }
+
+    /**
+     * Getter for name.
+     * @return name.
+     */
+    public String getName() {
+        return name;
+    }
+
 }
