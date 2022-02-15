@@ -53,9 +53,9 @@ public class AircraftController {
         }
 
 
-
         if(!error) {
             Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
+
         }
 
 
