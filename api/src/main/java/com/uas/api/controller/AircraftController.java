@@ -1,12 +1,8 @@
 package com.uas.api.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.uas.api.entities.Aircraft;
-import com.uas.api.entities.Location;
-import com.uas.api.entities.enums.PartName;
-import com.uas.api.entities.enums.PlatformStatus;
-import org.apache.tomcat.util.json.JSONParser;
+
+import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.enums.PlatformStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,12 +30,14 @@ public class AircraftController {
             default: error = true; break;
         }
 
+        
+
 
 
 
 
         if(!error) {
-            //Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), requestData.get("location"), platformStatus, requestData.get("platformType"));
+            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), requestData.get("location"), platformStatus, requestData.get("platformType"));
         }
 
 
