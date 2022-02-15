@@ -2,7 +2,10 @@ package com.uas.api.controllers;
 
 import com.uas.api.controller.MainController;
 import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
+import com.uas.api.services.StockControlService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,7 +21,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = MainController.class)
@@ -26,6 +28,9 @@ public class MainControllerTest {
 
     @MockBean
     PartService partService;
+
+    @MockBean
+    StockControlService stockControlService;
 
     @Autowired
     MockMvc mockMvc;
@@ -53,4 +58,12 @@ public class MainControllerTest {
         verify(this.partService, times(1)).getPartsAtLowStock();
         verifyNoMoreInteractions(this.partService);
     }
+
+    @Test
+    public void whenRequestMoreStockThenShouldBeTrue(){
+        MoreStockRequest mockStockRequest = new MoreStockRequest("Cardiff", 100.00, new ArrayList<>(), new ArrayList<>());
+        when(stockControlService.addMoreStock(mockStockRequest)).thenReturn(true);
+        Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
+    }
+
 }

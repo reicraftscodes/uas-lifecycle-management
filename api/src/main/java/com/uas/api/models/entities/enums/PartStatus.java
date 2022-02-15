@@ -6,9 +6,17 @@ public enum PartStatus {
     BEING_REPAIRED("Being Repaired"),
     BEYOND_REPAIR("Beyond Repair");
 
-    public final String label;
+    private final String label;
 
-    PartStatus(String label) {
+    PartStatus(final String label) {
         this.label = label;
+    }
+
+    /**
+     * Getter for label.
+     * @return the label.
+     */
+    public String getLabel() {
+        return label;
     }
 }

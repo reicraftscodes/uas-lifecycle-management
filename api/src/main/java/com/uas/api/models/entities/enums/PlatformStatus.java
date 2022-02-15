@@ -6,9 +6,17 @@ public enum PlatformStatus {
     OPERATION("Operation"),
     REPAIR("Repair");
 
-    public final String label;
+    private final String label;
 
-    PlatformStatus(String label) {
+    PlatformStatus(final String label) {
         this.label = label;
+    }
+
+    /**
+     * Getter for label.
+     * @return the label.
+     */
+    public String getLabel() {
+        return label;
     }
 }

@@ -13,9 +13,18 @@ public enum PartName {
     GIMBLE("Gimble"),
     QUAD_ARM("Quad Arm");
 
-    public final String name;
+    private final String name;
 
-    PartName(String name) {
+    PartName(final String name) {
         this.name = name;
     }
+
+    /**
+     * Getter for name.
+     * @return name.
+     */
+    public String getName() {
+        return name;
+    }
+
 }

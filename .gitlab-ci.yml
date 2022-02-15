@@ -1,0 +1,54 @@
+image: openjdk:11-jdk
+
+stages:
+  - build
+  - publish
+  - deploy
+before_script:
+  - echo $GRADLE_HOME
+  - echo `pwd`
+  - cd api
+  - echo `pwd`
+  - echo `ls`
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - rm -f  .gradle/caches/modules-2/modules-2.lock
+  - rm -fr .gradle/caches/*/plugin-resolution/
+  - chmod +x gradlew
+build:gradle:
+  stage: build
+  tags:
+    - general-docker
+  only:
+    - dev
+  script:
+    - ./gradlew buildAndReport
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - ./api/build/reports/checkstyle/main.html
+      - ./api/build/reports/test/html/index.html
+      - ./api/build/reports/tests/test/index.html
+    expire_in: 1 week
+
+
+pages:
+
+  stage: publish
+  tags:
+    - general-docker
+
+  script:
+    - pwd
+    - mv ./build/reports/checkstyle/main.html public
+    - mv ./build/reports/test/html/index.html public
+    - mv ./build/reports/tests/test/index.html public
+    - pwd
+    - ls -lR public
+
+  artifacts:
+    paths:
+      - api/public
+
+  only:
+    - dev
+    - main
