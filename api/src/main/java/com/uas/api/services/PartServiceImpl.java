@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PartName;
@@ -28,6 +29,23 @@ public class PartServiceImpl implements PartService {
     public PartServiceImpl(PartRepository partRepository, LocationRepository locationRepository) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
+    }
+
+    public List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations() {
+        List<LocationStockLevelsDTO> locationStockLevelsDTOs = new ArrayList<>();
+        List<Location> locations = locationRepository.findAll();
+        if(locations.isEmpty()) {
+            log.debug("No locations found when getting parts at low stock.");
+        }
+        for (Location location : locations) {
+            List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
+            for (PartName partName : PartName.values()) {
+                double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, location.getLocationName());
+                partStockLevelDTOs.add(new PartStockLevelDTO(partName.name, location.getLocationName(), partStockLevelPercentage));
+            }
+            locationStockLevelsDTOs.add(new LocationStockLevelsDTO(location.getLocationName(), partStockLevelDTOs));
+        }
+        return locationStockLevelsDTOs;
     }
 
     /**
@@ -59,7 +77,11 @@ public class PartServiceImpl implements PartService {
      * @return the stock level percentage for the part
      */
     private double getPartStockPercentageAtLocation(PartName partName, String location) {
-        int partTypeCount = partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
+        int partTypeCount = getPartStockLevelAtLocation(partName, location);
         return (partTypeCount*100)/maxStockCount;
+    }
+
+    private int getPartStockLevelAtLocation(PartName partName, String location) {
+        return partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
     }
 }
