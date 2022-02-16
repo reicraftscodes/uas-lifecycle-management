@@ -28,7 +28,7 @@ public class AircraftService {
         aircraftRepository.save(aircraft);
     }
 
-    public void addAircraftFromJson(HashMap<String,String> requestData){
+    public boolean addAircraftFromJson(HashMap<String,String> requestData) throws Exception {
         boolean error = false;
 
         PlatformStatus platformStatus = PlatformStatus.DESIGN;
@@ -37,7 +37,7 @@ public class AircraftService {
             case "Production" : platformStatus = PlatformStatus.PRODUCTION; break;
             case "Operation" : platformStatus = PlatformStatus.OPERATION; break;
             case "Repair" : platformStatus = PlatformStatus.REPAIR; break;
-            default: error = true; break;
+            default: error = true; throw new Exception("Invalid platform status.");
         }
 
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
@@ -54,8 +54,14 @@ public class AircraftService {
 
         if(!error) {
             Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
-            aircraftRepository.save(aircraft);
+            try {
+                aircraftRepository.save(aircraft);
+            } catch(Exception e) {
+                System.out.println(e);
+            }
+
         }
 
+        return error;
     }
 }
