@@ -70,6 +70,10 @@ public class MainController {
         }
     }
 
+    /**
+     * Checks for part stock levels at all locations.
+     * @return list of parts stock levels at all locations & response entity.
+     */
     @GetMapping("/api/parts/stock")
     public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();

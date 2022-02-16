@@ -54,14 +54,14 @@ public class PartServiceImpl implements PartService {
     public List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations() {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = new ArrayList<>();
         List<Location> locations = locationRepository.findAll();
-        if(locations.isEmpty()) {
+        if (locations.isEmpty()) {
             log.debug("No locations found when getting parts at low stock.");
         }
         for (Location location : locations) {
             List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
             for (PartName partName : PartName.values()) {
                 double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, location.getLocationName());
-                partStockLevelDTOs.add(new PartStockLevelDTO(partName.name, location.getLocationName(), partStockLevelPercentage));
+                partStockLevelDTOs.add(new PartStockLevelDTO(partName.getName(), location.getLocationName(), partStockLevelPercentage));
             }
             locationStockLevelsDTOs.add(new LocationStockLevelsDTO(location.getLocationName(), partStockLevelDTOs));
         }
@@ -98,7 +98,7 @@ public class PartServiceImpl implements PartService {
      */
     private double getPartStockPercentageAtLocation(final PartName partName, final String location) {
         int partTypeCount = getPartStockLevelAtLocation(partName, location);
-        return (partTypeCount*100) / maxStockCount;
+        return (partTypeCount * 100) / maxStockCount;
     }
 
     /**

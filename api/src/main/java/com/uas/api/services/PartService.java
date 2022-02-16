@@ -12,5 +12,9 @@ public interface PartService {
      */
     List<PartStockLevelDTO> getPartsAtLowStock();
 
+    /**
+     * Gets a list of all location part stock levels.
+     * @return the list.
+     */
     List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations();
 }

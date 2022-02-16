@@ -10,6 +10,14 @@ import java.util.List;
 @Getter
 @Setter
 public class LocationStockLevelsDTO {
+
+    /**
+     * The location name.
+     */
     private String location;
+
+    /**
+     * List of part stock levels.
+     */
     private List<PartStockLevelDTO> partStockLevelDTOs;
 }

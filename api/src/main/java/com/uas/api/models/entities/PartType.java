@@ -1,7 +1,6 @@
 package com.uas.api.models.entities;
 
 import com.uas.api.models.entities.enums.PartName;
-import com.uas.api.models.entities.enums.PlatformType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
