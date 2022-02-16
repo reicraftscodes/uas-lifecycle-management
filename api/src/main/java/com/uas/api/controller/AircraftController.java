@@ -50,9 +50,8 @@ public class AircraftController {
 
         PlatformType platformType = PlatformType.PLATFORM_A;
         switch (requestData.get("platformType")) {
-            case "Platform A" : break;
-            case "Platform B" : platformType = PlatformType.PLATFORM_B; break;
-            case "Both" : platformType = PlatformType.BOTH; break;
+            case "Platform_A" : break;
+            case "Platform_B" : platformType = PlatformType.PLATFORM_B; break;
             default: error = true; break;
         }
 
