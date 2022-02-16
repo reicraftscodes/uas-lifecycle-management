@@ -1,5 +1,6 @@
 package com.uas.api.controller;
 
+import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
@@ -67,6 +68,16 @@ public class MainController {
         } else {
             return ResponseEntity.badRequest().body("Failed to save stock request!");
         }
+    }
+
+    /**
+     * Checks for part stock levels at all locations.
+     * @return list of parts stock levels at all locations & response entity.
+     */
+    @GetMapping("/api/parts/stock")
+    public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() {
+        List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
+        return ResponseEntity.ok(locationStockLevelsDTOs);
     }
 
 }
