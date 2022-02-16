@@ -10,35 +10,37 @@ import java.util.stream.Stream;
 
 // Ref: https://www.baeldung.com/jpa-persisting-enums-in-jpa#converter
 @Converter(autoApply = true)
-public class PlatformStatusConverter implements AttributeConverter<PlatformStatus, String> {
+public class PartStatusConverter implements AttributeConverter<PartStatus, String> {
     /**
      * Logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PlatformStatusConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PartStatusConverter.class);
+
     /**
      * Convert to database column.
-     * @param platformStatus the platform status to convert.
-     * @return the label of the platform status.
+     * @param partStatus the part status to convert.
+     * @return the label of the part status.
      */
     @Override
-    public String convertToDatabaseColumn(final PlatformStatus platformStatus) {
-        if (platformStatus == null) {
+    public String convertToDatabaseColumn(final PartStatus partStatus) {
+        if (partStatus == null) {
             return null;
         }
-        return platformStatus.getLabel();
+        return partStatus.getLabel();
     }
+
     /**
      * Convert to entity attribute.
-     * @param label the platform status label.
-     * @return the converted platform status.
+     * @param label the label of part status.
+     * @return the part status.
      */
     @Override
-    public PlatformStatus convertToEntityAttribute(final String label) {
+    public PartStatus convertToEntityAttribute(final String label) {
         if (label == null) {
             return null;
         }
 
-        return Stream.of(PlatformStatus.values())
+        return Stream.of(PartStatus.values())
                 .filter(ps -> ps.getLabel().equals(label))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);

@@ -8,6 +8,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.stream.Stream;
 
+// Ref: https://www.baeldung.com/jpa-persisting-enums-in-jpa#converter
 @Converter(autoApply = true)
 public class PlatformTypeConverter implements AttributeConverter<PlatformType, String> {
     /**
@@ -16,19 +17,19 @@ public class PlatformTypeConverter implements AttributeConverter<PlatformType, S
     private static final Logger LOGGER = LoggerFactory.getLogger(PlatformTypeConverter.class);
     /**
      * Convert to database column.
-     * @param partName the part name to convert.
-     * @return the name of the part.
+     * @param partType the platform type to convert.
+     * @return the name of the platform type.
      */
     @Override
-    public String convertToDatabaseColumn(final PlatformType partName) {
-        if (partName == null) {
+    public String convertToDatabaseColumn(final PlatformType partType) {
+        if (partType == null) {
             return null;
         }
-        return partName.getName();
+        return partType.getName();
     }
     /**
      * Convert to entity attribute.
-     * @param name the name of part.
+     * @param name the name of platform type.
      * @return the platform name.
      */
     @Override
@@ -38,7 +39,7 @@ public class PlatformTypeConverter implements AttributeConverter<PlatformType, S
         }
 
         return Stream.of(PlatformType.values())
-                .filter(pn -> pn.getName().equals(name))
+                .filter(pt -> pt.getName().equals(name))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }
