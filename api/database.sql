@@ -20,18 +20,18 @@ CREATE TABLE Aircraft (
 	TailNumber varchar(255) NOT NULL,
     LocationName varchar(255) NOT NULL,
     PlatformStatus SET("Design","Production","Operation","Repair") NOT NULL, 
-    PlatformType SET("Platform_A","Platform_B","Both") NOT NULL,
+    PlatformType SET("Platform_A","Platform_B") NOT NULL,
     PRIMARY KEY (TailNumber),
     UNIQUE (TailNumber),
     FOREIGN KEY (LocationName) REFERENCES Locations(LocationName)
 );
 
-#Parts types for each platform are stored here. Parts for platform 1 and platform 2 have the same name but due to the size and design differences between a convential drone and
+#Parts types for each Platform_Are stored here. Parts for platform 1 and platform 2 have the same name but due to the size and design differences between a convential drone and
 # a quadcopter its likely they are different so a platform type is stored here aswell as the part types provided. 
 CREATE TABLE PartTypes ( 
 	PartID int NOT NULL AUTO_INCREMENT,
     PartType SET("Wing A","Wing B","Fuselage","Tail","Propeller","Motor","Communications Radio","Payload Electo Optical","Payload Infra-Red","Gimble","Quad Arm") NOT NULL,
-    PlatformType SET("Platform A","Platform B","Both") NOT NULL,
+    PlatformType SET("Platform_A","Platform_B","Both") NOT NULL,
 	Price decimal(10,2) NOT NULL,
     Weight int NOT NULL,
     TypicalFailureTime int NOT NULL,
@@ -75,25 +75,25 @@ CREATE TABLE Repairs (
     FOREIGN KEY (PartNumber) REFERENCES Parts(PartNumber)
 );
 
-#platform a parts
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Wing A","Platform A","200","50000","600");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Wing B","Platform A","250","55000","600");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Fuselage","Platform A","4000","100000","1000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Tail","Platform A","2000","30000","1250");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Propeller","Platform A","899.99","1000","250");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Motor","Platform A","400","5500","1200");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Communications Radio","Platform A","1000","600","5000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Electo Optical","Platform A","1000","600","5000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Infra-Red","Platform A","1000","600","4000");
+#Platform_A parts
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Wing A","Platform_A","200","50000","600");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Wing B","Platform_A","250","55000","600");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Fuselage","Platform_A","4000","100000","1000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Tail","Platform_A","2000","30000","1250");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Propeller","Platform_A","899.99","1000","250");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Motor","Platform_A","400","5500","1200");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Communications Radio","Platform_A","1000","600","5000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Electo Optical","Platform_A","1000","600","5000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Infra-Red","Platform_A","1000","600","4000");
 
-#platform b parts
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Quad Arm","Platform B","700","600","4000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Fuselage","Platform B","3000","1000","1000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Motor","Platform B","400","800","1200");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Communications Radio","Platform B","599.99","600","5000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Electo Optical","Platform B","1200","600","5000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Infra-Red","Platform B","1000","600","4000");
-INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Gimble","Platform B","250.00","3000","600");
+#Platform_B parts
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Quad Arm","Platform_B","700","600","4000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Fuselage","Platform_B","3000","1000","1000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Motor","Platform_B","400","800","1200");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Communications Radio","Platform_B","599.99","600","5000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Electo Optical","Platform_B","1200","600","5000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Payload Infra-Red","Platform_B","1000","600","4000");
+INSERT INTO PartTypes (PartType, PlatformType, Price, Weight, TypicalFailureTime) VALUES ("Gimble","Platform_B","250.00","3000","600");
 
 #location examples
 INSERT INTO Locations (LocationName, AddressLine1,PostCode,Country) VALUES ("Cardiff", "123 Street name","CF000AA","Wales");
@@ -105,26 +105,26 @@ INSERT INTO Locations (LocationName, AddressLine1,PostCode,Country) VALUES ("Ank
 INSERT INTO Locations (LocationName, AddressLine1,PostCode,Country) VALUES ("Dublin", "123 Street name","D000AA","Ireland");
 
 #aircraft data examples from all locations with all aircraft statuses 
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-001","St Athen","Design","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-002","St Athen","Design","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-003","St Athen","Production","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-004","St Athen","Production","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-005","St Athen","Operation","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-006","St Athen","Operation","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-007","St Athen","Repair","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-008","St Athen","Repair","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-009","Cardiff","Operation","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-010","Cardiff","Operation","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-011","London","Operation","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-012","London","Operation","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-013","Edinburgh","Operation","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-014","Edinburgh","Operation","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-015","Nevada","Operation","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-016","Nevada","Operation","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-017","Ankara","Operation","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-018","Ankara","Operation","Platform B");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-019","Dublin","Operation","Platform A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-020","Dublin","Operation","Platform B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-001","St Athen","Design","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-002","St Athen","Design","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-003","St Athen","Production","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-004","St Athen","Production","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-005","St Athen","Operation","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-006","St Athen","Operation","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-007","St Athen","Repair","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-008","St Athen","Repair","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-009","Cardiff","Operation","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-010","Cardiff","Operation","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-011","London","Operation","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-012","London","Operation","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-013","Edinburgh","Operation","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-014","Edinburgh","Operation","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-015","Nevada","Operation","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-016","Nevada","Operation","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-017","Ankara","Operation","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-018","Ankara","Operation","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-019","Dublin","Operation","Platform_A");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-020","Dublin","Operation","Platform_B");
 
 #4 users with the individual user roles 
 INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("John","Smith","password","email@email.com","CEO");

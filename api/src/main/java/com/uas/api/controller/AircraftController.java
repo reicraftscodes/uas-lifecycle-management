@@ -35,35 +35,7 @@ public class AircraftController {
         //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
         // as enums weren't created from the json strings.
 
-        boolean error = false;
-
-        PlatformStatus platformStatus = PlatformStatus.DESIGN;
-        switch (requestData.get("platformStatus")) {
-            case "Design" : break;
-            case "Production" : platformStatus = PlatformStatus.PRODUCTION; break;
-            case "Operation" : platformStatus = PlatformStatus.OPERATION; break;
-            case "Repair" : platformStatus = PlatformStatus.REPAIR; break;
-            default: error = true; break;
-        }
-
-        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
-
-        PlatformType platformType = PlatformType.PLATFORM_A;
-        switch (requestData.get("platformType")) {
-            case "Platform_A" : break;
-            case "Platform_B" : platformType = PlatformType.PLATFORM_B; break;
-            default: error = true; break;
-        }
-
-        if(!error) {
-            System.out.println(platformType);
-            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
-
-            System.out.println(aircraft.getPlatformType());
-            aircraftService.addAircraft(aircraft);
-        }
-
-
+        aircraftService.addAircraftFromJson(requestData);
 
     }
 }
