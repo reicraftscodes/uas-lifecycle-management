@@ -20,8 +20,8 @@ public class Aircraft {
      * Aircraft ID.
      */
     @Id
-    @Column(name = "TailNumber")
-    private Long tailNumber;
+    @Column(name = "TailNumber", unique = true)
+    private String tailNumber;
     /**
      * Location.
      */
