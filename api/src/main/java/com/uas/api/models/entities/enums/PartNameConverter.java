@@ -8,6 +8,7 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import java.util.stream.Stream;
 
+// Ref: https://www.baeldung.com/jpa-persisting-enums-in-jpa#converter
 @Converter(autoApply = true)
 public class PartNameConverter implements AttributeConverter<PartName, String> {
     /**
