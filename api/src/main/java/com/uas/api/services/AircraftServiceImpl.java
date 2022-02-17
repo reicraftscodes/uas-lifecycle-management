@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 @Service
-public class AircraftServiceImpl implements AircraftService{
+public class AircraftServiceImpl implements AircraftService {
     /**
      *  Aircraft repository contains methods for communicating with aircraft table in db.
      */
