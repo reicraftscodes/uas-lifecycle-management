@@ -33,6 +33,7 @@ public class AircraftController {
     ResponseEntity<?> addAircraft(@RequestBody final HashMap<String, String> requestData) {
         //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
         // as enums weren't created from the json strings.
+
         String result = aircraftService.addAircraftFromJson(requestData);
 
         if (result == null) {
