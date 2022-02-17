@@ -1,6 +1,6 @@
 package com.uas.api.controller;
 
-import com.uas.api.services.AircraftService;
+import com.uas.api.services.AircraftServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,14 +13,14 @@ public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
      */
-    private final AircraftService aircraftService;
+    private final AircraftServiceImpl aircraftService;
 
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
      */
     @Autowired
-    public AircraftController(final AircraftService aircraftService) {
+    public AircraftController(final AircraftServiceImpl aircraftService) {
         this.aircraftService = aircraftService;
     }
 

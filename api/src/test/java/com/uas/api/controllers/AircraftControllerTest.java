@@ -1,7 +1,7 @@
 package com.uas.api.controllers;
 
 import com.uas.api.controller.AircraftController;
-import com.uas.api.services.AircraftService;
+import com.uas.api.services.AircraftServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AircraftControllerTest {
 
     @MockBean
-    AircraftService aircraftService;
+    AircraftServiceImpl aircraftService;
 
     @Autowired
     MockMvc mockMvc;
