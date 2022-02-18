@@ -1,4 +1,4 @@
-package com.uas.api.requests;
+package com.uas.api.response;
 
 import java.util.List;
 

@@ -6,7 +6,7 @@
 //import com.uas.api.models.auth.User;
 //import com.uas.api.repositories.auth.RoleRepository;
 //import com.uas.api.repositories.auth.UserRepository;
-//import com.uas.api.requests.JwtResponse;
+//import com.uas.api.response.JwtResponse;
 //import org.junit.jupiter.api.AfterEach;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.springframework.beans.factory.annotation.Autowired;
