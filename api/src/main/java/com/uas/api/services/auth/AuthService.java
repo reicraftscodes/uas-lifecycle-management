@@ -11,7 +11,7 @@ import com.uas.api.models.auth.User;
 import com.uas.api.requests.JwtResponse;
 import com.uas.api.requests.LoginRequest;
 import com.uas.api.requests.MessageResponse;
-import com.uas.api.models.dtos.SignupRequest;
+import com.uas.api.requests.SignupRequest;
 import com.uas.api.repositories.auth.RoleRepository;
 import com.uas.api.repositories.auth.UserRepository;
 import com.uas.api.security.jwt.JwtUtils;
