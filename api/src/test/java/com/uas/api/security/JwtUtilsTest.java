@@ -1,4 +1,4 @@
-package com.uas.api;
+package com.uas.api.security;
 
 import com.uas.api.security.jwt.JwtUtils;
 import org.junit.jupiter.api.Test;
