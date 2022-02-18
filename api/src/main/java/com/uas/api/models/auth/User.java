@@ -1,6 +1,5 @@
 package com.uas.api.models.auth;
 
-
 import lombok.Data;
 
 import javax.persistence.*;
