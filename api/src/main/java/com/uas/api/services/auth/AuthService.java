@@ -1,6 +1,5 @@
 package com.uas.api.services.auth;
 
-import com.uas.api.configuration.AppProperties;
 import com.uas.api.exceptions.EmailAlreadyExistException;
 import com.uas.api.exceptions.EmailConfirmException;
 import com.uas.api.exceptions.PasswordConfirmException;
@@ -45,8 +44,6 @@ public class AuthService {
     private final PasswordEncoder encoder;
 
     private final JwtUtils jwtUtils;
-
-    private final AppProperties appProperties;
 
     public ResponseEntity<JwtResponse> authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
