@@ -2,16 +2,25 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.Part;
+import com.uas.api.models.entities.PartType;
 import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PartStatus;
+import com.uas.api.models.entities.enums.StringToEnumConverter;
+import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.LocationRepository;
 import com.uas.api.repositories.PartRepository;
+import com.uas.api.repositories.PartTypeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,6 +33,9 @@ public class PartServiceImpl implements PartService {
      * Repository for communication between API and location table in db.
      */
     private final LocationRepository locationRepository;
+
+    private final PartTypeRepository partTypeRepository;
+    private final AircraftRepository aircraftRepository;
 
     // This will probably change.
     /**
@@ -39,11 +51,15 @@ public class PartServiceImpl implements PartService {
      * Constructor.
      * @param partRepository required repository.
      * @param locationRepository required repository.
+     * @param partTypeRepository
+     * @param aircraftRepository
      */
     @Autowired
-    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository) {
+    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, PartTypeRepository partTypeRepository, AircraftRepository aircraftRepository) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
+        this.partTypeRepository = partTypeRepository;
+        this.aircraftRepository = aircraftRepository;
     }
 
     /**
@@ -90,6 +106,26 @@ public class PartServiceImpl implements PartService {
         return partStockLevelDTOs;
     }
 
+    @Override
+    public String addPartFromJSON(HashMap<String,String> requestData){
+        StringToEnumConverter stringToEnumConverter = new StringToEnumConverter();
+
+        PartType partType = partTypeRepository.findPartTypeById(Long.parseLong(requestData.get("partType")));
+        Optional<Aircraft> aircraft = aircraftRepository.findById(requestData.get("aircraft"));
+        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
+
+        PartStatus partStatus = PartStatus.OPERATIONAL;
+        try {
+            partStatus = stringToEnumConverter.stringToPartStatus(requestData.get("partStatus"));
+        } catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        Part part = new Part(partType,aircraft.get(),location.get(),partStatus);
+
+        return "";
+    }
+
     /**
      * Get the stock level percentage for a part at a location.
      * @param partName name of the part
@@ -110,4 +146,6 @@ public class PartServiceImpl implements PartService {
     private int getPartStockLevelAtLocation(final PartName partName, final String location) {
         return partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
     }
+
+
 }
