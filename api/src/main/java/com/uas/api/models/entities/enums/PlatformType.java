@@ -1,8 +1,8 @@
 package com.uas.api.models.entities.enums;
 
 public enum PlatformType {
-    PLATFORM_A("Platform A"),
-    PLATFORM_B("Platform B"),
+    PLATFORM_A("Platform_A"),
+    PLATFORM_B("Platform_B"),
     BOTH("Both");
 
     private final String name;

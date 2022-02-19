@@ -1,10 +1,7 @@
 package com.uas.api.models.entities;
 
 import com.uas.api.models.entities.enums.PartStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Entity
 @Table(name = "Parts")
 public class Part {
@@ -48,7 +46,6 @@ public class Part {
     /**
      * Part status.
      */
-    @Enumerated(EnumType.STRING)
     @Column(name = "PartStatus")
     private PartStatus partStatus;
 }
