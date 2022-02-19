@@ -2,6 +2,7 @@ package com.uas.api.controller;
 
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.PartType;
 import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.StringToEnumConverter;
@@ -45,13 +46,18 @@ public class PartsController {
         Optional<Aircraft> aircraft = aircraftRepository.findById(requestData.get("aircraft"));
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
 
+        PartStatus partStatus = PartStatus.OPERATIONAL;
         try {
-            PartStatus partStatus = stringToEnumConverter.stringToPartStatus(requestData.get("partStatus"));
+            partStatus = stringToEnumConverter.stringToPartStatus(requestData.get("partStatus"));
         } catch(Exception e) {
             System.out.println(e.getMessage());
         }
 
+        Part part = new Part(partType,aircraft.get(),location.get(),partStatus);
 
+        
+
+        System.out.println(part.getManufacture());
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

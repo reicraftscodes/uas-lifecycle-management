@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -19,6 +20,7 @@ public class Part {
      */
     @Id
     @Column(name = "PartNumber")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partNumber;
     /**
      * Part Type ID.
@@ -48,4 +50,14 @@ public class Part {
      */
     @Column(name = "PartStatus")
     private PartStatus partStatus;
+
+    public Part(PartType partType, Aircraft aircraft, Location location, PartStatus partStatus){
+        this.partType = partType;
+        this.aircraft = aircraft;
+        this.location = location;
+        LocalDateTime dateTime = LocalDateTime.now();
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.manufacture = dateTime;
+        this.partStatus = partStatus;
+    }
 }
