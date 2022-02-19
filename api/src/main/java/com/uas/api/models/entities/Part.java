@@ -2,8 +2,11 @@ package com.uas.api.models.entities;
 
 import com.uas.api.models.entities.enums.PartStatus;
 import lombok.*;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -64,11 +67,20 @@ public class Part {
         this.partStatus = partStatus;
     }
 
-    public Part(PartType partType, Aircraft aircraft, Location location, String manufacture, PartStatus partStatus){
+    public Part(PartType partType, Aircraft aircraft, Location location, String manufacture, PartStatus partStatus) {
         this.partType = partType;
         this.aircraft = aircraft;
         this.location = location;
-        this.manufacture = LocalDateTime.parse(manufacture);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.manufacture = LocalDateTime.parse(manufacture, formatter);
+        this.partStatus = partStatus;
+    }
+
+    public Part(PartType partType, Location location, String manufacture, PartStatus partStatus){
+        this.partType = partType;
+        this.location = location;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        this.manufacture = LocalDateTime.parse(manufacture, formatter);
         this.partStatus = partStatus;
     }
 

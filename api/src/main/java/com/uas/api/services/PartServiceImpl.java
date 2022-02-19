@@ -17,10 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -36,6 +33,7 @@ public class PartServiceImpl implements PartService {
 
     private final PartTypeRepository partTypeRepository;
     private final AircraftRepository aircraftRepository;
+    private final AircraftService aircraftService;
 
     // This will probably change.
     /**
@@ -49,17 +47,20 @@ public class PartServiceImpl implements PartService {
 
     /**
      * Constructor.
+     * @param partService
      * @param partRepository required repository.
      * @param locationRepository required repository.
      * @param partTypeRepository
      * @param aircraftRepository
+     * @param aircraftService
      */
     @Autowired
-    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, PartTypeRepository partTypeRepository, AircraftRepository aircraftRepository) {
+    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, PartTypeRepository partTypeRepository, AircraftRepository aircraftRepository, AircraftService aircraftService) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
         this.partTypeRepository = partTypeRepository;
         this.aircraftRepository = aircraftRepository;
+        this.aircraftService = aircraftService;
     }
 
     /**
@@ -111,9 +112,10 @@ public class PartServiceImpl implements PartService {
         StringToEnumConverter stringToEnumConverter = new StringToEnumConverter();
         String error = "";
 
-        Optional<PartType> partType = partTypeRepository.findById(Integer.parseInt(requestData.get("partType")));
-        Optional<Aircraft> aircraft = aircraftRepository.findById(requestData.get("aircraft"));
+        PartType partType = partTypeRepository.findPartTypeById(Long.parseLong(requestData.get("partType")));
+        Optional<Aircraft> aircraft = aircraftService.findAircraftById(requestData.get("aircraft"));
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
+        String manufacture = requestData.get("manufacture");
 
         PartStatus partStatus = PartStatus.OPERATIONAL;
         // creates enum from json string but if invalid string will set error variable.
@@ -124,26 +126,38 @@ public class PartServiceImpl implements PartService {
         }
 
         //checks that valid partType and location have been entered and if not error variable set.
-        if (partType.isEmpty()) {
-            error = "Invalid part type.";
-        } else if (location.isEmpty()) {
+        if (location.isEmpty()) {
             error = "Invalid location.";
         }
 
-        if (error.equals("")){
-            //part with aircraft and manufacture date
+        System.out.println(aircraft.isPresent());
 
+        System.out.println("manufacture"+manufacture);
+
+        if (error.equals("")){
+            if (aircraft.isPresent() && !manufacture.equals("")){
+                //part with aircraft and manufacture date
+                Part part = new Part(partType,aircraft.get(),location.get(),manufacture,partStatus);
+                partRepository.save(part);
+                System.out.println("both present");
+            } else if (!manufacture.equals("")){
+                //part without aircraft but with manufacture date
+                Part part = new Part(partType,location.get(),manufacture,partStatus);
+                partRepository.save(part);
+                System.out.println("manufacture only");
+            } else if (aircraft.isPresent()) {
+                Part part = new Part(partType,aircraft.get(),location.get(),partStatus);
+                partRepository.save(part);
+                System.out.println("aircraft only");
+            } else {
+                //part without aircraft and without manufacture date
+                Part part = new Part(partType,location.get(),partStatus);
+                partRepository.save(part);
+                System.out.println("none present");
+            }
         }
 
-
-
-        //part without aircraft but with manufacture date
-        //part without aircraft and without manufacture date
-
-
-        Part part = new Part(partType.get(),aircraft.get(),location.get(),partStatus);
-
-        return "";
+        return error;
     }
 
     /**

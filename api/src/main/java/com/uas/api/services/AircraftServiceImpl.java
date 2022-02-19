@@ -100,4 +100,11 @@ public class AircraftServiceImpl implements AircraftService {
         //Returns either null meaning no errors or an error message about what went wrong.
         return errorMessage;
     }
+
+    @Override
+    public Optional<Aircraft> findAircraftById(String Id){
+
+        return(aircraftRepository.findById(Id));
+
+    }
 }

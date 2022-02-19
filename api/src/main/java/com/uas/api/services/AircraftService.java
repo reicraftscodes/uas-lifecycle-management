@@ -1,6 +1,9 @@
 package com.uas.api.services;
 
+import com.uas.api.models.entities.Aircraft;
+
 import java.util.HashMap;
+import java.util.Optional;
 
 public interface AircraftService {
     /**
@@ -9,5 +12,7 @@ public interface AircraftService {
      * @return returns a string with any errors encountered adding the aircraft.
      */
     String addAircraftFromJson(HashMap<String, String> requestData);
+
+    Optional<Aircraft> findAircraftById(String Id);
 
 }
