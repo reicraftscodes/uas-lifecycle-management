@@ -51,6 +51,9 @@ public class Part {
     @Column(name = "PartStatus")
     private PartStatus partStatus;
 
+    @Column(name = "FlyTimeHours")
+    private int FlyTimeHours;
+
     public Part(PartType partType, Aircraft aircraft, Location location, PartStatus partStatus){
         this.partType = partType;
         this.aircraft = aircraft;
@@ -58,6 +61,21 @@ public class Part {
         LocalDateTime dateTime = LocalDateTime.now();
         //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         this.manufacture = dateTime;
+        this.partStatus = partStatus;
+    }
+
+    public Part(PartType partType, Aircraft aircraft, Location location, String manufacture, PartStatus partStatus){
+        this.partType = partType;
+        this.aircraft = aircraft;
+        this.location = location;
+        this.manufacture = LocalDateTime.parse(manufacture);
+        this.partStatus = partStatus;
+    }
+
+    public Part(PartType partType, Location location, PartStatus partStatus){
+        this.partType = partType;
+        this.location = location;
+        this.manufacture = LocalDateTime.now();
         this.partStatus = partStatus;
     }
 }

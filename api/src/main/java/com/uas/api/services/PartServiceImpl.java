@@ -109,19 +109,39 @@ public class PartServiceImpl implements PartService {
     @Override
     public String addPartFromJSON(HashMap<String,String> requestData){
         StringToEnumConverter stringToEnumConverter = new StringToEnumConverter();
+        String error = "";
 
-        PartType partType = partTypeRepository.findPartTypeById(Long.parseLong(requestData.get("partType")));
+        Optional<PartType> partType = partTypeRepository.findById(Integer.parseInt(requestData.get("partType")));
         Optional<Aircraft> aircraft = aircraftRepository.findById(requestData.get("aircraft"));
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
 
         PartStatus partStatus = PartStatus.OPERATIONAL;
+        // creates enum from json string but if invalid string will set error variable.
         try {
             partStatus = stringToEnumConverter.stringToPartStatus(requestData.get("partStatus"));
         } catch(Exception e) {
-            System.out.println(e.getMessage());
+            error = e.getMessage();
         }
 
-        Part part = new Part(partType,aircraft.get(),location.get(),partStatus);
+        //checks that valid partType and location have been entered and if not error variable set.
+        if (partType.isEmpty()) {
+            error = "Invalid part type.";
+        } else if (location.isEmpty()) {
+            error = "Invalid location.";
+        }
+
+        if (error.equals("")){
+            //part with aircraft and manufacture date
+
+        }
+
+
+
+        //part without aircraft but with manufacture date
+        //part without aircraft and without manufacture date
+
+
+        Part part = new Part(partType.get(),aircraft.get(),location.get(),partStatus);
 
         return "";
     }
