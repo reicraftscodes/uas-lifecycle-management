@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -112,7 +114,7 @@ public class PartServiceImpl implements PartService {
         StringToEnumConverter stringToEnumConverter = new StringToEnumConverter();
         String error = "";
 
-        PartType partType = partTypeRepository.findPartTypeById(Long.parseLong(requestData.get("partType")));
+        Optional<PartType> partType = Optional.ofNullable(partTypeRepository.findPartTypeById(Long.parseLong(requestData.get("partType"))));
         Optional<Aircraft> aircraft = aircraftService.findAircraftById(requestData.get("aircraft"));
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
         String manufacture = requestData.get("manufacture");
@@ -129,31 +131,32 @@ public class PartServiceImpl implements PartService {
         if (location.isEmpty()) {
             error = "Invalid location.";
         }
-
-        System.out.println(aircraft.isPresent());
-
-        System.out.println("manufacture"+manufacture);
+        if (partType.isEmpty()) {
+            error = "Invalid part type.";
+        }
+        try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime.parse(manufacture, formatter);
+        } catch (Exception e){
+            error = "Invalid datetime.";
+        }
 
         if (error.equals("")){
             if (aircraft.isPresent() && !manufacture.equals("")){
                 //part with aircraft and manufacture date
-                Part part = new Part(partType,aircraft.get(),location.get(),manufacture,partStatus);
+                Part part = new Part(partType.get(),aircraft.get(),location.get(),manufacture,partStatus);
                 partRepository.save(part);
-                System.out.println("both present");
             } else if (!manufacture.equals("")){
                 //part without aircraft but with manufacture date
-                Part part = new Part(partType,location.get(),manufacture,partStatus);
+                Part part = new Part(partType.get(),location.get(),manufacture,partStatus);
                 partRepository.save(part);
-                System.out.println("manufacture only");
             } else if (aircraft.isPresent()) {
-                Part part = new Part(partType,aircraft.get(),location.get(),partStatus);
+                Part part = new Part(partType.get(),aircraft.get(),location.get(),partStatus);
                 partRepository.save(part);
-                System.out.println("aircraft only");
             } else {
                 //part without aircraft and without manufacture date
-                Part part = new Part(partType,location.get(),partStatus);
+                Part part = new Part(partType.get(),location.get(),partStatus);
                 partRepository.save(part);
-                System.out.println("none present");
             }
         }
 

@@ -13,7 +13,7 @@ public class StringToEnumConverter {
         } else if (partStatusValue.equals("Beyond Repair")) {
             partStatus = PartStatus.BEYOND_REPAIR;
         } else {
-            throw new Exception("Not valid partStatus.");
+            throw new Exception("Invalid partStatus.");
         }
 
         return partStatus;

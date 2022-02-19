@@ -31,6 +31,8 @@ public class PartsController {
 
         String response = partService.addPartFromJSON(requestData);
 
+        System.out.println(response);
+
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }
