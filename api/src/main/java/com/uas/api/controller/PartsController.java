@@ -28,11 +28,12 @@ public class PartsController {
 
     @PostMapping(value="/add", consumes = "application/json")
     ResponseEntity<?> addPart(@RequestBody HashMap<String,String> requestData) {
-
         String response = partService.addPartFromJSON(requestData);
 
-        System.out.println(response);
-
-        return new ResponseEntity<>(null, HttpStatus.OK);
+        if (response.equals("")){
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }

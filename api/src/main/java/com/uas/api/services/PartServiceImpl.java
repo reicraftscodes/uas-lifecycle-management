@@ -34,7 +34,6 @@ public class PartServiceImpl implements PartService {
     private final LocationRepository locationRepository;
 
     private final PartTypeRepository partTypeRepository;
-    private final AircraftRepository aircraftRepository;
     private final AircraftService aircraftService;
 
     // This will probably change.
@@ -49,19 +48,16 @@ public class PartServiceImpl implements PartService {
 
     /**
      * Constructor.
-     * @param partService
      * @param partRepository required repository.
      * @param locationRepository required repository.
      * @param partTypeRepository
-     * @param aircraftRepository
      * @param aircraftService
      */
     @Autowired
-    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, PartTypeRepository partTypeRepository, AircraftRepository aircraftRepository, AircraftService aircraftService) {
+    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, PartTypeRepository partTypeRepository, AircraftService aircraftService) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
         this.partTypeRepository = partTypeRepository;
-        this.aircraftRepository = aircraftRepository;
         this.aircraftService = aircraftService;
     }
 
@@ -134,11 +130,13 @@ public class PartServiceImpl implements PartService {
         if (partType.isEmpty()) {
             error = "Invalid part type.";
         }
-        try{
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDateTime.parse(manufacture, formatter);
-        } catch (Exception e){
-            error = "Invalid datetime.";
+        if(!Objects.equals(manufacture, "")) {
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime.parse(manufacture, formatter);
+            } catch (Exception e) {
+                error = "Invalid datetime.";
+            }
         }
 
         if (error.equals("")){
