@@ -58,14 +58,14 @@ public class PartControllerTests {
 
     @Test
     public void createPartWithAllParams() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"Operational\"}";
+        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType","1");
         data.put("aircraft","G-001");
         data.put("location","London");
         data.put("manufacture","2022-02-20 11:00:00");
-        data.put("partStatus","Operational");
+        data.put("partStatus","OPERATIONAL");
 
         Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
 
@@ -78,14 +78,14 @@ public class PartControllerTests {
 
     @Test
     public void createPartWithAircraft() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"Operational\"}";
+        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType","1");
         data.put("aircraft","G-001");
         data.put("location","London");
         data.put("manufacture","");
-        data.put("partStatus","Operational");
+        data.put("partStatus","OPERATIONAL");
 
         Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
 
@@ -98,14 +98,14 @@ public class PartControllerTests {
 
     @Test
     public void createPartWithManufacture() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"Operational\"}";
+        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType","1");
         data.put("aircraft","");
         data.put("location","London");
         data.put("manufacture","2022-02-20 11:00:00");
-        data.put("partStatus","Operational");
+        data.put("partStatus","OPERATIONAL");
 
         Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
 
@@ -118,14 +118,14 @@ public class PartControllerTests {
 
     @Test
     public void createPartWithNeither() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"Operational\"}";
+        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType","1");
         data.put("aircraft","");
         data.put("location","London");
         data.put("manufacture","");
-        data.put("partStatus","Operational");
+        data.put("partStatus","OPERATIONAL");
 
         Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
 

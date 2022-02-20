@@ -8,7 +8,6 @@ import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.PartType;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
-import com.uas.api.models.entities.enums.StringToEnumConverter;
 import com.uas.api.repositories.LocationRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.PartTypeRepository;
@@ -116,8 +115,6 @@ public class PartServiceImpl implements PartService {
      */
     @Override
     public String addPartFromJSON(final HashMap<String, String> requestData) {
-        //Method that changes strings to enums, used to reduce code repetition.
-        StringToEnumConverter stringToEnumConverter = new StringToEnumConverter();
         //stores error messages that occur in execution.
         String error = "";
 
@@ -131,9 +128,9 @@ public class PartServiceImpl implements PartService {
         // creates enum from json string but if invalid string will set error variable.
         PartStatus partStatus = PartStatus.OPERATIONAL;
         try {
-            partStatus = stringToEnumConverter.stringToPartStatus(requestData.get("partStatus"));
+            partStatus = PartStatus.valueOf(requestData.get("partStatus"));
         } catch (Exception e) {
-            error = e.getMessage();
+            error = "Invalid part status.";
         }
 
         //checks that valid partType and location have been entered and if not error variable set.
