@@ -37,9 +37,9 @@ public class PartsController {
         String response = partService.addPartFromJSON(requestData);
 
         if (response.equals("")) {
-            return ResponseEntity.ok("Success");
+            return ResponseEntity.ok("{\"response\":\"Success\"}");
         } else {
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.badRequest().body("{\"response\":\""+response+"\"}");
         }
     }
 }
