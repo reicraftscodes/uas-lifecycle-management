@@ -1,4 +1,4 @@
-package com.uas.api.controllers;
+package com.uas.api.controllers.integration;
 
 import com.google.gson.Gson;
 import com.uas.api.models.auth.ERole;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public abstract class BaseIntegrationTest {
-    private static final String EMAIL = "maycraftscodes@gmail.com";
+    private static final String EMAIL = "maytests@gmail.com";
     private static final String CORRECT_PASSWORD = "maycraftscodes";
     private static final String INCORRECT_PASSWORD = "incorrectpassword";
     @Autowired

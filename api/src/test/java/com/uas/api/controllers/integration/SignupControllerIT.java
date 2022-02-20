@@ -1,6 +1,5 @@
 package com.uas.api.controllers.integration;
 
-import com.uas.api.controllers.BaseIntegrationTest;
 import com.uas.api.repositories.auth.RoleRepository;
 import com.uas.api.repositories.auth.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -17,11 +16,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles("dev")
 @AutoConfigureMockMvc
 class SignupControllerIT extends BaseIntegrationTest {
 
-    private static final String EMAIL = "maycraftscodes@gmail.com";
+    private static final String EMAIL = "maytests@gmail.com";
     private static final String EMAIL2 = "nonexistentuser@gmail.com";
     private static final String CORRECT_PASSWORD = "maycraftscodes";
     private static final String INCORRECT_CONFIRM_PASSWORD = "incorrectpassword";
