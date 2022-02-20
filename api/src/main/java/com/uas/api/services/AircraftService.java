@@ -13,6 +13,11 @@ public interface AircraftService {
      */
     String addAircraftFromJson(HashMap<String, String> requestData);
 
-    Optional<Aircraft> findAircraftById(String Id);
+    /**
+     * trys to find an aircraft from the database.
+     * @param id The tailnumber id of the aircraft.
+     * @return returns an aircraft object if found.
+     */
+    Optional<Aircraft> findAircraftById(String id);
 
 }

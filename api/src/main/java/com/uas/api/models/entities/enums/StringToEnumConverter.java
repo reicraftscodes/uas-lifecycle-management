@@ -1,7 +1,13 @@
 package com.uas.api.models.entities.enums;
 
 public class StringToEnumConverter {
-    public PartStatus stringToPartStatus(String partStatusValue) throws Exception {
+    /**
+     *  converts a string value into a partStatus enum.
+     * @param partStatusValue string part status value.
+     * @return returns a partStatus enum.
+     * @throws Exception throws an exception if the part status isn't valid.
+     */
+    public PartStatus stringToPartStatus(final String partStatusValue) throws Exception {
 
         PartStatus partStatus;
         if (partStatusValue.equals("Operational")) {

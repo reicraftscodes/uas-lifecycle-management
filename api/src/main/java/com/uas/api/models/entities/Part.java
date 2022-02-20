@@ -2,11 +2,7 @@ package com.uas.api.models.entities;
 
 import com.uas.api.models.entities.enums.PartStatus;
 import lombok.*;
-import org.apache.tomcat.jni.Local;
-
 import javax.persistence.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -53,21 +49,36 @@ public class Part {
      */
     @Column(name = "PartStatus")
     private PartStatus partStatus;
-
+    /**
+     * Time the part has spent flying.
+     */
     @Column(name = "FlyTimeHours")
-    private int FlyTimeHours;
+    private int flyTimeHours;
 
-    public Part(PartType partType, Aircraft aircraft, Location location, PartStatus partStatus){
+    /**
+     *  Constructor for a part.
+     * @param partType Type of part.
+     * @param aircraft Aircraft the part is associated with.
+     * @param location Location of the part.
+     * @param partStatus Status of the part.
+     */
+    public Part(final PartType partType, final Aircraft aircraft, final Location location, final PartStatus partStatus) {
         this.partType = partType;
         this.aircraft = aircraft;
         this.location = location;
-        LocalDateTime dateTime = LocalDateTime.now();
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.manufacture = dateTime;
+        this.manufacture = LocalDateTime.now();
         this.partStatus = partStatus;
     }
 
-    public Part(PartType partType, Aircraft aircraft, Location location, String manufacture, PartStatus partStatus) {
+    /**
+     * Constructor for a part.
+     * @param partType Type of part.
+     * @param aircraft Aircraft the part is associated with.
+     * @param location Location of the part.
+     * @param manufacture Date the part was manufactured.
+     * @param partStatus Status of the part.
+     */
+    public Part(final PartType partType, final Aircraft aircraft, final Location location, final String manufacture, final PartStatus partStatus) {
         this.partType = partType;
         this.aircraft = aircraft;
         this.location = location;
@@ -76,7 +87,14 @@ public class Part {
         this.partStatus = partStatus;
     }
 
-    public Part(PartType partType, Location location, String manufacture, PartStatus partStatus){
+    /**
+     * Constructor for a part.
+     * @param partType Type of part.
+     * @param location Location of the part.
+     * @param manufacture Date the part was manufactured.
+     * @param partStatus Status of the part.
+     */
+    public Part(final PartType partType, final Location location, final String manufacture, final PartStatus partStatus) {
         this.partType = partType;
         this.location = location;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -84,7 +102,13 @@ public class Part {
         this.partStatus = partStatus;
     }
 
-    public Part(PartType partType, Location location, PartStatus partStatus){
+    /**
+     * Constructor for a part.
+     * @param partType Type of part.
+     * @param location Location of the part.
+     * @param partStatus Status of the part.
+     */
+    public Part(final PartType partType, final Location location, final PartStatus partStatus) {
         this.partType = partType;
         this.location = location;
         this.manufacture = LocalDateTime.now();

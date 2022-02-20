@@ -19,6 +19,11 @@ public interface PartService {
      */
     List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations();
 
-    String addPartFromJSON(HashMap<String,String> requestData);
+    /**
+     * Adds a part to the db from a json request.
+     * @param requestData a hashmap of the json request data.
+     * @return returns an error message if it occurs or if not a blank string.
+     */
+    String addPartFromJSON(HashMap<String, String> requestData);
 
 }

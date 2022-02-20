@@ -10,6 +10,11 @@ import java.util.Optional;
 @Repository
 public interface PartRepository extends JpaRepository<Part, Integer> {
 
+    /**
+     * Find a part by the partNumber.
+     * @param partNumber The part number of the part being searched for.
+     * @return returns a part if found.
+     */
     Optional<Part> findPartBypartNumber(long partNumber);
 
     /**

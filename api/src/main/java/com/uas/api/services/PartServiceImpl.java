@@ -9,7 +9,6 @@ import com.uas.api.models.entities.PartType;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.StringToEnumConverter;
-import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.LocationRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.PartTypeRepository;
@@ -32,8 +31,13 @@ public class PartServiceImpl implements PartService {
      * Repository for communication between API and location table in db.
      */
     private final LocationRepository locationRepository;
-
+    /**
+     * Repository for communication between API and part type table in db.
+     */
     private final PartTypeRepository partTypeRepository;
+    /**
+     * Repository for service for communicating with aircraft table in the db.
+     */
     private final AircraftService aircraftService;
 
     // This will probably change.
@@ -50,11 +54,11 @@ public class PartServiceImpl implements PartService {
      * Constructor.
      * @param partRepository required repository.
      * @param locationRepository required repository.
-     * @param partTypeRepository
-     * @param aircraftService
+     * @param partTypeRepository required repository.
+     * @param aircraftService required service.
      */
     @Autowired
-    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, PartTypeRepository partTypeRepository, AircraftService aircraftService) {
+    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, final PartTypeRepository partTypeRepository, final AircraftService aircraftService) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
         this.partTypeRepository = partTypeRepository;
@@ -105,21 +109,30 @@ public class PartServiceImpl implements PartService {
         return partStockLevelDTOs;
     }
 
+    /**
+     *  Adds a part from json data to the db.
+     * @param requestData a hashmap of the json request data.
+     * @return returns a string which contains errors or is blank if no errors occur.
+     */
     @Override
-    public String addPartFromJSON(HashMap<String,String> requestData){
+    public String addPartFromJSON(final HashMap<String, String> requestData) {
+        //Method that changes strings to enums, used to reduce code repetition.
         StringToEnumConverter stringToEnumConverter = new StringToEnumConverter();
+        //stores error messages that occur in execution.
         String error = "";
 
+        //retrieves objects from the json. Some are optional as the user input may not return an object due to error in user input.
         Optional<PartType> partType = Optional.ofNullable(partTypeRepository.findPartTypeById(Long.parseLong(requestData.get("partType"))));
         Optional<Aircraft> aircraft = aircraftService.findAircraftById(requestData.get("aircraft"));
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
+        //string to store json manufacture datetime.
         String manufacture = requestData.get("manufacture");
 
-        PartStatus partStatus = PartStatus.OPERATIONAL;
         // creates enum from json string but if invalid string will set error variable.
+        PartStatus partStatus = PartStatus.OPERATIONAL;
         try {
             partStatus = stringToEnumConverter.stringToPartStatus(requestData.get("partStatus"));
-        } catch(Exception e) {
+        } catch (Exception e) {
             error = e.getMessage();
         }
 
@@ -130,7 +143,8 @@ public class PartServiceImpl implements PartService {
         if (partType.isEmpty()) {
             error = "Invalid part type.";
         }
-        if(!Objects.equals(manufacture, "")) {
+        //checks that the user inputted manufacture date can be formatted correctly and if not sets error.
+        if (!Objects.equals(manufacture, "")) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 LocalDateTime.parse(manufacture, formatter);
@@ -139,25 +153,28 @@ public class PartServiceImpl implements PartService {
             }
         }
 
-        if (error.equals("")){
-            if (aircraft.isPresent() && !manufacture.equals("")){
+        //if no errors have occured above then the parts are created and saved depending on which json inputs they have.
+        if (error.equals("")) {
+            if (aircraft.isPresent() && !manufacture.equals("")) {
                 //part with aircraft and manufacture date
-                Part part = new Part(partType.get(),aircraft.get(),location.get(),manufacture,partStatus);
+                Part part = new Part(partType.get(), aircraft.get(), location.get(), manufacture, partStatus);
                 partRepository.save(part);
-            } else if (!manufacture.equals("")){
+            } else if (!manufacture.equals("")) {
                 //part without aircraft but with manufacture date
-                Part part = new Part(partType.get(),location.get(),manufacture,partStatus);
+                Part part = new Part(partType.get(), location.get(), manufacture, partStatus);
                 partRepository.save(part);
             } else if (aircraft.isPresent()) {
-                Part part = new Part(partType.get(),aircraft.get(),location.get(),partStatus);
+                Part part = new Part(partType.get(), aircraft.get(), location.get(), partStatus);
                 partRepository.save(part);
             } else {
                 //part without aircraft and without manufacture date
-                Part part = new Part(partType.get(),location.get(),partStatus);
+                Part part = new Part(partType.get(), location.get(), partStatus);
                 partRepository.save(part);
             }
         }
 
+        //returns error messages or a blank string if no error occured.
+        //This is used to return a http response of ok or bad request with the error message as the body.
         return error;
     }
 
