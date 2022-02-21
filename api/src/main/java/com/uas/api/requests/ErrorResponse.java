@@ -13,13 +13,15 @@ public class ErrorResponse {
     private String status;
 
     /**
-     * Error response constructor
+     * Error response constructor.
      */
     public ErrorResponse() {
     }
 
     /**
-     * Error response constructor
+     * Error response constructor.
+     * @param message error message.
+     * @param status error status.
      */
     public ErrorResponse(String message, String status) {
         this.message = message;

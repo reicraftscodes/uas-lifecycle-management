@@ -10,23 +10,23 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
 
     /**
-     * user id
+     * user id.
      */
     private Long id;
     /**
-     * user user name
+     * user user name.
      */
     private String username;
     /**
-     * user email
+     * user email.
      */
     private String email;
     /**
-     * user first name
+     * user first name.
      */
     private String firstName;
     /**
-     * user last name
+     * user last name.
      */
     private String lastName;
 }

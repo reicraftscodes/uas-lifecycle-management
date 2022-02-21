@@ -19,7 +19,7 @@ import java.util.Set;
 public class User {
 
     /**
-     * user id
+     * user id.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class User {
 
 
     /**
-     * user unique username
+     * user unique username.
      */
     @NotBlank
     @Size(max = 50)
@@ -35,7 +35,7 @@ public class User {
 
 
     /**
-     * user email
+     * user email.
      */
     @NotBlank
     @Size(max = 50)
@@ -43,28 +43,28 @@ public class User {
     private String email;
 
     /**
-     * user password
+     * user password.
      */
     @NotBlank
     @Size(max = 120)
     private String password;
 
     /**
-     * user first name
+     * user first name.
      */
     @NotBlank
     @Size(max = 50)
     private String firstName;
 
     /**
-     * user last name
+     * user last name.
      */
     @NotBlank
     @Size(max = 50)
     private String lastName;
 
     /**
-     * user reset token
+     * user reset token.
      */
     @NotBlank
     @Size(max = 50)
@@ -77,13 +77,20 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     /**
-     * empty constructor
+     * empty constructor.
      */
     public User() {
     }
 
     /**
-     * constructor
+     * constructor.
+     * @param username username required.
+     * @param email email required.
+     * @param password password required.
+     * @param firstName user first name required.
+     * @param lastName user last name required.
+     * @param roles user roles required.
+     * @param resetPasswordToken token required.
      */
     public User(String username,
                 String email,

@@ -13,57 +13,53 @@ import javax.persistence.Table;
 public class Role {
 
     /**
-     * Role id
+     * Role id.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     /**
-     * Role name
+     * Role name.
      */
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
     private ERole name;
 
     /**
-     * Role constructor
+     * Role constructor.
      */
     public Role() {
 
     }
-
     /**
-     * Role constructor
+     * Role constructor.
+     * @param name required.
      */
     public Role(ERole name) {
         this.name = name;
     }
-
     /**
-     * get user Id
+     * get user Id.
      */
     public Integer getId() {
         return id;
     }
-
     /**
-     * set user Id
+     * set user Id.
      */
 
     public void setId(Integer id) {
         this.id = id;
     }
-
     /**
-     * get user's name
+     * get user's name.
      */
     public ERole getName() {
         return name;
     }
-
     /**
-     * set user's name
+     * set user's name.
      */
     public void setName(ERole name) {
         this.name = name;
