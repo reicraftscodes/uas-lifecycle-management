@@ -28,7 +28,7 @@ public class AuthController {
     private AuthService authService;
 
     /**
-     * User Mapper
+     * UserDImpl will Autowire and use our AddressMapper:
      */
 
     @Autowired
