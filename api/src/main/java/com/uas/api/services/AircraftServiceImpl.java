@@ -60,12 +60,10 @@ public class AircraftServiceImpl implements AircraftService {
 
         //Changes the json platform status from a string to an enum.
         PlatformStatus platformStatus = PlatformStatus.DESIGN;
-        switch (requestData.get("platformStatus")) {
-            case "Design" : break;
-            case "Production" : platformStatus = PlatformStatus.PRODUCTION; break;
-            case "Operation" : platformStatus = PlatformStatus.OPERATION; break;
-            case "Repair" : platformStatus = PlatformStatus.REPAIR; break;
-            default: errorMessage = "Invalid platform status."; break;
+        try {
+            PlatformStatus.valueOf(requestData.get("platformStatus"));
+        } catch (Exception e) {
+            errorMessage = "Invalid platform status.";
         }
 
         //Checks that the location entered exists and creates a location object.
