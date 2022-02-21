@@ -56,6 +56,7 @@ public class AuthController {
 
     /**
      * A post mapping that allows a user to view jwt info.
+     * @return getJwtReponse in return.
      */
     @PostMapping("/getJwtInfo")
     @PreAuthorize("hasRole('USER')")
@@ -65,6 +66,7 @@ public class AuthController {
 
     /**
      * A post mapping that allows a user to view user information.
+     * @return userMap to userDTO.
      */
     @GetMapping("/getUserInfo")
     @PreAuthorize("hasRole('USER')")
