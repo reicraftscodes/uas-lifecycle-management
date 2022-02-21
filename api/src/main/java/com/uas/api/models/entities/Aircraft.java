@@ -31,13 +31,11 @@ public class Aircraft {
     /**
      * Status of platform.
      */
-    @Enumerated(EnumType.STRING)
     @Column(name = "PlatformStatus")
     private PlatformStatus platformStatus;
     /**
      * Type of platform.
      */
-    @Enumerated(EnumType.STRING)
     @Column(name = "PlatformType")
     private PlatformType platformType;
 }

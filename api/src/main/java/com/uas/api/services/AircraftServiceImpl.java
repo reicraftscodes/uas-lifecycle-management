@@ -100,4 +100,16 @@ public class AircraftServiceImpl implements AircraftService {
         //Returns either null meaning no errors or an error message about what went wrong.
         return errorMessage;
     }
+
+    /**
+     * Optional finds aircraft from the db by the tailnumber id.
+     * @param id The tailnumber id.
+     * @return returns an aircraft.
+     */
+    @Override
+    public Optional<Aircraft> findAircraftById(final String id) {
+
+        return (aircraftRepository.findById(id));
+
+    }
 }

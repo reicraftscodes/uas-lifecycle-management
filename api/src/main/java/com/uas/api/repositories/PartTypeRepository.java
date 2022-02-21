@@ -10,4 +10,5 @@ public interface PartTypeRepository extends JpaRepository<PartType, Integer> {
      * @return the part type.
      */
     PartType findPartTypeById(long id);
+
 }
