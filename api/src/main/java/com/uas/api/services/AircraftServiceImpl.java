@@ -82,6 +82,11 @@ public class AircraftServiceImpl implements AircraftService {
             default: errorMessage = "Invalid platform type."; break;
         }
 
+        Optional<Aircraft> aircraftCheck = aircraftRepository.findById(requestData.get("tailNumber"));
+        if(aircraftCheck.isPresent()){
+            errorMessage = "Aircraft with specified tail number already present.";
+        }
+
         //Checks if any errors have happened and if so doesn't save the aircraft to the db.
         if (errorMessage == null) {
             Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
