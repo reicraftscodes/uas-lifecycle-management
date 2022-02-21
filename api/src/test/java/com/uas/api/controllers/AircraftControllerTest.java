@@ -24,7 +24,7 @@ public class AircraftControllerTest {
 
     @Test
     public void AddAircraftWithCorrectJSON() throws Exception {
-        String json = "{\"tailNumber\":\"G-999\",\"location\":\"London\",\"platformStatus\":\"Operation\",\"platformType\":\"Platform_A\"}";
+        String json = "{\"tailNumber\":\"G-999\",\"location\":\"London\",\"platformStatus\":\"DESIGN\",\"platformType\":\"Platform_A\"}";
 
         mockMvc.perform(post("/aircraft/add")
                 .contentType(MediaType.APPLICATION_JSON)

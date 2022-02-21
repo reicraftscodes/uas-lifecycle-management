@@ -2,7 +2,6 @@ package com.uas.api.controller;
 
 import com.uas.api.services.AircraftServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
@@ -29,7 +28,7 @@ public class AircraftController {
      * @param requestData JSON data from the request body turned into a HashMap.
      * @return A response to the request with either a confirmation or the error received.
      */
-    @PostMapping(value = "/add", consumes = "application/json")
+    @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     ResponseEntity<?> addAircraft(@RequestBody final HashMap<String, String> requestData) {
         //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
         // as enums weren't created from the json strings.
@@ -37,9 +36,9 @@ public class AircraftController {
         String result = aircraftService.addAircraftFromJson(requestData);
 
         if (result == null) {
-            return new ResponseEntity<>(null, HttpStatus.OK);
+            return ResponseEntity.ok().body("{\"response\":\"Success\"}");
         } else {
-            return ResponseEntity.badRequest().body("Error adding aircraft. " + result);
+            return ResponseEntity.badRequest().body("{\"response\":\"" + result + "\"}");
         }
     }
 }
