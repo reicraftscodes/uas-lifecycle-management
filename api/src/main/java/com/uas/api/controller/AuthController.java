@@ -22,13 +22,13 @@ import javax.validation.Valid;
 public class AuthController {
 
     /**
-     * Authentication service
+     * Authentication service.
      */
     @Autowired
     private AuthService authService;
 
     /**
-     * UserDImpl will Autowire and use our AddressMapper:
+     * UserDImpl will Autowire and use our AddressMapper.
      */
 
     @Autowired
@@ -55,7 +55,7 @@ public class AuthController {
     }
 
     /**
-     * A post mapping that allows a user to view jwt info
+     * A post mapping that allows a user to view jwt info.
      */
     @PostMapping("/getJwtInfo")
     @PreAuthorize("hasRole('USER')")

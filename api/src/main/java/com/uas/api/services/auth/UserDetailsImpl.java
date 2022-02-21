@@ -67,46 +67,50 @@ public class UserDetailsImpl implements UserDetails {
 
     /**
      * Get user id.
+     * @return id, returns user id.
     */
     public Long getId() {
         return id;
     }
     /**
      * Get user email.
+     * @return email, return user email.
      */
     public String getEmail() {
         return email;
     }
     /**
      * Get user email password.
+     * @return password, return user password.
      */
     @Override
     public String getPassword() {
         return password;
     }
     /**
-     * Get username .
+     * Get username.
+     * @return username, returns user username.
      */
     @Override
     public String getUsername() {
         return username;
     }
     /**
-     * Use account is not expired
+     * Use account is not expired.
      */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
     /**
-     * Lock user account
+     * Lock user account.
      */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
     /**
-     * User credentials is not expired
+     * User credentials is not expired.
      */
     @Override
     public boolean isCredentialsNonExpired() {

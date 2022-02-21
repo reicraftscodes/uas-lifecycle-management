@@ -10,6 +10,7 @@ public class UserMapper {
     /**
      * UserMapper to UserDTO.
      * @param user user details.
+     * @return userDto userDto.
      */
     public UserDTO toUserDto(User user) {
         UserDTO userDTO = new UserDTO();

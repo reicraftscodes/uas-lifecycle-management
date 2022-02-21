@@ -3,12 +3,12 @@ package com.uas.api.requests;
 public class ErrorResponse {
 
     /**
-     * Error response message
+     * Error response message.
      */
     private String message;
 
     /**
-     * Error response status
+     * Error response status.
      */
     private String status;
 
@@ -29,14 +29,16 @@ public class ErrorResponse {
     }
 
     /**
-     * Get error response message
+     * Get error response message.
+     * @return message, response messages.
      */
     public String getMessage() {
         return message;
     }
 
     /**
-     * Set error response message
+     * Set error response message.
+     * @param message set messages.
      */
     public void setMessage(String message) {
         this.message = message;
@@ -44,12 +46,14 @@ public class ErrorResponse {
 
     /**
      * Get error response status
+     * @return status, the response status.
      */
     public String getStatus() {
         return status;
     }
     /**
      * Set error response status
+     * @param status, the error response status.
      */
     public void setStatus(String status) {
         this.status = status;

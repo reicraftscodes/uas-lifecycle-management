@@ -41,12 +41,14 @@ public class Role {
     }
     /**
      * get user Id.
+     * @return userId, get the user id.
      */
     public Integer getId() {
         return id;
     }
     /**
      * set user Id.
+     * @param id required.
      */
 
     public void setId(Integer id) {
@@ -54,12 +56,14 @@ public class Role {
     }
     /**
      * get user's name.
+     * @return name, get the user name.
      */
     public ERole getName() {
         return name;
     }
     /**
      * set user's name.
+     * @param name required.
      */
     public void setName(ERole name) {
         this.name = name;

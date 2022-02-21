@@ -70,6 +70,9 @@ public class User {
     @Size(max = 50)
     private String resetPasswordToken;
 
+    /**
+     * join user and role table.
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
