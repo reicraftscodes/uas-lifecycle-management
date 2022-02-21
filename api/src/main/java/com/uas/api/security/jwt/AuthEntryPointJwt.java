@@ -12,16 +12,19 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-/**
- * AuthEntryPointJwt class that implements AuthenticationEntryPoint interface.
- * This method will be triggered anytime unauthenticated. User requests a secured HTTP resource and an AuthenticationException is thrown.
- */
-
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
+    /**
+     * Logger.
+     */
     private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
 
+
+    /**
+     * AAuthEntryPointJwt class that implements AuthenticationEntryPoint interface.
+     * Then override the commence() method. This method will be triggered anytime unauthenticated User requests a secured HTTP resource and an AuthenticationException is thrown.
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {

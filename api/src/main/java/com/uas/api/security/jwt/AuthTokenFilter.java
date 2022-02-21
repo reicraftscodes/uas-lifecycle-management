@@ -19,9 +19,14 @@ import java.io.IOException;
 
 
 public class AuthTokenFilter extends OncePerRequestFilter {
+    /**
+     * Logger.
+     */
     private static final Logger appLogger = LoggerFactory.getLogger(AuthTokenFilter.class);
+
     @Autowired
     private JwtUtils jwtUtils;
+
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 

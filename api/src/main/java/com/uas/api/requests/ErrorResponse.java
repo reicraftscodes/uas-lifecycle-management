@@ -45,15 +45,15 @@ public class ErrorResponse {
     }
 
     /**
-     * Get error response status
+     * Get error response status.
      * @return status, the response status.
      */
     public String getStatus() {
         return status;
     }
     /**
-     * Set error response status
-     * @param status, the error response status.
+     * Set error response status.
+     * @param status the error response status.
      */
     public void setStatus(String status) {
         this.status = status;
