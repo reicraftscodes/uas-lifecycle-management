@@ -69,7 +69,7 @@ public class AircraftServiceImpl implements AircraftService {
         //Checks that the location entered exists and creates a location object.
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
         if (location.isEmpty()) {
-            errorMessage = "Location not found.";
+            errorMessage = "Invalid location not found.";
         }
 
         //Changes the json platform type to enum.
@@ -81,8 +81,8 @@ public class AircraftServiceImpl implements AircraftService {
         }
 
         Optional<Aircraft> aircraftCheck = aircraftRepository.findById(requestData.get("tailNumber"));
-        if(aircraftCheck.isPresent()){
-            errorMessage = "Aircraft with specified tail number already present.";
+        if (aircraftCheck.isPresent()) {
+            errorMessage = "Invalid aircraft with specified tail number already present.";
         }
 
         //Checks if any errors have happened and if so doesn't save the aircraft to the db.
