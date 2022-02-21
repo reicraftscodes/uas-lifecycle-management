@@ -7,10 +7,33 @@ This is the git repository for the API and the web front end. For more informati
 <h3>Adding a platform through the API</h3>
 To add a platform navigate to /aircraft/api and send a post request with the JSON for an aircraft in the body, e.g. 
 
-`{"tailNumber":"G-000","location":"London","platformStatus":"Design","platformType":"Platform_A"} `
-
+`{"tailNumber":"G-000","location":"London","platformStatus":"DESIGN","platformType":"Platform_A"} `
 
 (json names are case sensitive and must be written as shown).
+
+- The tailNumber must be unique and provided. 
+- The location must be a locationName present in the location table or an error will be returned. 
+- platformStatus must be written as one of these options or an error will be returned. "DESIGN" "PRODUCTION" "OPERATION" "REPAIR"
+- platformType can only take 2 different inputs, either "Platform_A" or "Plaform_B" or an error will be returned.
+
+If a request is successful the json returned will be `{"response": "Success"}`
+If the request is unsuccessful then an bad request response will be returned with the json containing an error message. Examples of these include:
+
+`{
+    "response": "Invalid aircraft with specified tail number already present."
+}`
+
+`{
+    "response": "Invalid location not found."
+}`
+
+`{
+    "response": "Invalid platform status."
+}`
+
+`{
+    "response": "Invalid platform type."
+}`
 
 <h3>Adding a part through the API</h3>
 
