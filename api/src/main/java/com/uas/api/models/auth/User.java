@@ -17,31 +17,55 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")
         })
 public class User {
+
+    /**
+     * user id
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    /**
+     * user unique username
+     */
     @NotBlank
     @Size(max = 50)
     private String username;
 
+
+    /**
+     * user email
+     */
     @NotBlank
     @Size(max = 50)
     @Email
     private String email;
 
+    /**
+     * user password
+     */
     @NotBlank
     @Size(max = 120)
     private String password;
 
+    /**
+     * user first name
+     */
     @NotBlank
     @Size(max = 50)
     private String firstName;
 
+    /**
+     * user last name
+     */
     @NotBlank
     @Size(max = 50)
     private String lastName;
 
+    /**
+     * user reset token
+     */
     @NotBlank
     @Size(max = 50)
     private String resetPasswordToken;
@@ -52,9 +76,15 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    /**
+     * empty constructor
+     */
     public User() {
     }
 
+    /**
+     * constructor
+     */
     public User(String username,
                 String email,
                 String password,
