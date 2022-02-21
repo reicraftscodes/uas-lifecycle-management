@@ -11,6 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+
+/**
+ * AuthEntryPointJwt class that implements AuthenticationEntryPoint interface.
+ * This method will be triggered anytime unauthenticated. User requests a secured HTTP resource and an AuthenticationException is thrown.
+ */
+
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
@@ -20,6 +26,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
         logger.error("Unauthorized error: {}", authException.getMessage());
+        //HttpServletResponse.SC_UNAUTHORIZED is the 401 Status code. It indicates that the request requires HTTP authentication.
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
     }
 

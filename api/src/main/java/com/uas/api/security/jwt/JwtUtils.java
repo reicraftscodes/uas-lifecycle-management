@@ -19,12 +19,21 @@ import java.util.Date;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
+    /**
+     * Jwt Secret Key.
+     */
     @Value("${app.jwtSecret}")
     private String jwtSecret;
 
+    /**
+     * Jwt Expiration
+     */
     @Value("${app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    /**
+     * Generate JWT Auth
+     */
     public String generateJwtToken(Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -37,10 +46,16 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Get User name user from jwt token.
+     */
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
+    /**
+     * Validate JWT token
+     */
     public boolean validateJwtToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
@@ -61,10 +76,16 @@ public class JwtUtils {
     }
 
 
+    /**
+     * Get JWT Secret
+     */
     public String getJwtSecret() {
         return jwtSecret;
     }
 
+    /**
+     * Get JWT Expiration
+     */
     public int getJwtExpirationMs() {
         return jwtExpirationMs;
     }

@@ -42,6 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+    // cors - List of multiple cross-origin urls in spring boot
+    // https://stackoverflow.com/questions/39623211/add-multiple-cross-origin-urls-in-spring-boot
     @Value("#{'${cors.allowed.origins}'.split(',')}")
     private List<String> allowedOrigin;
 

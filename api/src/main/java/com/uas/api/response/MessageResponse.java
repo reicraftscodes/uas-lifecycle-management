@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class MessageResponse {
+    /**
+     * Response message.
+     */
     private String message;
 
 }
