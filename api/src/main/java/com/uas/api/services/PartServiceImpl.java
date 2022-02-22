@@ -88,6 +88,22 @@ public class PartServiceImpl implements PartService {
         return locationStockLevelsDTOs;
     }
 
+
+    /**
+     * Retrieve stock levels for parts at given location.
+     * @return list of part stock level dtos.
+     */
+    @Override
+    public List<PartStockLevelDTO> getPartStockLevelsAtLocation(final String locationName) {
+        List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
+        for (PartName partName : PartName.values()) {
+            double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, locationName);
+            partStockLevelDTOs.add(new PartStockLevelDTO(partName.name(), locationName, partStockLevelPercentage));
+        }
+        return partStockLevelDTOs;
+    }
+
+
     /**
      * Retrieve details on all parts that fall below the low stock percentage at all locations.
      * @return list of part stock level dtos.
