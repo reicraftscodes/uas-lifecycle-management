@@ -2,6 +2,7 @@ package com.uas.api.controller;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
@@ -85,6 +86,16 @@ public class MainController {
     public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @RequestParam("location") String location) {
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
         return ResponseEntity.ok(partStockLevelDTOs);
+    }
+
+    /**
+     * Get mapping to retrieve all the failure times for all the parts.
+     * @return list containing part names and failure times.
+     */
+    @GetMapping("/api/parts/failuretime")
+    public ResponseEntity<?> getFailureTime() {
+        List<PartTypeFailureTimeDTO> failureTimes = partService.getFailureTime();
+        return ResponseEntity.ok(failureTimes);
     }
 
 }
