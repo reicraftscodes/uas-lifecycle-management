@@ -21,7 +21,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadCredentialsException(BadCredentialsException badCredentialsException) {
+    public ErrorResponse handleBadCredentialsException(final BadCredentialsException badCredentialsException) {
         return new ErrorResponse("Invalid email or password!", HttpStatus.BAD_REQUEST.name());
     }
 
@@ -32,7 +32,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleEmailAlreadyExistException(EmailAlreadyExistException emailAlreadyExistException) {
+    public ErrorResponse handleEmailAlreadyExistException(final EmailAlreadyExistException emailAlreadyExistException) {
         return new ErrorResponse(emailAlreadyExistException.getMessage(), HttpStatus.BAD_REQUEST.name());
     }
 
@@ -43,7 +43,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleEmailConfirmException(EmailConfirmException emailEmailConfirmException) {
+    public ErrorResponse handleEmailConfirmException(final EmailConfirmException emailEmailConfirmException) {
         return new ErrorResponse(emailEmailConfirmException.getMessage(), HttpStatus.BAD_REQUEST.name());
     }
 
@@ -54,7 +54,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handlePasswordConfirmException(PasswordConfirmException passwordConfirmException) {
+    public ErrorResponse handlePasswordConfirmException(final PasswordConfirmException passwordConfirmException) {
         return new ErrorResponse(passwordConfirmException.getMessage(), HttpStatus.BAD_REQUEST.name());
     }
 
@@ -65,7 +65,7 @@ public class GlobalControllerAdvice {
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleUserNotFoundException(UserNotFoundException userNotFoundException) {
+    public ErrorResponse handleUserNotFoundException(final UserNotFoundException userNotFoundException) {
         return new ErrorResponse(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST.name());
     }
 }
