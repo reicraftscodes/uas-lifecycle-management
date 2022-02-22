@@ -60,6 +60,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * filter that executes once per request.
+     * @return new auth token filter.
      */
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -76,7 +77,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 
     /**
      * PasswordEncoder is a Spring Security interface which contains a very
@@ -105,6 +105,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
+    /**
+     * Cors configuration
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         final CorsConfiguration configuration = new CorsConfiguration();
