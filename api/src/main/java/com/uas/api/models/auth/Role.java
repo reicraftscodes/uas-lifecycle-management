@@ -36,7 +36,7 @@ public class Role {
      * Role constructor.
      * @param name required.
      */
-    public Role(ERole name) {
+    public Role(final ERole name) {
         this.name = name;
     }
     /**
@@ -51,7 +51,7 @@ public class Role {
      * @param id required.
      */
 
-    public void setId(Integer id) {
+    public void setId(final Integer id) {
         this.id = id;
     }
     /**
@@ -65,7 +65,7 @@ public class Role {
      * set user's name.
      * @param name required.
      */
-    public void setName(ERole name) {
+    public void setName(final ERole name) {
         this.name = name;
     }
 }

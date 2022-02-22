@@ -95,13 +95,13 @@ public class User {
      * @param roles user roles required.
      * @param resetPasswordToken token required.
      */
-    public User(String username,
-                String email,
-                String password,
-                String firstName,
-                String lastName,
-                Set<Role> roles,
-                String resetPasswordToken) {
+    public User(final String username,
+                final String email,
+                final String password,
+                final String firstName,
+                final String lastName,
+                final Set<Role> roles,
+                final String resetPasswordToken) {
         this.username = username;
         this.email = email;
         this.password = password;
