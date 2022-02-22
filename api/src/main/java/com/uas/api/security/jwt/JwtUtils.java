@@ -38,6 +38,7 @@ public class JwtUtils {
     /**
      * Generate JWT token.
      * @param  authentication auth.
+     * @return generate jwt tokens subs, issues expirations, key.
      */
     public String generateJwtToken(Authentication authentication) {
 
@@ -62,6 +63,7 @@ public class JwtUtils {
     /**
      * Validate JWT token.
      * @param authToken auth token.
+     * @return validate token false.
      */
     public boolean validateJwtToken(String authToken) {
         try {
@@ -85,6 +87,7 @@ public class JwtUtils {
 
     /**
      * Getter JWT Secret.
+     * @return jwt secret token as string
      */
     public String getJwtSecret() {
         return jwtSecret;
@@ -92,6 +95,7 @@ public class JwtUtils {
 
     /**
      * Getter JWT Expiration.
+     * @return expiration number token as int
      */
     public int getJwtExpirationMs() {
         return jwtExpirationMs;

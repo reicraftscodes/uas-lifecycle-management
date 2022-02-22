@@ -75,3 +75,4 @@ public class AuthController {
         return userMapper.toUserDto(user);
     }
 }
+
