@@ -81,8 +81,8 @@ public class MainController {
      * @param location the name of the loaction.
      * @return list of parts stock levels at location & response entity.
      */
-    @GetMapping("/api/parts/stock/{location}")
-    public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @PathVariable("location") String location) {
+    @GetMapping("/api/parts/location/stock")
+    public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @RequestParam("location") String location) {
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
         return ResponseEntity.ok(partStockLevelDTOs);
     }
