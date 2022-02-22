@@ -52,7 +52,8 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
     /**
-     * user detail implementation build
+     * user detail implementation build.
+     * @param user user
      */
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()

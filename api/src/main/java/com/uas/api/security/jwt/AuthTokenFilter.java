@@ -23,10 +23,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
      * Logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthTokenFilter.class);
-
+    /**
+     * Inject Jwt utility which in charge of parsing the token into User object and generating the token from the User object.
+     */
     @Autowired
     private JwtUtils jwtUtils;
-
+    /**
+     * Inject UserDetailsService interface to load User by username and returns a UserDetails object that Spring Security can use for authentication and validation.
+     */
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 

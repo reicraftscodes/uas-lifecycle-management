@@ -38,7 +38,7 @@ public class JwtUtils {
     /**
      * Generate JWT token.
      * @param  authentication auth.
-     * @return generate jwt tokens subs, issues expirations, key.
+     * @return the jwt tokens subs, issues expirations, key.
      */
     public String generateJwtToken(Authentication authentication) {
 
