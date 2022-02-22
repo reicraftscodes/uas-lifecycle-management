@@ -4,9 +4,11 @@ import com.uas.api.models.entities.PartType;
 import com.uas.api.repositories.projections.PartTypeFailureTimeProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface PartTypeRepository extends JpaRepository<PartType, Integer> {
     /**
      * Find the part type by the id.
@@ -21,5 +23,9 @@ public interface PartTypeRepository extends JpaRepository<PartType, Integer> {
      */
     @Query(value = "SELECT PartType, TypicalFailureTime FROM PartTypes", nativeQuery = true)
     List<PartTypeFailureTimeProjection> findAllProjectedBy();
+
+    @Query(value = "SELECT PartType FROM PartTypes WHERE PartID = (SELECT PartID from Parts WHERE PartNumber = ?1)", nativeQuery = true)
+    String getPartTypeByPartNumber(long partNumber);
+
 
 }

@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.models.entities.Aircraft;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -243,9 +245,17 @@ public class PartServiceImpl implements PartService {
         return failureTime;
     }
 
-    public void getMostCommonFailingParts() {
-        Page<Map<Object, Object>> objects = repairRepository.findPartsWithMostRepairsAndTheirCost(PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "repairCount")));
-        //System.out.println(objects.getTotalElements());
+    public List<PartRepairsDTO> getMostCommonFailingParts(final int topN) {
+        Page<Map<Object, Object>> objects = repairRepository.findPartsWithMostRepairsAndTheirCost(PageRequest.of(0, topN, Sort.by(Sort.Direction.DESC, "repairCount")));
+        List<PartRepairsDTO> partRepairsDTOs = new ArrayList<>();
+        for (Map<Object, Object> objectMap : objects.getContent()) {
+            long partNumber = (Long) objectMap.get("partNumber");
+            long repairCount = (Long) objectMap.get("repairCount");
+            BigDecimal totalCost = (BigDecimal) objectMap.get("totalCost");
+            String partType = partTypeRepository.getPartTypeByPartNumber(partNumber);
+            partRepairsDTOs.add(new PartRepairsDTO(partNumber, partType, repairCount, totalCost));
+        }
+        return partRepairsDTOs;
     }
 
 

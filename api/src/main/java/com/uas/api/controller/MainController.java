@@ -1,6 +1,7 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.requests.MoreStockRequest;
@@ -98,9 +99,9 @@ public class MainController {
     }
 
 
-    @GetMapping("/api/parts/most-failing")
-    public ResponseEntity<String> getPartsMostFailing() {
-        partService.getMostCommonFailingParts();
-        return ResponseEntity.ok("Success");
+    @GetMapping("/api/parts/most-failing/{topN}")
+    public ResponseEntity<List<PartRepairsDTO>> getPartsMostFailing(@PathVariable("topN") final int topN) {
+        List<PartRepairsDTO> partRepairsDTOs = partService.getMostCommonFailingParts(topN);
+        return ResponseEntity.ok(partRepairsDTOs);
     }
 }

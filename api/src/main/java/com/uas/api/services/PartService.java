@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 
@@ -40,5 +41,5 @@ public interface PartService {
      */
     List<PartTypeFailureTimeDTO> getFailureTime();
 
-    void getMostCommonFailingParts();
+    List<PartRepairsDTO> getMostCommonFailingParts(int topN);
 }
