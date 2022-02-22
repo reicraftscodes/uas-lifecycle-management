@@ -35,16 +35,35 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AuthService {
 
+    /**
+     *  Authentication Manager Attempts to authenticate the passed Authentication object, returning a fully populated Authentication object (including granted authorities) if successful.
+     */
     private final AuthenticationManager authenticationManager;
 
+    /**
+     *  User repository contains methods for communicating with users table in db.
+     */
     private final UserRepository userRepository;
 
+    /**
+     *  Role repository contains methods for communicating with role table in db.
+     */
     private final RoleRepository roleRepository;
 
+    /**
+     * Service interface for encoding passwords. Encode the raw password. Generally, a good encoding algorithm applies a SHA-1 or greater hash combined with an 8-byte or greater randomly generated salt
+     */
     private final PasswordEncoder encoder;
 
+    /**
+     *  Jwt utility class is in charge of parsing the token into User object and generating the token from the User object.
+     */
     private final JwtUtils jwtUtils;
 
+    /**
+     * Jwt authentication response.
+     * @param  loginRequest login request.
+     */
     public ResponseEntity<JwtResponse> authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -53,6 +72,10 @@ public class AuthService {
         return getJwtResponse(authentication);
     }
 
+    /**
+     * Jwt authentication get auth response.
+     * @param authentication authentication.
+     */
     private ResponseEntity<JwtResponse> getJwtResponse(Authentication authentication) {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
@@ -68,11 +91,18 @@ public class AuthService {
                 roles));
     }
 
+    /**
+     * Jwt authentication response.
+     */
     public ResponseEntity<JwtResponse> getJwtResponse() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return getJwtResponse(authentication);
     }
 
+    /**
+     * When register new user and role response.
+     * @param signupRequest login request.
+     */
     public ResponseEntity<MessageResponse> registerUser(SignupRequest signupRequest) {
         validateSignupRequest(signupRequest);
 
@@ -91,8 +121,13 @@ public class AuthService {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+
     }
 
+    /**
+     * Sign up validation request.
+     * @param  signupRequest sign up request.
+     */
     private void validateSignupRequest(SignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             throw new EmailAlreadyExistException("Email already exist! Please use another email.");
@@ -107,6 +142,10 @@ public class AuthService {
         }
     }
 
+    /**
+     * Print user information.
+     */
+
     public User getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -115,3 +154,4 @@ public class AuthService {
     }
 
 }
+

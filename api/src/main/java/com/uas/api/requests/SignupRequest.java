@@ -33,4 +33,7 @@ public class SignupRequest {
      * Sign up user last name.
      */
     private String lastName;
+
 }
+
+

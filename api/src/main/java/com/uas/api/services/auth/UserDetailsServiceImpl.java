@@ -11,15 +11,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+
+    /**
+     * Repository for communication between users table in db.
+     */
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * User details service.
+     * @param  username find username. It is used by the DaoAuthenticationProvider to load details about the user during authentication.
+     */
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
         return UserDetailsImpl.build(user);
+
     }
 
+
+
 }
+
