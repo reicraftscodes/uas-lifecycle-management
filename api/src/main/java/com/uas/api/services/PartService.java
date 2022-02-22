@@ -26,4 +26,6 @@ public interface PartService {
      */
     String addPartFromJSON(HashMap<String, String> requestData);
 
+    void getFailureTime();
+
 }

@@ -79,5 +79,10 @@ public class MainController {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
         return ResponseEntity.ok(locationStockLevelsDTOs);
     }
+    @GetMapping("/api/parts/failuretime")
+    public ResponseEntity<?> getFailureTime() {
+        partService.getFailureTime();
+        return ResponseEntity.ok("Yay!");
+    }
 
 }

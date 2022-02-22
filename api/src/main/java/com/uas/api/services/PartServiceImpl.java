@@ -11,6 +11,7 @@ import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.repositories.LocationRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.PartTypeRepository;
+import com.uas.api.repositories.projections.PartTypeFailureTimeProjection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -194,6 +195,11 @@ public class PartServiceImpl implements PartService {
      */
     private int getPartStockLevelAtLocation(final PartName partName, final String location) {
         return partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
+    }
+    @Override
+    public void getFailureTime() {
+        List<PartTypeFailureTimeProjection> fts = partTypeRepository.findAllProjectedBy();
+        System.out.println(fts.size());
     }
 
 
