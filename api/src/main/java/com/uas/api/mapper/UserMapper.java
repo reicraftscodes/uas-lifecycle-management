@@ -12,7 +12,7 @@ public class UserMapper {
      * @param user user details.
      * @return userDto userDto.
      */
-    public UserDTO toUserDto(User user) {
+    public UserDTO toUserDto(final User user) {
         UserDTO userDTO = new UserDTO();
         BeanUtils.copyProperties(user, userDTO);
         return userDTO;

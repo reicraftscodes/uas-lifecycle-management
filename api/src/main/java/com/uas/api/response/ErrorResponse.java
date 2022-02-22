@@ -23,7 +23,7 @@ public class ErrorResponse {
      * @param message error message.
      * @param status error status.
      */
-    public ErrorResponse(String message, String status) {
+    public ErrorResponse(final String message, final String status) {
         this.message = message;
         this.status = status;
     }
@@ -40,7 +40,7 @@ public class ErrorResponse {
      * Set error response message.
      * @param message set messages.
      */
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
         this.message = message;
     }
 
@@ -55,7 +55,7 @@ public class ErrorResponse {
      * Set error response status.
      * @param status the error response status.
      */
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 }

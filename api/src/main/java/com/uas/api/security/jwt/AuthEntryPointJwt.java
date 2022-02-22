@@ -26,8 +26,8 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
      * Then override the commence() method. This method will be triggered anytime unauthenticated User requests a secured HTTP resource and an AuthenticationException is thrown.
      */
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException, ServletException {
+    public void commence(final HttpServletRequest request, final HttpServletResponse response,
+                         final AuthenticationException authException) throws IOException, ServletException {
         LOGGER.error("Unauthorized error: {}", authException.getMessage());
         //HttpServletResponse.SC_UNAUTHORIZED is the 401 Status code. It indicates that the request requires HTTP authentication.
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");

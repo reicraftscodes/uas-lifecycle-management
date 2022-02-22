@@ -40,7 +40,7 @@ public class JwtUtils {
      * @param  authentication auth.
      * @return the jwt tokens subs, issues expirations, key.
      */
-    public String generateJwtToken(Authentication authentication) {
+    public String generateJwtToken(final Authentication authentication) {
 
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -57,7 +57,7 @@ public class JwtUtils {
      * @param token token.
      * @return Returns a new JwtBuilder instance, key used, returns the JWT body and Sets the JWT subject value.
      */
-    public String getUserNameFromJwtToken(String token) {
+    public String getUserNameFromJwtToken(final String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
@@ -66,7 +66,7 @@ public class JwtUtils {
      * @param authToken auth token.
      * @return validate token false.
      */
-    public boolean validateJwtToken(String authToken) {
+    public boolean validateJwtToken(final String authToken) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;

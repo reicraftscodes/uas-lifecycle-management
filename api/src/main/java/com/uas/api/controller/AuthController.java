@@ -40,7 +40,7 @@ public class AuthController {
      * @return response entity with response.
      */
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody final LoginRequest loginRequest) {
         return authService.authenticateUser(loginRequest);
     }
 
@@ -50,7 +50,7 @@ public class AuthController {
      * @return response entity with response.
      */
     @PostMapping("/signup")
-    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody final SignupRequest signUpRequest) {
         return authService.registerUser(signUpRequest);
     }
 
