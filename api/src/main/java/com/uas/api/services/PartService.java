@@ -14,6 +14,13 @@ public interface PartService {
     List<PartStockLevelDTO> getPartsAtLowStock();
 
     /**
+     * Gets a list of all parts with low stock at given location.
+     * @param locationName the name of the location.
+     * @return the list of part stock level dtos.
+     */
+    List<PartStockLevelDTO> getPartStockLevelsAtLocation(String locationName);
+
+    /**
      * Gets a list of all location part stock levels.
      * @return the list.
      */

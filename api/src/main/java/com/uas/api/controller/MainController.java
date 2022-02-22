@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -78,6 +75,16 @@ public class MainController {
     public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
         return ResponseEntity.ok(locationStockLevelsDTOs);
+    }
+    /**
+     * Checks for part stock levels at location.
+     * @param location the name of the loaction.
+     * @return list of parts stock levels at location & response entity.
+     */
+    @GetMapping("/api/parts/stock/{location}")
+    public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @PathVariable("location") String location) {
+        List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
+        return ResponseEntity.ok(partStockLevelDTOs);
     }
 
 }
