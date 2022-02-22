@@ -68,14 +68,18 @@ public class MainController {
         }
     }
 
-    @GetMapping("/api/parts/most-failing")
-    public ResponseEntity<String> getPartsMostFailing() {
-        partService.getMostCommonFailingParts();
-        return ResponseEntity.ok("Success");
+    /**
+     * Checks for part stock levels at all locations.
+     * @return list of parts stock levels at all locations & response entity.
+     */
+    @GetMapping("/api/parts/stock")
+    public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() {
+        List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
+        return ResponseEntity.ok(locationStockLevelsDTOs);
     }
     /**
      * Checks for part stock levels at location.
-     * @param location the name of the loaction.
+     * @param location the name of the location.
      * @return list of parts stock levels at location & response entity.
      */
     @GetMapping("/api/parts/location/stock")
@@ -83,7 +87,6 @@ public class MainController {
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
         return ResponseEntity.ok(partStockLevelDTOs);
     }
-
     /**
      * Get mapping to retrieve all the failure times for all the parts.
      * @return list containing part names and failure times.
@@ -94,4 +97,10 @@ public class MainController {
         return ResponseEntity.ok(failureTimes);
     }
 
+
+    @GetMapping("/api/parts/most-failing")
+    public ResponseEntity<String> getPartsMostFailing() {
+        partService.getMostCommonFailingParts();
+        return ResponseEntity.ok("Success");
+    }
 }
