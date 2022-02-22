@@ -111,3 +111,4 @@ public class User {
         this.resetPasswordToken = resetPasswordToken;
     }
 }
+
