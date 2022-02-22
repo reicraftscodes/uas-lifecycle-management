@@ -14,6 +14,12 @@ public interface PartService {
     List<PartStockLevelDTO> getPartsAtLowStock();
 
     /**
+     * Get the part stock levels at given location.
+     * @param locationName the name of the location.
+     * @return the PartStockLevelDTO list
+     */
+    List<PartStockLevelDTO> getPartsAtLowStockAtLocation(String locationName);
+    /**
      * Gets a list of all location part stock levels.
      * @return the list.
      */
@@ -26,4 +32,5 @@ public interface PartService {
      */
     String addPartFromJSON(HashMap<String, String> requestData);
 
+    void getMostCommonFailingParts();
 }

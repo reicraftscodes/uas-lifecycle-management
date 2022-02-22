@@ -11,8 +11,12 @@ import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.repositories.LocationRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.PartTypeRepository;
+import com.uas.api.repositories.RepairRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,6 +43,11 @@ public class PartServiceImpl implements PartService {
      */
     private final AircraftService aircraftService;
 
+    /**
+     * Repository for service for communicating with repairs table in the db.
+     */
+    private final RepairRepository repairRepository;
+
     // This will probably change.
     /**
      * Max stock allowance.
@@ -55,13 +64,19 @@ public class PartServiceImpl implements PartService {
      * @param locationRepository required repository.
      * @param partTypeRepository required repository.
      * @param aircraftService required service.
+     * @param repairRepository required repair repository.
      */
     @Autowired
-    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, final PartTypeRepository partTypeRepository, final AircraftService aircraftService) {
+    public PartServiceImpl(final PartRepository partRepository,
+                           final LocationRepository locationRepository,
+                           final PartTypeRepository partTypeRepository,
+                           final AircraftService aircraftService,
+                           final RepairRepository repairRepository) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
         this.partTypeRepository = partTypeRepository;
         this.aircraftService = aircraftService;
+        this.repairRepository = repairRepository;
     }
 
     /**
@@ -194,6 +209,11 @@ public class PartServiceImpl implements PartService {
      */
     private int getPartStockLevelAtLocation(final PartName partName, final String location) {
         return partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
+    }
+
+    public void getMostCommonFailingParts() {
+        Page<Map<Object, Object>> objects = repairRepository.findPartsWithMostRepairsAndTheirCost(PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "repairCount")));
+        //System.out.println(objects.getTotalElements());
     }
 
 
