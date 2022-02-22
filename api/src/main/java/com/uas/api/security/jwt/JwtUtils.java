@@ -30,7 +30,7 @@ public class JwtUtils {
     private String jwtSecret;
 
     /**
-     * Jwt expiration in milliseconds
+     * Jwt expiration in milliseconds.
      */
     @Value("${app.jwtExpirationMs}")
     private int jwtExpirationMs;
@@ -55,6 +55,7 @@ public class JwtUtils {
     /**
      * Get User name user from jwt token.
      * @param token token.
+     * @return Returns a new JwtBuilder instance, key used, returns the JWT body and Sets the JWT subject value.
      */
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
@@ -83,7 +84,6 @@ public class JwtUtils {
 
         return false;
     }
-
 
     /**
      * Getter JWT Secret.
