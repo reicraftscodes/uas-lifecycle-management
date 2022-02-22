@@ -14,7 +14,12 @@ public interface PartTypeRepository extends JpaRepository<PartType, Integer> {
      * @return the part type.
      */
     PartType findPartTypeById(long id);
-    @Query("SELECT partName, typicalFailureTime FROM PartType")
+
+    /**
+     * Gets a list of the parts and their failure times.
+     * @return the list of parts.
+     */
+    @Query(value = "SELECT PartType, TypicalFailureTime FROM PartTypes", nativeQuery = true)
     List<PartTypeFailureTimeProjection> findAllProjectedBy();
 
 }

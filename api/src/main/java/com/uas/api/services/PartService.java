@@ -2,6 +2,7 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,10 @@ public interface PartService {
      */
     String addPartFromJSON(HashMap<String, String> requestData);
 
-    void getFailureTime();
+    /**
+     * Gets the part name and it's failure time from the part type table using a projection.
+     * @return the part name (String) and it's failure time (long) (via projection)
+     */
+    List<PartTypeFailureTimeDTO> getFailureTime();
 
 }

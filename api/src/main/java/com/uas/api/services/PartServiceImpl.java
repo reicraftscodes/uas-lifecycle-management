@@ -2,6 +2,7 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.Part;
@@ -196,10 +197,19 @@ public class PartServiceImpl implements PartService {
     private int getPartStockLevelAtLocation(final PartName partName, final String location) {
         return partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
     }
+
+    /**
+     * Gets the failure time for all the parts in the database.
+     * @return the failure time and the part name.
+     */
     @Override
-    public void getFailureTime() {
+    public List<PartTypeFailureTimeDTO> getFailureTime() {
+        List<PartTypeFailureTimeDTO> failureTime = new ArrayList<>();
         List<PartTypeFailureTimeProjection> fts = partTypeRepository.findAllProjectedBy();
-        System.out.println(fts.size());
+        for (PartTypeFailureTimeProjection part:fts) {
+            failureTime.add(new PartTypeFailureTimeDTO(part.getPartType(), part.getTypicalFailureTime()));
+        }
+        return failureTime;
     }
 
 
