@@ -30,6 +30,10 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private final String password;
 
+    /**
+     * PasswordEncoder is a Spring Security interface which contains flexible mechanism when it comes to storing password.
+     * A password is converted from a literal text format into a sequence of characters.
+     */
     private final Collection<? extends GrantedAuthority> authorities;
     /**
      * Constructor.
@@ -47,7 +51,9 @@ public class UserDetailsImpl implements UserDetails {
         this.password = password;
         this.authorities = authorities;
     }
-
+    /**
+     * user detail implementation build
+     */
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
@@ -60,6 +66,9 @@ public class UserDetailsImpl implements UserDetails {
                 authorities);
     }
 
+    /**
+     * The collection of GrantedAuthority.
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

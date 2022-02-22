@@ -95,6 +95,7 @@ public class AuthService {
 
     /**
      * Jwt authentication response.
+     * @return jwt auth response
      */
     public ResponseEntity<JwtResponse> getJwtResponse() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
