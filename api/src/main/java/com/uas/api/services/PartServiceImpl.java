@@ -2,6 +2,7 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.Part;
@@ -12,6 +13,7 @@ import com.uas.api.repositories.LocationRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.PartTypeRepository;
 import com.uas.api.repositories.RepairRepository;
+import com.uas.api.repositories.projections.PartTypeFailureTimeProjection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -100,6 +102,22 @@ public class PartServiceImpl implements PartService {
         }
         return locationStockLevelsDTOs;
     }
+
+
+    /**
+     * Retrieve stock levels for parts at given location.
+     * @return list of part stock level dtos.
+     */
+    @Override
+    public List<PartStockLevelDTO> getPartStockLevelsAtLocation(final String locationName) {
+        List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
+        for (PartName partName : PartName.values()) {
+            double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, locationName);
+            partStockLevelDTOs.add(new PartStockLevelDTO(partName.name(), locationName, partStockLevelPercentage));
+        }
+        return partStockLevelDTOs;
+    }
+
 
     /**
      * Retrieve details on all parts that fall below the low stock percentage at all locations.
@@ -209,6 +227,20 @@ public class PartServiceImpl implements PartService {
      */
     private int getPartStockLevelAtLocation(final PartName partName, final String location) {
         return partRepository.countAllByLocation_LocationNameAndPartType_PartName(location, partName);
+    }
+
+    /**
+     * Gets the failure time for all the parts in the database.
+     * @return the failure time and the part name.
+     */
+    @Override
+    public List<PartTypeFailureTimeDTO> getFailureTime() {
+        List<PartTypeFailureTimeDTO> failureTime = new ArrayList<>();
+        List<PartTypeFailureTimeProjection> fts = partTypeRepository.findAllProjectedBy();
+        for (PartTypeFailureTimeProjection part:fts) {
+            failureTime.add(new PartTypeFailureTimeDTO(part.getPartType(), part.getTypicalFailureTime()));
+        }
+        return failureTime;
     }
 
     public void getMostCommonFailingParts() {
