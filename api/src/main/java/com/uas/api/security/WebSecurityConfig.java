@@ -36,6 +36,11 @@ import static java.util.Arrays.asList;
         prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+
+    /**
+     *  UserDetailsService interface to implement load User details to perform authentication & authorization.
+     */
+
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
@@ -46,12 +51,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthEntryPointJwt unauthorizedHandler;
 
     /**
-     * lists multiple cross-origin urls in spring boot CORS.
+     * lists multiple cross-origin urls in spring boot.
      */
     // https://stackoverflow.com/questions/39623211/add-multiple-cross-origin-urls-in-spring-boot
     @Value("#{'${cors.allowed.origins}'.split(',')}")
     private List<String> allowedOrigin;
 
+
+    /**
+     * filter that executes once per request.
+     */
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
@@ -68,11 +77,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+
+    /**
+     * PasswordEncoder is a Spring Security interface which contains a very
+     * flexible mechanism when it comes to password storage.
+     * @return ByCryptPasswordEncoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * override the configure(HttpSecurity http) method from WebSecurityConfigurerAdapter interface. It tells Spring Security how to configure CORS and CSRF,
+     * when we want to require all users to be authenticated or not, which filter (AuthTokenFilter) and when we want it to work (filter before UsernamePasswordAuthenticationFilter),
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().
