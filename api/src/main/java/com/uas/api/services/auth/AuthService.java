@@ -63,6 +63,7 @@ public class AuthService {
     /**
      * Jwt authentication response.
      * @param  loginRequest login request.
+     * @return jwt response.
      */
     public ResponseEntity<JwtResponse> authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -73,8 +74,9 @@ public class AuthService {
     }
 
     /**
-     * Jwt authentication get auth response.
+     * Jwt authentication auth response.
      * @param authentication authentication.
+     * @return generate new user jwt response success.
      */
     private ResponseEntity<JwtResponse> getJwtResponse(Authentication authentication) {
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -102,6 +104,7 @@ public class AuthService {
     /**
      * When register new user and role response.
      * @param signupRequest login request.
+     * @return response success.
      */
     public ResponseEntity<MessageResponse> registerUser(SignupRequest signupRequest) {
         validateSignupRequest(signupRequest);
@@ -143,7 +146,8 @@ public class AuthService {
     }
 
     /**
-     * Print user information.
+     * Print user information when user authenticated.
+     * @return if user is not found, return UserNotFoundException exception.
      */
 
     public User getUserInfo() {
