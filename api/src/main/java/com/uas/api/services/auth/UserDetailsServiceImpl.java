@@ -16,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * Repository for communication between users table in db.
      */
     @Autowired
-    UserRepository userRepository;
+   private UserRepository userRepository;
 
     /**
      * User details service.
@@ -24,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(final String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
         return UserDetailsImpl.build(user);

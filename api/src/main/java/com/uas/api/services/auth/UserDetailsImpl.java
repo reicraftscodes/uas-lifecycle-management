@@ -43,8 +43,8 @@ public class UserDetailsImpl implements UserDetails {
      * @param password required.
      * @param authorities required.
      */
-    public UserDetailsImpl(Long id, String username, String email, String password,
-                           Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(final Long id, final String username, final String email, final String password,
+                           final Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -54,8 +54,9 @@ public class UserDetailsImpl implements UserDetails {
     /**
      * user detail implementation build.
      * @param user user
+     * @return the new user.
      */
-    public static UserDetailsImpl build(User user) {
+    public static UserDetailsImpl build(final User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
