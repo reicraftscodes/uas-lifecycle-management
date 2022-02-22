@@ -12,21 +12,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Find the user's name.
-     * @param username username
-     * @return username
+     * @param username username.
+     * @return username.
      */
     Optional<User> findByUsername(String username);
 
     /**
      * Find the user details reset token.
-     * @param token token
-     * @return the token
+     * @param token token.
+     * @return the token.
      */
 
     Optional<User> findByResetPasswordToken(String token);
 
     /**
-     * Validate if email exists
+     * Validate if email exists.
      * @param email email
      * @return the email.
      */

@@ -22,7 +22,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     /**
      * Logger.
      */
-    private static final Logger appLogger = LoggerFactory.getLogger(AuthTokenFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -46,7 +46,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            appLogger.error("Cannot set user authentication: []", e);
+            LOGGER.error("Cannot set user authentication: []", e);
         }
         filterChain.doFilter(request, response);
     }
