@@ -103,4 +103,31 @@ public class MainControllerTest {
         verifyNoMoreInteractions(this.partService);
     }
 
+    @Test
+    public void whenGetPartsStockAtLocationReturnLocationStockLevelsDetails() throws Exception {
+        List<PartStockLevelDTO> partStockLevelStAthenDTOs = new ArrayList<>();
+        partStockLevelStAthenDTOs.add(new PartStockLevelDTO("Motor", "St Athen", 80d));
+        partStockLevelStAthenDTOs.add(new PartStockLevelDTO("Fuselage", "St Athen", 75d));
+
+
+        when(partService.getPartStockLevelsAtLocation(any())).thenReturn(partStockLevelStAthenDTOs);
+
+        mockMvc.perform(get("/api/parts/location/stock")
+                        .queryParam("location", "St Athen")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].partName").value("Motor"))
+                .andExpect(jsonPath("$[0].location").value("St Athen"))
+                .andExpect(jsonPath("$[0].stockLevelPercentage").value(80d))
+                .andExpect(jsonPath("$[1].partName").value("Fuselage"))
+                .andExpect(jsonPath("$[1].location").value("St Athen"))
+                .andExpect(jsonPath("$[1].stockLevelPercentage").value(75d));
+
+        verify(this.partService, times(1)).getPartStockLevelsAtLocation(any());
+        verifyNoMoreInteractions(this.partService);
+    }
+
 }
