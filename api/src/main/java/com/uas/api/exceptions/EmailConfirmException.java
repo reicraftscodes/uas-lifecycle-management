@@ -6,7 +6,7 @@ public class EmailConfirmException extends RuntimeException {
      * Email Confirm Exception message.
      * @param message message when user input incorrect email when creating an account.
      */
-    public EmailConfirmException(String message) {
+    public EmailConfirmException(final String message) {
         super(message);
     }
 }

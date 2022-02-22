@@ -7,7 +7,7 @@ public class PasswordConfirmException extends RuntimeException {
      * @param message password confirmation messages.
      * displays message when user input incorrect password.
      */
-    public PasswordConfirmException(String message) {
+    public PasswordConfirmException(final String message) {
         super(message);
     }
 }

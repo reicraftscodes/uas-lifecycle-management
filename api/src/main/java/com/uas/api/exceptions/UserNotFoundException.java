@@ -6,7 +6,7 @@ public class UserNotFoundException extends RuntimeException {
      * @param message user not found messages.
      * and display message when user could not be found.
      */
-    public UserNotFoundException(String message) {
+    public UserNotFoundException(final String message) {
         super(message);
     }
 }
