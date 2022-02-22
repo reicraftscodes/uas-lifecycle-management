@@ -8,7 +8,7 @@ import com.uas.api.models.auth.ERole;
 import com.uas.api.models.auth.Role;
 import com.uas.api.models.auth.User;
 import com.uas.api.response.JwtResponse;
-import com.uas.api.response.LoginRequest;
+import com.uas.api.requests.LoginRequest;
 import com.uas.api.response.MessageResponse;
 import com.uas.api.requests.SignupRequest;
 import com.uas.api.repositories.auth.RoleRepository;

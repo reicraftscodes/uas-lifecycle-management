@@ -4,7 +4,7 @@ import com.uas.api.advice.GlobalControllerAdvice;
 import com.uas.api.exceptions.EmailAlreadyExistException;
 import com.uas.api.exceptions.PasswordConfirmException;
 import com.uas.api.exceptions.UserNotFoundException;
-import com.uas.api.requests.ErrorResponse;
+import com.uas.api.response.ErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

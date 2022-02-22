@@ -4,7 +4,7 @@ import com.uas.api.exceptions.EmailAlreadyExistException;
 import com.uas.api.exceptions.EmailConfirmException;
 import com.uas.api.exceptions.PasswordConfirmException;
 import com.uas.api.exceptions.UserNotFoundException;
-import com.uas.api.requests.ErrorResponse;
+import com.uas.api.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;

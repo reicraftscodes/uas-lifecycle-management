@@ -1,4 +1,4 @@
-package com.uas.api.response;
+package com.uas.api.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

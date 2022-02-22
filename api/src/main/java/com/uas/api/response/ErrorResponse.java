@@ -1,4 +1,4 @@
-package com.uas.api.requests;
+package com.uas.api.response;
 
 public class ErrorResponse {
 

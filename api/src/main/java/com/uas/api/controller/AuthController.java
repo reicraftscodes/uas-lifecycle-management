@@ -5,7 +5,7 @@ import com.uas.api.mapper.UserMapper;
 import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
 import com.uas.api.response.JwtResponse;
-import com.uas.api.response.LoginRequest;
+import com.uas.api.requests.LoginRequest;
 import com.uas.api.response.MessageResponse;
 import com.uas.api.requests.SignupRequest;
 import com.uas.api.services.auth.AuthService;
