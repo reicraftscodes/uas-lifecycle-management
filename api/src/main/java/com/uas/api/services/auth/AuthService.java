@@ -65,7 +65,7 @@ public class AuthService {
      * @param  loginRequest login request.
      * @return jwt response.
      */
-    public ResponseEntity<JwtResponse> authenticateUser(LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> authenticateUser(final LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
@@ -78,7 +78,7 @@ public class AuthService {
      * @param authentication authentication.
      * @return generate new user jwt response success.
      */
-    private ResponseEntity<JwtResponse> getJwtResponse(Authentication authentication) {
+    private ResponseEntity<JwtResponse> getJwtResponse(final Authentication authentication) {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -107,7 +107,7 @@ public class AuthService {
      * @param signupRequest login request.
      * @return response success.
      */
-    public ResponseEntity<MessageResponse> registerUser(SignupRequest signupRequest) {
+    public ResponseEntity<MessageResponse> registerUser(final SignupRequest signupRequest) {
         validateSignupRequest(signupRequest);
 
         Set<Role> roles = new HashSet<>();
@@ -132,7 +132,7 @@ public class AuthService {
      * Sign up validation request.
      * @param  signupRequest sign up request.
      */
-    private void validateSignupRequest(SignupRequest signupRequest) {
+    private void validateSignupRequest(final SignupRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             throw new EmailAlreadyExistException("Email already exist! Please use another email.");
         }
