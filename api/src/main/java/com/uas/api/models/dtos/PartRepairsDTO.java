@@ -13,18 +13,18 @@ public class PartRepairsDTO {
     /**
      * The part number.
      */
-    private long partNumber;
+    private final long partNumber;
     /**
      * The part type name.
      */
-    private String partName;
+    private final String partName;
     /**
      * The part repair count.
      */
-    private long repairsCount;
+    private final long repairsCount;
     /**
      * The total cost of all repairs for the part.
      */
-    private BigDecimal totalRepairsCost;
+    private final BigDecimal totalRepairsCost;
 
 }
