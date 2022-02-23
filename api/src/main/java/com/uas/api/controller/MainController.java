@@ -98,7 +98,11 @@ public class MainController {
         return ResponseEntity.ok(failureTimes);
     }
 
-
+    /**
+     * Get mapping to retrieve all the top N most common failing parts.
+     * @param topN the number of results to return.
+     * @return list containing the most common failing parts and their cost.
+     */
     @GetMapping("/api/parts/most-failing/{topN}")
     public ResponseEntity<List<PartRepairsDTO>> getPartsMostFailing(@PathVariable("topN") final int topN) {
         List<PartRepairsDTO> partRepairsDTOs = partService.getMostCommonFailingParts(topN);

@@ -41,5 +41,10 @@ public interface PartService {
      */
     List<PartTypeFailureTimeDTO> getFailureTime();
 
+    /**
+     * Get the top N most common failing parts.
+     * @param topN the number of results to return.
+     * @return the PartRepairsDTO list.
+     */
     List<PartRepairsDTO> getMostCommonFailingParts(int topN);
 }

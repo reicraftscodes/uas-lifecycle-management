@@ -10,9 +10,21 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class PartRepairsDTO {
+    /**
+     * The part number.
+     */
     private long partNumber;
+    /**
+     * The part type name.
+     */
     private String partName;
+    /**
+     * The part repair count.
+     */
     private long repairsCount;
+    /**
+     * The total cost of all repairs for the part.
+     */
     private BigDecimal totalRepairsCost;
 
 }

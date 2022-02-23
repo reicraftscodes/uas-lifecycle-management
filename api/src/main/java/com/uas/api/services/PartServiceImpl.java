@@ -245,6 +245,11 @@ public class PartServiceImpl implements PartService {
         return failureTime;
     }
 
+    /**
+     * Get the top N most common failing parts.
+     * @param topN the number of results to return.
+     * @return the PartRepairsDTO list.
+     */
     public List<PartRepairsDTO> getMostCommonFailingParts(final int topN) {
         Page<Map<Object, Object>> objects = repairRepository.findPartsWithMostRepairsAndTheirCost(PageRequest.of(0, topN, Sort.by(Sort.Direction.DESC, "repairCount")));
         List<PartRepairsDTO> partRepairsDTOs = new ArrayList<>();
