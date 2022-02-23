@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
 
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     /**
      * AuthEntryPointJWT.
@@ -66,12 +66,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
-
+    /**
+     * configure which allows for easily building in authentication, adding UserDetailsService.
+     */
     @Override
-    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+    public void configure(final AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
+    /**
+     * Override this method to expose the AuthenticationManager from configure(AuthenticationManagerBuilder) to be exposed as a Bean.
+     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -93,7 +98,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * when we want to require all users to be authenticated or not, which filter (AuthTokenFilter) and when we want it to work (filter before UsernamePasswordAuthenticationFilter),
      */
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         http.cors().and().csrf().
                 ignoringAntMatchers("/api/**").and()
                 .headers().frameOptions().disable().and()
@@ -106,7 +111,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Cors configuration
+     * Cors configuration.
+     * @return cors source.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
