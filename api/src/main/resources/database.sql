@@ -46,6 +46,7 @@ CREATE TABLE Parts (
     Manufacture DATETIME NOT NULL,
     FailureTime int,
     PartStatus SET("Operational","Awaiting Repair","Being Repaired","Beyond Repair") NOT NULL,
+    flyTimeHours int,
     PRIMARY KEY (PartNumber),
     UNIQUE (PartNumber),
     FOREIGN KEY (AircraftTailNumber) REFERENCES Aircraft(TailNumber),
