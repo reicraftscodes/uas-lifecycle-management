@@ -1,6 +1,7 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.requests.MoreStockRequest;
@@ -79,7 +80,7 @@ public class MainController {
     }
     /**
      * Checks for part stock levels at location.
-     * @param location the name of the loaction.
+     * @param location the name of the location.
      * @return list of parts stock levels at location & response entity.
      */
     @GetMapping("/api/parts/location/stock")
@@ -87,7 +88,6 @@ public class MainController {
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
         return ResponseEntity.ok(partStockLevelDTOs);
     }
-
     /**
      * Get mapping to retrieve all the failure times for all the parts.
      * @return list containing part names and failure times.
@@ -98,4 +98,14 @@ public class MainController {
         return ResponseEntity.ok(failureTimes);
     }
 
+    /**
+     * Get mapping to retrieve all the top N most common failing parts.
+     * @param topN the number of results to return.
+     * @return list containing the most common failing parts and their cost.
+     */
+    @GetMapping("/api/parts/most-failing/{topN}")
+    public ResponseEntity<List<PartRepairsDTO>> getPartsMostFailing(@PathVariable("topN") final int topN) {
+        List<PartRepairsDTO> partRepairsDTOs = partService.getMostCommonFailingParts(topN);
+        return ResponseEntity.ok(partRepairsDTOs);
+    }
 }

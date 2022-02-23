@@ -2,6 +2,7 @@ package com.uas.api.controllers;
 
 import com.uas.api.controller.MainController;
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,6 +129,31 @@ public class MainControllerTest {
                 .andExpect(jsonPath("$[1].stockLevelPercentage").value(75d));
 
         verify(this.partService, times(1)).getPartStockLevelsAtLocation(any());
+        verifyNoMoreInteractions(this.partService);
+    }
+
+    @Test
+    public void whenGetMostCommonFailingParts() throws Exception {
+        List<PartRepairsDTO> partRepairsDTOs = new ArrayList<>();
+        partRepairsDTOs.add(new PartRepairsDTO(1, "Wing A", 5, BigDecimal.valueOf(200.50)));
+        partRepairsDTOs.add(new PartRepairsDTO(2, "Wing B", 3, BigDecimal.valueOf(157.00)));
+
+        when(partService.getMostCommonFailingParts(2)).thenReturn(partRepairsDTOs);
+
+        mockMvc.perform(get("/api/parts/most-failing/2")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].partNumber").value(1))
+                .andExpect(jsonPath("$[0].partName").value("Wing A"))
+                .andExpect(jsonPath("$[0].totalRepairsCost").value(200.50))
+                .andExpect(jsonPath("$[1].partNumber").value(2))
+                .andExpect(jsonPath("$[1].partName").value("Wing B"))
+                .andExpect(jsonPath("$[1].totalRepairsCost").value(157.00));
+
+        verify(this.partService, times(1)).getMostCommonFailingParts(2);
         verifyNoMoreInteractions(this.partService);
     }
 

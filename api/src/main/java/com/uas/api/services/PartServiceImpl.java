@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.models.entities.Aircraft;
@@ -12,11 +13,16 @@ import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.repositories.LocationRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.PartTypeRepository;
+import com.uas.api.repositories.RepairRepository;
 import com.uas.api.repositories.projections.PartTypeFailureTimeProjection;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -41,6 +47,11 @@ public class PartServiceImpl implements PartService {
      */
     private final AircraftService aircraftService;
 
+    /**
+     * Repository for service for communicating with repairs table in the db.
+     */
+    private final RepairRepository repairRepository;
+
     // This will probably change.
     /**
      * Max stock allowance.
@@ -57,13 +68,19 @@ public class PartServiceImpl implements PartService {
      * @param locationRepository required repository.
      * @param partTypeRepository required repository.
      * @param aircraftService required service.
+     * @param repairRepository required repair repository.
      */
     @Autowired
-    public PartServiceImpl(final PartRepository partRepository, final LocationRepository locationRepository, final PartTypeRepository partTypeRepository, final AircraftService aircraftService) {
+    public PartServiceImpl(final PartRepository partRepository,
+                           final LocationRepository locationRepository,
+                           final PartTypeRepository partTypeRepository,
+                           final AircraftService aircraftService,
+                           final RepairRepository repairRepository) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
         this.partTypeRepository = partTypeRepository;
         this.aircraftService = aircraftService;
+        this.repairRepository = repairRepository;
     }
 
     /**
@@ -226,6 +243,24 @@ public class PartServiceImpl implements PartService {
             failureTime.add(new PartTypeFailureTimeDTO(part.getPartType(), part.getTypicalFailureTime()));
         }
         return failureTime;
+    }
+
+    /**
+     * Get the top N most common failing parts.
+     * @param topN the number of results to return.
+     * @return the PartRepairsDTO list.
+     */
+    public List<PartRepairsDTO> getMostCommonFailingParts(final int topN) {
+        Page<Map<Object, Object>> objects = repairRepository.findPartsWithMostRepairsAndTheirCost(PageRequest.of(0, topN, Sort.by(Sort.Direction.DESC, "repairCount")));
+        List<PartRepairsDTO> partRepairsDTOs = new ArrayList<>();
+        for (Map<Object, Object> objectMap : objects.getContent()) {
+            long partNumber = (Long) objectMap.get("partNumber");
+            long repairCount = (Long) objectMap.get("repairCount");
+            BigDecimal totalCost = (BigDecimal) objectMap.get("totalCost");
+            String partType = partTypeRepository.getPartTypeByPartNumber(partNumber);
+            partRepairsDTOs.add(new PartRepairsDTO(partNumber, partType, repairCount, totalCost));
+        }
+        return partRepairsDTOs;
     }
 
 
