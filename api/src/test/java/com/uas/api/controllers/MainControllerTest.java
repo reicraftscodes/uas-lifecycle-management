@@ -4,6 +4,7 @@ import com.uas.api.controller.MainController;
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.requests.MoreStockRequest;
+import com.uas.api.security.WebSecurityConfig;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.PartService;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -48,6 +51,7 @@ public class MainControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @WithMockUser(value = "user")
     @Test
     public void whenGetPartsAtLowStockReturnPartsDetails() throws Exception {
         List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
@@ -79,6 +83,7 @@ public class MainControllerTest {
         Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
     }
 
+    @WithMockUser(value = "user")
     @Test
     public void whenGetPartsStockReturnLocationStockLevelsDetails() throws Exception {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = new ArrayList<>();
@@ -114,6 +119,7 @@ public class MainControllerTest {
         verifyNoMoreInteractions(this.partService);
     }
 
+    @WithMockUser(value = "user")
     @Test
     public void whenGetPartsStockAtLocationReturnLocationStockLevelsDetails() throws Exception {
         List<PartStockLevelDTO> partStockLevelStAthenDTOs = new ArrayList<>();
