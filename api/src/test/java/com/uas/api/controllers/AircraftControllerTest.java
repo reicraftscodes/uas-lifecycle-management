@@ -1,7 +1,10 @@
 package com.uas.api.controllers;
 
 import com.uas.api.controller.AircraftController;
+import com.uas.api.security.jwt.AuthEntryPointJwt;
+import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.AircraftServiceImpl;
+import com.uas.api.services.auth.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,6 +21,14 @@ public class AircraftControllerTest {
 
     @MockBean
     AircraftServiceImpl aircraftService;
+
+    @MockBean
+    UserDetailsServiceImpl userDetailsService;
+
+    @MockBean
+    AuthEntryPointJwt authEntryPointJwt;
+    @MockBean
+    JwtUtils jwtUtils;
 
     @Autowired
     MockMvc mockMvc;

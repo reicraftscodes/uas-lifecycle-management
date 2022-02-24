@@ -15,8 +15,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     /**
      * Repository for communication between users table in db.
      */
-    @Autowired
-   private UserRepository userRepository;
+   private final UserRepository userRepository;
+
+   @Autowired
+   public UserDetailsServiceImpl(final UserRepository userRepository) {
+       this.userRepository = userRepository;
+   }
 
     /**
      * User details service.

@@ -2,6 +2,7 @@ package com.uas.api.security;
 
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.AuthTokenFilter;
+import com.uas.api.services.auth.UserDetailsService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,15 +42,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      *  UserDetailsService interface to implement load User details to perform authentication & authorization.
      */
 
-    @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
     /**
      * AuthEntryPointJWT.
      */
-    @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+    @Autowired
+    public WebSecurityConfig(final UserDetailsServiceImpl userDetailsService, final AuthEntryPointJwt authEntryPointJwt) {
+        this.userDetailsService = userDetailsService;
+        this.unauthorizedHandler = authEntryPointJwt;
+    }
     /**
      * lists multiple cross-origin urls in spring boot.
      */
