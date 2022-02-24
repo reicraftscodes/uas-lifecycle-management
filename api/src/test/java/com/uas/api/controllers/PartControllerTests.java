@@ -100,12 +100,22 @@ public class PartControllerTests {
         data.put("partStatus","OPERATIONAL");
 
         Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
+//
+//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add")
+//                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+//                .content(json);
+//
+//        MvcResult mvcRes = mockMvc.perform(mockResponse)
+//                .andExpect(status()
+//                .isOk()).andReturn();
 
-        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
+        mockMvc.perform(post("/parts/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response").value("Success"));
 
-        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
-
-        assertEquals("{\"response\":\"Success\"}",mvcRes.getResponse().getContentAsString());
+//        assertEquals("{\"response\":\"Success\"}",mvcRes.getResponse().getContentAsString());
     }
 
     @Test

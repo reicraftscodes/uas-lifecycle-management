@@ -56,9 +56,9 @@ public class MainControllerTest {
         when(partService.getPartsAtLowStock()).thenReturn(partStockLevelDTOs);
 
         mockMvc.perform(get("/api/parts/low-stock")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].partName").value("Motor"))
