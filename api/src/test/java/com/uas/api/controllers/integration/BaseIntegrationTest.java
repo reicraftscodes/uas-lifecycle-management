@@ -90,7 +90,6 @@ public abstract class BaseIntegrationTest {
                 findByName(ERole.ROLE_USER_LOGISTIC)
                 .orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
         roles.add(userLogisticOfficerRoleDb);
-        roles.add(userLogisticOfficerRoleDb);
 
         User user = new User(EMAIL, EMAIL,
                 passwordEncoder.encode(CORRECT_PASSWORD),
