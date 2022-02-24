@@ -2,7 +2,10 @@ package com.uas.api.controllers;
 
 import com.uas.api.controller.MainController;
 import com.uas.api.controller.PartsController;
+import com.uas.api.security.jwt.AuthEntryPointJwt;
+import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.PartService;
+import com.uas.api.services.auth.UserDetailsServiceImpl;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,6 +46,15 @@ public class PartControllerTests {
 
     @MockBean
     private PartService partService;
+
+    @MockBean
+    UserDetailsServiceImpl userDetailsService;
+
+    @MockBean
+    AuthEntryPointJwt authEntryPointJwt;
+
+    @MockBean
+    JwtUtils jwtUtils;
 
     @Autowired
     MockMvc mockMvc;

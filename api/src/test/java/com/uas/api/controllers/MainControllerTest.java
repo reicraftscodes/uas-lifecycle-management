@@ -4,8 +4,11 @@ import com.uas.api.controller.MainController;
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.requests.MoreStockRequest;
+import com.uas.api.security.jwt.AuthEntryPointJwt;
+import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
+import com.uas.api.services.auth.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,14 @@ public class MainControllerTest {
 
     @MockBean
     StockControlService stockControlService;
+
+    @MockBean
+    UserDetailsServiceImpl userDetailsService;
+
+    @MockBean
+    AuthEntryPointJwt authEntryPointJwt;
+    @MockBean
+    JwtUtils jwtUtils;
 
     @Autowired
     MockMvc mockMvc;
