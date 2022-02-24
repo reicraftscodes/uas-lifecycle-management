@@ -104,7 +104,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.cors().and().csrf().
-                ignoringAntMatchers("/api/**").and()
+                ignoringAntMatchers("/api/**", "/aircraft/**", "/parts/**").and()
                 .headers().frameOptions().disable().and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
