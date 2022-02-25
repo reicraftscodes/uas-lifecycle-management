@@ -19,6 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     /**
      * Constructor.
+     * @param userRepository userRepo.
      */
    @Autowired
    public UserDetailsServiceImpl(final UserRepository userRepository) {
