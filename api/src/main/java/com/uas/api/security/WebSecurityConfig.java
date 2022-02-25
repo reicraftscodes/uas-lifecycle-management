@@ -2,7 +2,6 @@ package com.uas.api.security;
 
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.AuthTokenFilter;
-import com.uas.api.services.auth.UserDetailsService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,6 +48,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     private AuthEntryPointJwt unauthorizedHandler;
 
+    /**
+     * WebSecurityConfig constructor.
+     */
     @Autowired
     public WebSecurityConfig(final UserDetailsServiceImpl userDetailsService, final AuthEntryPointJwt authEntryPointJwt) {
         this.userDetailsService = userDetailsService;

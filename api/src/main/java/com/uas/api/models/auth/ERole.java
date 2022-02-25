@@ -15,3 +15,4 @@ public enum ERole {
      */
     ROLE_USER_CEO
 }
+
