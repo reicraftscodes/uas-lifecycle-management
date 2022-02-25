@@ -4,6 +4,7 @@ import com.uas.api.controller.PartsController;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.PartService;
+import com.uas.api.services.StockControlService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -29,7 +30,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PartControllerTests {
 
     @MockBean
-    private PartService partService;
+    PartService partService;
+
+    @MockBean
+    StockControlService stockControlService;
 
     @MockBean
     UserDetailsServiceImpl userDetailsService;
