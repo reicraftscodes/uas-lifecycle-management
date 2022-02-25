@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public abstract class BaseIntegrationTest {
     private static final String EMAIL = "maytests@gmail.com";
     private static final String CORRECT_PASSWORD = "maycraftscodes";
-    private static final String INCORRECT_PASSWORD = "incorrectpassword";
+    private static final String INCORRECT_PASSWORD = "incorrectpasswords";
     @Autowired
     protected MockMvc mockMvc;
 
