@@ -50,6 +50,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
      * WebSecurityConfig constructor.
+     * @param userDetailsService userdetailsSevices.
+     * @param authEntryPointJwt authEntryPoint
      */
     @Autowired
     public WebSecurityConfig(final UserDetailsServiceImpl userDetailsService, final AuthEntryPointJwt authEntryPointJwt) {
