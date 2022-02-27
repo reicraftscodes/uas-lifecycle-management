@@ -176,32 +176,36 @@ INSERT INTO Repairs (PartNumber, cost) VALUES ("3","50");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
 
 CREATE TABLE ROLES(
-    ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    NAME VARCHAR
+    RoleID INT NOT NULL AUTO_INCREMENT,
+    NAME TEXT NOT NULL,
+    PRIMARY KEY(RoleID)
 );
 
 CREATE TABLE USERS(
-    ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    USERNAME VARCHAR,
-    EMAIL VARCHAR,
-    PASSWORD VARCHAR,
-    FIRST_NAME VARCHAR,
-    LAST_NAME VARCHAR,
-    RESET_PASSWORD_TOKEN VARCHAR
+    UserID INT NOT NULL AUTO_INCREMENT,
+    USERNAME TEXT NOT NULL,
+    EMAIL TEXT NOT NULL,
+    PASSWORD TEXT NOT NULL,
+    FirstName TEXT,
+    LastName TEXT,
+    ResetPasswordToken TEXT,
+    PRIMARY KEY(UserID)
 );
 
-CREATE TABLE USER_ROLES(
-    USER_ID INT,
-    ROLE_ID INT
+CREATE TABLE UserRoles(
+    UserID INT,
+    RoleID INT,
+    FOREIGN KEY(UserID) REFERENCES USERS(UserID),
+    FOREIGN KEY(RoleID) REFERENCES ROLES(RoleID)
 );
 
 #USER roles
-INSERT INTO ROLES (ID, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
-INSERT INTO ROLES (ID, NAME) VALUES ("2", "ROLE_USER_CTO");
+INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
+INSERT INTO ROLES (roleid, NAME) VALUES ("2", "ROLE_USER_CTO");
 
 #Users
-INSERT INTO `users` (`id`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('1', 'logisticOne@snc.ac.uk', 'Logistic', 'One', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'logisticOne@snc.ac.uk');
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('1', 'logisticOne@snc.ac.uk', 'Logistic', 'One', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'logisticOne@snc.ac.uk');
 
 #User roles
-INSERT INTO `user_roles` (`user_id`, `role_id`) VALUES ('1', '1');
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('1', '1');
 
