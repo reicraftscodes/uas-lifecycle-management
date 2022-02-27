@@ -1,35 +1,47 @@
 package com.uas.api.controllers;
 
-import com.uas.api.controller.AircraftController;
-import com.uas.api.services.AircraftServiceImpl;
+import com.uas.api.controllers.integration.BaseIntegrationTest;
+import com.uas.api.models.entities.Location;
+import com.uas.api.repositories.LocationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
-@WebMvcTest(controllers = AircraftController.class)
-public class AircraftControllerTest {
 
-    @MockBean
-    AircraftServiceImpl aircraftService;
+public class AircraftControllerTest extends BaseIntegrationTest {
 
     @Autowired
-    MockMvc mockMvc;
+    private LocationRepository locationRepository;
+
+
+    @Override
+    protected void afterEach() {
+
+    }
+
+    @Override
+    protected void beforeEach() {
+
+    }
 
     @Test
     public void AddAircraftWithCorrectJSON() throws Exception {
+        Location location = new Location();
+        location.setLocationName("London");
+        locationRepository.save(location);
+
         String json = "{\"tailNumber\":\"G-999\",\"location\":\"London\",\"platformStatus\":\"DESIGN\",\"platformType\":\"Platform_A\"}";
 
         mockMvc.perform(post("/aircraft/add")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json).characterEncoding("utf-8"))
-                .andExpect(status().isOk());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + token)
+                        .content(json).characterEncoding("utf-8"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response").value("Success"));
     }
 
 }
