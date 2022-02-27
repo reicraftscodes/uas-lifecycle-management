@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@Transactional
 public abstract class BaseIntegrationTest {
     private static final String EMAIL = "maytests@gmail.com";
     private static final String CORRECT_PASSWORD = "maycraftscodes";
@@ -56,15 +58,12 @@ public abstract class BaseIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAll();
-        roleRepository.deleteAll();
         afterEach();
     }
 
     @BeforeEach
     void setup() throws Exception {
-        userRepository.deleteAll();
-        roleRepository.deleteAll();
+
 
         user = createUserAccount();
 
@@ -84,13 +83,9 @@ public abstract class BaseIntegrationTest {
     }
 
     private User createUserAccount() {
-        Role logisticUserRole = new Role();
-        logisticUserRole.setName(ERole.ROLE_USER_LOGISTIC);
-
-        roleRepository.save(logisticUserRole);
         Set<Role> roles = new HashSet<>();
         Role userLogisticOfficerRoleDb = roleRepository.
-                findByName(ERole.ROLE_USER_LOGISTIC)
+                findRoleByRoleName(ERole.ROLE_USER_LOGISTIC)
                 .orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
         roles.add(userLogisticOfficerRoleDb);
 

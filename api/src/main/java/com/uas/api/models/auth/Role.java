@@ -17,14 +17,15 @@ public class Role {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "roleid")
     private Integer id;
 
     /**
      * Role name.
      */
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ERole name;
+    @Column(length = 20, name = "name")
+    private ERole roleName;
 
     /**
      * Role constructor.
@@ -37,7 +38,7 @@ public class Role {
      * @param name required.
      */
     public Role(final ERole name) {
-        this.name = name;
+        this.roleName = name;
     }
     /**
      * get user Id.
@@ -59,14 +60,14 @@ public class Role {
      * @return name, get the user name.
      */
     public ERole getName() {
-        return name;
+        return roleName;
     }
     /**
      * set user's name.
      * @param name required.
      */
     public void setName(final ERole name) {
-        this.name = name;
+        this.roleName = name;
     }
 }
 
