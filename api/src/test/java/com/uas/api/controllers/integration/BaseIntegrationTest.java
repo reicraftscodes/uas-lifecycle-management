@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -42,14 +43,13 @@ public abstract class BaseIntegrationTest {
 
     protected String token;
 
-    @Autowired
+    @MockBean
     private UserRepository userRepository;
 
-    @Autowired
-
+    @MockBean
     private RoleRepository roleRepository;
 
-    @Autowired
+    @MockBean
     private PasswordEncoder passwordEncoder;
 
     protected abstract void afterEach();
