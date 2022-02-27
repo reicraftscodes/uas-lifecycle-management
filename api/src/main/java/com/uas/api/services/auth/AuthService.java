@@ -111,7 +111,7 @@ public class AuthService {
         validateSignupRequest(signupRequest);
 
         Set<Role> roles = new HashSet<>();
-        Role logisticUserRole = roleRepository.findByName(ERole.ROLE_USER_LOGISTIC).orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
+        Role logisticUserRole = roleRepository.findRoleByRoleName(ERole.ROLE_USER_LOGISTIC).orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
         roles.add(logisticUserRole);
 
         UUID uuid = UUID.randomUUID();

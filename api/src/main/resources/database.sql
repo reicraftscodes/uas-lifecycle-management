@@ -54,17 +54,6 @@ CREATE TABLE Parts (
     FOREIGN KEY (PartID) REFERENCES PartTypes(PartID)
 );
 
-#name may not need to be stored but this would need to be clarified with the client.
-CREATE TABLE Users (
-	UserID int NOT NULL AUTO_INCREMENT,
-    FirstName varchar(255) NOT NULL,
-    Surname varchar(255) NOT NULL,
-    UserPassword varchar(255) NOT NULL,
-    Email varchar(255) NOT NULL,
-    UserRole SET ("CEO","COO","CTO","Logistics Officer") NOT NULL,
-    PRIMARY KEY (UserID)
-);
-
 #unsure on exact design for repairs table as client never mentioned it but it stores the part number as a foreign key so the number of repairs and their costs can be looked up
 #for a specific part
 CREATE TABLE Repairs (
@@ -140,12 +129,6 @@ INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VAL
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-019","Dublin","Operation","Platform_A");
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-020","Dublin","Operation","Platform_B");
 
-#4 users with the individual user roles
-INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("John","Smith","password","email@email.com","CEO");
-INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("Tim","Smith","password","email1@email.com","COO");
-INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("Bob","Smith","password","email2@email.com","CTO");
-INSERT INTO Users (FirstName, Surname, UserPassword, Email, UserRole) VALUES ("Lisa","Smith","password","email3@email.com","Logistics Officer");
-
 #parts that have been assigned to aircrafts
 INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus) VALUES ("1","G-001","St Athen","2022-02-09 00:00:00","Operational");
 INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus) VALUES ("2","G-001","St Athen","2022-02-09 00:00:00","Operational");
@@ -192,6 +175,37 @@ INSERT INTO Repairs (PartNumber, cost) VALUES ("2","100");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("3","50");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
 
+CREATE TABLE ROLES(
+    RoleID INT NOT NULL AUTO_INCREMENT,
+    NAME TEXT NOT NULL,
+    PRIMARY KEY(RoleID)
+);
 
+CREATE TABLE USERS(
+    UserID INT NOT NULL AUTO_INCREMENT,
+    USERNAME TEXT NOT NULL,
+    EMAIL TEXT NOT NULL,
+    PASSWORD TEXT NOT NULL,
+    FirstName TEXT,
+    LastName TEXT,
+    ResetPasswordToken TEXT,
+    PRIMARY KEY(UserID)
+);
 
+CREATE TABLE UserRoles(
+    UserID INT,
+    RoleID INT,
+    FOREIGN KEY(UserID) REFERENCES USERS(UserID),
+    FOREIGN KEY(RoleID) REFERENCES ROLES(RoleID)
+);
+
+#USER roles
+INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
+INSERT INTO ROLES (roleid, NAME) VALUES ("2", "ROLE_USER_CTO");
+
+#Users
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('1', 'logisticOne@snc.ac.uk', 'Logistic', 'One', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'logisticOne@snc.ac.uk');
+
+#User roles
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('1', '1');
 
