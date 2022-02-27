@@ -63,6 +63,9 @@ public abstract class BaseIntegrationTest {
 
     @BeforeEach
     void setup() throws Exception {
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
+
         user = createUserAccount();
 
         String loginRequestAsJson = "{\n" +
