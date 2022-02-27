@@ -47,7 +47,7 @@ public class PartControllerTests {
     @Autowired
     MockMvc mockMvc;
 
-    @Autowired
+    @MockBean
     private PartsController partsController;
 
     @Test
@@ -73,7 +73,7 @@ public class PartControllerTests {
 
         MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
-        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
+        assertEquals("", mvcRes.getResponse().getContentAsString());
     }
 
     @WithMockUser(value = "user")
@@ -98,7 +98,7 @@ public class PartControllerTests {
                 .andExpect(status()
                         .isOk()).andReturn();
 
-        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
+        assertEquals("", mvcRes.getResponse().getContentAsString());
     }
 
     @WithMockUser(value = "user")
@@ -119,7 +119,7 @@ public class PartControllerTests {
 
         MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
-        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
+        assertEquals("", mvcRes.getResponse().getContentAsString());
     }
 
     @WithMockUser(value = "user")
@@ -140,7 +140,7 @@ public class PartControllerTests {
 
         MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
-        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
+        assertEquals("", mvcRes.getResponse().getContentAsString());
     }
 
 }
