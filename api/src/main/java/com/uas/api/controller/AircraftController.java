@@ -1,10 +1,12 @@
 package com.uas.api.controller;
 
-import com.uas.api.services.AircraftServiceImpl;
+import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.services.AircraftService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")
@@ -12,14 +14,14 @@ public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
      */
-    private final AircraftServiceImpl aircraftService;
+    private final AircraftService aircraftService;
 
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
      */
     @Autowired
-    public AircraftController(final AircraftServiceImpl aircraftService) {
+    public AircraftController(final AircraftService aircraftService) {
         this.aircraftService = aircraftService;
     }
 
@@ -40,5 +42,12 @@ public class AircraftController {
         } else {
             return ResponseEntity.badRequest().body("{\"response\":\"" + result + "\"}");
         }
+    }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<UserAircraftDTO>> getUserAircraft(@PathVariable("id") final int userId) {
+
+        List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
+        return ResponseEntity.ok(userAircraftDTOs);
     }
 }
