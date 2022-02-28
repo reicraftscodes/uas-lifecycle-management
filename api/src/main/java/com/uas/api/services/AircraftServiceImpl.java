@@ -1,16 +1,22 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
+import com.uas.api.repositories.AircraftUserRepository;
 import com.uas.api.repositories.LocationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +30,10 @@ public class AircraftServiceImpl implements AircraftService {
      */
     private final LocationRepository locationRepository;
     /**
+     * Contains methods for communication with the aircraft_user table of the db.
+     */
+    private final AircraftUserRepository aircraftUserRepository;
+    /**
      * Used to output logs of what the program is doing to the console.
      */
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
@@ -32,11 +42,15 @@ public class AircraftServiceImpl implements AircraftService {
      * The constructor.
      * @param aircraftRepository Repository used to modify aircraft data in db.
      * @param locationRepository Repository used to retrieve location data in db.
+     * @param aircraftUserRepository Repository used to modify aircraft user data in db.
      */
     @Autowired
-    public AircraftServiceImpl(final AircraftRepository aircraftRepository, final LocationRepository locationRepository) {
+    public AircraftServiceImpl(final AircraftRepository aircraftRepository,
+                               final LocationRepository locationRepository,
+                               final AircraftUserRepository aircraftUserRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
+        this.aircraftUserRepository = aircraftUserRepository;
     }
 
     /**
@@ -87,7 +101,7 @@ public class AircraftServiceImpl implements AircraftService {
 
         //Checks if any errors have happened and if so doesn't save the aircraft to the db.
         if (errorMessage == null) {
-            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
+            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType, 0);
             try {
                 aircraftRepository.save(aircraft);
                 //Logs the aircraft added to the console.
@@ -114,5 +128,21 @@ public class AircraftServiceImpl implements AircraftService {
 
         return (aircraftRepository.findById(id));
 
+    }
+
+    public List<UserAircraftDTO> getAircraftsForUser(final long userID) {
+        List<AircraftUser> aircraftUsers = aircraftUserRepository.findAllByUser_Id(userID);
+        List<UserAircraftDTO> userAircraftDTOs = new ArrayList<>();
+        for (AircraftUser aircraftUser : aircraftUsers) {
+            userAircraftDTOs.add(
+                    new UserAircraftDTO(
+                            aircraftUser.getAircraft().getTailNumber(),
+                            aircraftUser.getAircraft().getLocation().getLocationName(),
+                            aircraftUser.getAircraft().getPlatformStatus().getLabel(),
+                            aircraftUser.getAircraft().getPlatformType().getName(),
+                            aircraftUser.getUserFlyingHours(),
+                            aircraftUser.getAircraft().getFlyTimeHours()));
+        }
+        return userAircraftDTOs;
     }
 }

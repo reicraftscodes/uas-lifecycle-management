@@ -38,4 +38,7 @@ public class Aircraft {
      */
     @Column(name = "PlatformType")
     private PlatformType platformType;
+
+    @Column(name = "FlyTimeHours")
+    private int flyTimeHours;
 }
