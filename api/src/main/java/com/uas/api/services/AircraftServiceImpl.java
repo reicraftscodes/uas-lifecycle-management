@@ -130,7 +130,7 @@ public class AircraftServiceImpl implements AircraftService {
 
     }
 
-    public List<UserAircraftDTO> getAircraftsForUser(final long userID) {
+    public List<UserAircraftDTO> getAircraftForUser(final long userID) {
         List<AircraftUser> aircraftUsers = aircraftUserRepository.findAllByUser_Id(userID);
         List<UserAircraftDTO> userAircraftDTOs = new ArrayList<>();
         for (AircraftUser aircraftUser : aircraftUsers) {
