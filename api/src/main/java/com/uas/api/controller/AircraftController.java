@@ -1,10 +1,13 @@
 package com.uas.api.controller;
 
-import com.uas.api.services.AircraftServiceImpl;
+import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.services.AircraftService;
+import com.uas.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")
@@ -12,15 +15,21 @@ public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
      */
-    private final AircraftServiceImpl aircraftService;
+    private final AircraftService aircraftService;
+    /**
+     * User service for communication between controller and DB.
+     */
+    private final UserService userService;
 
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
+     * @param userService User service for communication between controller and DB.
      */
     @Autowired
-    public AircraftController(final AircraftServiceImpl aircraftService) {
+    public AircraftController(final AircraftService aircraftService, final UserService userService) {
         this.aircraftService = aircraftService;
+        this.userService = userService;
     }
 
     /**
@@ -39,6 +48,21 @@ public class AircraftController {
             return ResponseEntity.ok().body("{\"response\":\"Success\"}");
         } else {
             return ResponseEntity.badRequest().body("{\"response\":\"" + result + "\"}");
+        }
+    }
+
+    /**
+     * Get mapping request for retrieving all aircraft assigned to a user.
+     * @param userId the id of the user.
+     * @return response entity with response.
+     */
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getUserAircraft(@PathVariable("id") final long userId) {
+        if (!userService.userExistsById(userId)) {
+            return ResponseEntity.badRequest().body("Failed to retrieve aircraft for user because user does not exist.");
+        } else {
+            List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
+            return ResponseEntity.ok(userAircraftDTOs);
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.entities.Aircraft;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public interface AircraftService {
@@ -20,4 +22,10 @@ public interface AircraftService {
      */
     Optional<Aircraft> findAircraftById(String id);
 
+    /**
+     * Get all aircraft assigned to a user.
+     * @param userID the id of the user.
+     * @return a list of UserAircraftDTOs.
+     */
+    List<UserAircraftDTO> getAircraftForUser(long userID);
 }
