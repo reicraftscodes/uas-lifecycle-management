@@ -1,10 +1,13 @@
 package com.uas.api.controller;
 
+import com.uas.api.models.dtos.AircraftTotalRepairsDTO;
+import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.services.AircraftServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")
@@ -40,5 +43,16 @@ public class AircraftController {
         } else {
             return ResponseEntity.badRequest().body("{\"response\":\"" + result + "\"}");
         }
+    }
+    /**
+     * Gets a the cumulative total repairs for each platform.
+     * @return list of integers which represent the number of repairs done to each platform.
+     */
+    @GetMapping("/total-repairs")
+    public ResponseEntity <AircraftTotalRepairsDTO> getTotalRepairs() {
+        List<Integer> aircraftRepairsList = aircraftService.calculateTotalRepairs();
+        AircraftTotalRepairsDTO aircraftTotalRepairsDTO = new AircraftTotalRepairsDTO(aircraftRepairsList);
+
+        return ResponseEntity.ok(aircraftTotalRepairsDTO);
     }
 }

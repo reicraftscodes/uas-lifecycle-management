@@ -3,6 +3,7 @@ package com.uas.api.services;
 import com.uas.api.models.entities.Aircraft;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 public interface AircraftService {
@@ -20,4 +21,5 @@ public interface AircraftService {
      */
     Optional<Aircraft> findAircraftById(String id);
 
+    List<Integer> calculateTotalRepairs();
 }
