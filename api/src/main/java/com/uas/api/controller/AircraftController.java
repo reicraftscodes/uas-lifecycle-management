@@ -2,6 +2,7 @@ package com.uas.api.controller;
 
 import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.services.AircraftService;
+import com.uas.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,16 @@ public class AircraftController {
      */
     private final AircraftService aircraftService;
 
+    private final UserService userService;
+
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
      */
     @Autowired
-    public AircraftController(final AircraftService aircraftService) {
+    public AircraftController(final AircraftService aircraftService, final UserService userService) {
         this.aircraftService = aircraftService;
+        this.userService = userService;
     }
 
     /**
@@ -45,9 +49,12 @@ public class AircraftController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<List<UserAircraftDTO>> getUserAircraft(@PathVariable("id") final int userId) {
-
-        List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
-        return ResponseEntity.ok(userAircraftDTOs);
+    public ResponseEntity<?> getUserAircraft(@PathVariable("id") final long userId) {
+        if (!userService.userExistsById(userId)) {
+            return ResponseEntity.badRequest().body("Failed to retrieve aircraft for user because user does not exist.");
+        } else {
+            List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
+            return ResponseEntity.ok(userAircraftDTOs);
+        }
     }
 }
