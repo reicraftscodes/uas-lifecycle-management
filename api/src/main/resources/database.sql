@@ -84,6 +84,39 @@ CREATE TABLE StockToOrders (
     FOREIGN KEY(PartID) REFERENCES parttypes(PartID)
 );
 
+CREATE TABLE ROLES(
+    RoleID INT NOT NULL AUTO_INCREMENT,
+    NAME TEXT NOT NULL,
+    PRIMARY KEY(RoleID)
+);
+
+CREATE TABLE USERS(
+    UserID INT NOT NULL AUTO_INCREMENT,
+    USERNAME TEXT NOT NULL,
+    EMAIL TEXT NOT NULL,
+    PASSWORD TEXT NOT NULL,
+    FirstName TEXT,
+    LastName TEXT,
+    ResetPasswordToken TEXT,
+    PRIMARY KEY(UserID)
+);
+
+CREATE TABLE UserRoles(
+    UserID INT,
+    RoleID INT,
+    FOREIGN KEY(UserID) REFERENCES USERS(UserID),
+    FOREIGN KEY(RoleID) REFERENCES ROLES(RoleID)
+);
+
+# Link table for aircraft assigned to users.
+CREATE TABLE Aircraft_User(
+    UserID INT NOT NULL,
+    TailNumber varchar(255) NOT NULL,
+    FlyingHours INT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID),
+    FOREIGN KEY (TailNumber) REFERENCES Aircraft(TailNumber)
+);
+
 #Platform_A parts
 INSERT INTO PartTypes (PartType, Price, Weight, TypicalFailureTime) VALUES ("Wing A","200","50000","600");
 INSERT INTO PartTypes (PartType, Price, Weight, TypicalFailureTime) VALUES ("Wing B","250","55000","600");
@@ -175,37 +208,20 @@ INSERT INTO Repairs (PartNumber, cost) VALUES ("2","100");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("3","50");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
 
-CREATE TABLE ROLES(
-    RoleID INT NOT NULL AUTO_INCREMENT,
-    NAME TEXT NOT NULL,
-    PRIMARY KEY(RoleID)
-);
-
-CREATE TABLE USERS(
-    UserID INT NOT NULL AUTO_INCREMENT,
-    USERNAME TEXT NOT NULL,
-    EMAIL TEXT NOT NULL,
-    PASSWORD TEXT NOT NULL,
-    FirstName TEXT,
-    LastName TEXT,
-    ResetPasswordToken TEXT,
-    PRIMARY KEY(UserID)
-);
-
-CREATE TABLE UserRoles(
-    UserID INT,
-    RoleID INT,
-    FOREIGN KEY(UserID) REFERENCES USERS(UserID),
-    FOREIGN KEY(RoleID) REFERENCES ROLES(RoleID)
-);
 
 #USER roles
 INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
 INSERT INTO ROLES (roleid, NAME) VALUES ("2", "ROLE_USER_CTO");
+INSERT INTO ROLES (roleid, NAME) VALUES ("3", "ROLE_USER");
 
 #Users
 INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('1', 'logisticOne@snc.ac.uk', 'Logistic', 'One', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'logisticOne@snc.ac.uk');
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('2', 'userOne@snc.ac.uk', 'Thomas', 'Anderson', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'userOne@snc.ac.uk');
 
 #User roles
 INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('1', '1');
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('2', '3');
 
+#User assignrf Aircraft
+INSERT INTO aircraft_user (UserID, TailNumber, FlyingHours) VALUES (2, "G-001", 250);
+INSERT INTO aircraft_user (UserID, TailNumber, FlyingHours) VALUES (2, "G-002", 175);
