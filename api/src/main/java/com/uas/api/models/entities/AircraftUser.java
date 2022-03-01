@@ -16,7 +16,9 @@ import javax.persistence.*;
 @Table(name = "Aircraft_User")
 public class AircraftUser {
 
-
+    /**
+     * The AircraftUser id.
+     */
     @EmbeddedId
     private AircraftUserKey id;
 
@@ -36,6 +38,9 @@ public class AircraftUser {
     @JoinColumn(name = "TailNumber")
     private Aircraft aircraft;
 
+    /**
+     * The users total flight time in hours for the aircraft.
+     */
     @Column(name = "FlyingHours")
     private Long userFlyingHours;
 }

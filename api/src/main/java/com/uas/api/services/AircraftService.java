@@ -22,5 +22,10 @@ public interface AircraftService {
      */
     Optional<Aircraft> findAircraftById(String id);
 
-    List<UserAircraftDTO> getAircraftForUser(final long userID);
+    /**
+     * Get all aircraft assigned to a user.
+     * @param userID the id of the user.
+     * @return a list of UserAircraftDTOs.
+     */
+    List<UserAircraftDTO> getAircraftForUser(long userID);
 }

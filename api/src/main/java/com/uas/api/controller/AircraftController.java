@@ -16,12 +16,15 @@ public class AircraftController {
      * Aircraft service used to communicate with the db about the aircraft table.
      */
     private final AircraftService aircraftService;
-
+    /**
+     * User service for communication between controller and DB.
+     */
     private final UserService userService;
 
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
+     * @param userService User service for communication between controller and DB.
      */
     @Autowired
     public AircraftController(final AircraftService aircraftService, final UserService userService) {
@@ -48,6 +51,11 @@ public class AircraftController {
         }
     }
 
+    /**
+     * Get mapping request for retrieving all aircraft assigned to a user.
+     * @param userId the id of the user.
+     * @return response entity with response.
+     */
     @GetMapping("/user/{id}")
     public ResponseEntity<?> getUserAircraft(@PathVariable("id") final long userId) {
         if (!userService.userExistsById(userId)) {

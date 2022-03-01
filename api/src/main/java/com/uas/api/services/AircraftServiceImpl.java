@@ -130,6 +130,11 @@ public class AircraftServiceImpl implements AircraftService {
 
     }
 
+    /**
+     * Get all aircraft assigned to a user.
+     * @param userID the id of the user.
+     * @return a list of UserAircraftDTOs.
+     */
     public List<UserAircraftDTO> getAircraftForUser(final long userID) {
         List<AircraftUser> aircraftUsers = aircraftUserRepository.findAllByUser_Id(userID);
         List<UserAircraftDTO> userAircraftDTOs = new ArrayList<>();

@@ -33,5 +33,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
+    /**
+     * Validate if a user exists with provided id.
+     * @param userId the user id.
+     * @return boolean
+     */
     boolean existsById(int userId);
 }
