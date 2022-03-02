@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
@@ -42,6 +43,8 @@ public class AircraftServiceImpl implements AircraftService {
         this.locationRepository = locationRepository;
     }
 
+    String errorMessage = null;
+
     /**
      * Used to save an aircraft to the database.
      * @param aircraft The aircraft entity to be saved.
@@ -59,7 +62,6 @@ public class AircraftServiceImpl implements AircraftService {
     @Override
     public String addAircraftFromJson(final HashMap<String, String> requestData) {
         //Stores error messages and tracks if any errors have occured.
-        String errorMessage = null;
 
         //Changes the json platform status from a string to an enum.
         PlatformStatus platformStatus = PlatformStatus.DESIGN;
@@ -132,5 +134,15 @@ public class AircraftServiceImpl implements AircraftService {
             hoursOperationalList.add(aircraft.getHoursOperational());
         }
         return hoursOperationalList;
+    }
+
+    @Override
+    public Aircraft updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
+        Aircraft aircraft = aircraftRepository.findById(aircraftAddHoursOperationalDTO.getTailNumber()).get();
+        Integer hoursToAdd = aircraftAddHoursOperationalDTO.getHoursToAdd();
+
+        aircraft.setHoursOperational(aircraft.getHoursOperational() + hoursToAdd);
+        return aircraftRepository.save(aircraft);
+
     }
 }

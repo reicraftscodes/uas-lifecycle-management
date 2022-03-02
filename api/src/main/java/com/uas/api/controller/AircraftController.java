@@ -1,10 +1,17 @@
 package com.uas.api.controller;
 
+import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
+import com.uas.api.models.entities.Aircraft;
+import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.AircraftServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,4 +62,20 @@ public class AircraftController {
 
         return ResponseEntity.ok(aircraftTotalRepairsDTO);
     }
+
+    /**
+     * Updates the hours operational of an aircraft.
+     * @return response entity indicating success/failure.
+     */
+    @PostMapping("/time-operational")
+    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
+        Aircraft aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
+        List<Integer> hoursOperational = new ArrayList<>();
+        hoursOperational.add(aircraft.getHoursOperational());
+        
+        AircraftHoursOperationalDTO aircraftHoursOperationalDTO = new AircraftHoursOperationalDTO(hoursOperational);
+
+        return ResponseEntity.ok(aircraftHoursOperationalDTO);
+    }
+
 }

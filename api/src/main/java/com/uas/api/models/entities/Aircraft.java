@@ -39,6 +39,6 @@ public class Aircraft {
     @Column(name = "PlatformType")
     private PlatformType platformType;
 
-    @Column(name = "hoursOperational")
+    @Column(name = "HoursOperational")
     private Integer hoursOperational;
 }
