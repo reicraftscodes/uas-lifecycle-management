@@ -53,7 +53,7 @@ public class Part {
      * Time the part has spent flying.
      */
     @Column(name = "FlyTimeHours")
-    private int flyTimeHours;
+    private Integer flyTimeHours;
 
 
     /**
