@@ -41,6 +41,6 @@ public class Aircraft {
     /**
      * The total flight time in hours.
      */
-    @Column(name = "FlyTimeHours")
-    private int flyTimeHours;
+    @Column(name = "FlyingHours")
+    private Integer flyTimeHours;
 }
