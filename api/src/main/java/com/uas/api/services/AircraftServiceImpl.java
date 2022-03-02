@@ -10,7 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -87,7 +90,7 @@ public class AircraftServiceImpl implements AircraftService {
 
         //Checks if any errors have happened and if so doesn't save the aircraft to the db.
         if (errorMessage == null) {
-            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType);
+            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType, 0);
             try {
                 aircraftRepository.save(aircraft);
                 //Logs the aircraft added to the console.
@@ -114,5 +117,20 @@ public class AircraftServiceImpl implements AircraftService {
 
         return (aircraftRepository.findById(id));
 
+    }
+
+    /**
+     * For each aircraft saved in the DB, get the hours operational and add it to the list.
+     * @return returns a list of hours operational for each platform.
+     */
+    @Override
+    public List<Integer> getHoursOperational() {
+        List<Integer> hoursOperationalList = new ArrayList<>();
+        List<Aircraft> aircraftList = aircraftRepository.findAll();
+        for (Aircraft aircraft: aircraftList
+             ) {
+            hoursOperationalList.add(aircraft.getHoursOperational());
+        }
+        return hoursOperationalList;
     }
 }

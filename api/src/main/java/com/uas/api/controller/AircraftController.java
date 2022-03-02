@@ -1,13 +1,16 @@
 package com.uas.api.controller;
 
+import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.services.AircraftServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")
+@CrossOrigin("http://localhost:3000/")
 public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
@@ -40,5 +43,16 @@ public class AircraftController {
         } else {
             return ResponseEntity.badRequest().body("{\"response\":\"" + result + "\"}");
         }
+    }
+    /**
+     * Gets a the cumulative total repairs for each platform.
+     * @return list of integers which represent the number of repairs done to each platform.
+     */
+    @GetMapping("/time-operational")
+    public ResponseEntity <AircraftHoursOperationalDTO> getHoursOperational() {
+        List<Integer> hoursOperational = aircraftService.getHoursOperational();
+        AircraftHoursOperationalDTO aircraftTotalRepairsDTO = new AircraftHoursOperationalDTO(hoursOperational);
+
+        return ResponseEntity.ok(aircraftTotalRepairsDTO);
     }
 }
