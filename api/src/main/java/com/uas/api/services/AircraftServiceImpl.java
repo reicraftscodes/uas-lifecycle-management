@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
+import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
@@ -137,12 +138,18 @@ public class AircraftServiceImpl implements AircraftService {
     }
 
     @Override
-    public Aircraft updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
+    public AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
         Aircraft aircraft = aircraftRepository.findById(aircraftAddHoursOperationalDTO.getTailNumber()).get();
         Integer hoursToAdd = aircraftAddHoursOperationalDTO.getHoursToAdd();
+        List<Integer> hoursOperational = new ArrayList<>();
+        if (aircraft.getHoursOperational() != null) {
+            hoursToAdd += aircraft.getHoursOperational();
 
-        aircraft.setHoursOperational(aircraft.getHoursOperational() + hoursToAdd);
-        return aircraftRepository.save(aircraft);
+        }
+        hoursOperational.add(hoursToAdd);
+        aircraft.setHoursOperational(hoursToAdd);
+        aircraftRepository.save(aircraft);
+        return new AircraftHoursOperationalDTO(hoursOperational);
 
     }
 }

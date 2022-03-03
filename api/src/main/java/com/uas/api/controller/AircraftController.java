@@ -69,13 +69,8 @@ public class AircraftController {
      */
     @PostMapping("/time-operational")
     public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
-        Aircraft aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
-        List<Integer> hoursOperational = new ArrayList<>();
-        hoursOperational.add(aircraft.getHoursOperational());
-        
-        AircraftHoursOperationalDTO aircraftHoursOperationalDTO = new AircraftHoursOperationalDTO(hoursOperational);
-
-        return ResponseEntity.ok(aircraftHoursOperationalDTO);
+        AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
+        return ResponseEntity.ok(aircraft);
     }
 
 }

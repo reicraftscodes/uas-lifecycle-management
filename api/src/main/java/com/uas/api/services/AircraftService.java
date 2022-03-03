@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
+import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
 
 import java.util.HashMap;
@@ -24,6 +25,6 @@ public interface AircraftService {
 
     List<Integer> getHoursOperational();
 
-    Aircraft updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
+    AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
 
 }
