@@ -1,21 +1,32 @@
 package com.uas.api.controller;
 
+import com.uas.api.models.dtos.LogFlightDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.Part;
 import com.uas.api.services.AircraftService;
+
+import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/aircraft")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
      */
     private final AircraftService aircraftService;
+    /**
+     * part service used for communication with the db about the part table.
+     */
+    private final PartService partService;
     /**
      * User service for communication between controller and DB.
      */
@@ -24,11 +35,13 @@ public class AircraftController {
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
+     * @param partService
      * @param userService User service for communication between controller and DB.
      */
     @Autowired
-    public AircraftController(final AircraftService aircraftService, final UserService userService) {
+    public AircraftController(final AircraftService aircraftService, final PartService partService, final UserService userService) {
         this.aircraftService = aircraftService;
+        this.partService = partService;
         this.userService = userService;
     }
 
@@ -64,5 +77,55 @@ public class AircraftController {
             List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
             return ResponseEntity.ok(userAircraftDTOs);
         }
+    }
+
+    /**
+     * Post mapping used for updating the aircrafts and the parts associated with that aircrafts flight hours.
+     * @param request takes json request body for the aircraft tailnumber and flytime to be logged.
+     * @return returns a response with ok for no errors or a bad request with a body with the error message.
+     */
+    @PostMapping(value = "/log-flight", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> updateFlightHours(@RequestBody final LogFlightDTO request) {
+        // A request body example that a post would have
+        //{
+        //    "aircraft":"G-001",
+        //    "flyTime":12
+        //}
+        String error = null;
+        //Gets the aircraft entity from the post request body
+        Optional<Aircraft> aircraft = aircraftService.findAircraftById(request.getAircraft());
+
+        //checks that an aircraft has been found from the aircraft input and if not sets the error variable.
+        if (aircraft.isPresent()) {
+            //gets all parts associated with the aircraft and stores them in the list.
+            List<Part> parts = partService.findPartsAssociatedWithAircraft(aircraft.get());
+            //Uses a try and catch statement to check if the user input hours is an integer.
+            try {
+                int hoursInput = request.getFlyTime();
+
+                //checks the user input is positive and if not sets error variable
+                if (hoursInput < 0) {
+                    error = "Fly time value cannot be negative!";
+                } else {
+                    //updates the part flight hours for all parts associated with the aircraft.
+                    partService.updatePartFlyTime(parts, hoursInput);
+                    //updates the aircraft flight hours
+                    aircraftService.updateAircraftFlyTime(aircraft.get(), hoursInput);
+                }
+            } catch (Exception e) {
+                error = "Fly time value isn't integer!";
+            }
+        } else {
+            error = "Aircraft not found!";
+        }
+
+        //checks for errors and if no errors then returns and okay response
+        if (error == null) {
+            return ResponseEntity.ok("");
+        } else {
+            //if there are errors then it returns a bad request with a response of the error.
+            return ResponseEntity.badRequest().body("response: " + error);
+        }
+
     }
 }

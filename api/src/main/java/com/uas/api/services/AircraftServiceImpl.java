@@ -75,7 +75,7 @@ public class AircraftServiceImpl implements AircraftService {
         //Changes the json platform status from a string to an enum.
         PlatformStatus platformStatus = PlatformStatus.DESIGN;
         try {
-            PlatformStatus.valueOf(requestData.get("platformStatus"));
+            platformStatus = PlatformStatus.valueOf(requestData.get("platformStatus"));
         } catch (Exception e) {
             errorMessage = "Invalid platform status.";
         }
@@ -149,5 +149,21 @@ public class AircraftServiceImpl implements AircraftService {
                             aircraftUser.getAircraft().getFlyTimeHours()));
         }
         return userAircraftDTOs;
+    }
+
+    /**
+     * Used to update the flytime of an aircraft in the database.
+     * @param aircraft The aircraft that the hours are being updated for.
+     * @param flyTime The fly time to be added to the hours field.
+     */
+    public void updateAircraftFlyTime(final Aircraft aircraft, final int flyTime) {
+        //the flytime currently in the database.
+        int oldFlyTime = aircraft.getFlyTimeHours();
+
+        //sets the new flytime to the new hours logged plus the old hours
+        aircraft.setFlyTimeHours(oldFlyTime + flyTime);
+
+        //saves to the db an update aircraft entity
+        aircraftRepository.save(aircraft);
     }
 }
