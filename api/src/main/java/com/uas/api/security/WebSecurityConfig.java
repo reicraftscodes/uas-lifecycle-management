@@ -21,7 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
 import java.util.Collections;
 import java.util.List;
 
@@ -41,12 +40,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      *  UserDetailsService interface to implement load User details to perform authentication & authorization.
      */
 
-    private UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     /**
      * AuthEntryPointJWT.
      */
-    private AuthEntryPointJwt unauthorizedHandler;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
     /**
      * WebSecurityConfig constructor.

@@ -1,13 +1,14 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
-import com.uas.api.repositories.AircraftRepository;
-import com.uas.api.repositories.LocationRepository;
+import com.uas.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,18 @@ public class AircraftServiceImpl implements AircraftService {
      */
     private final LocationRepository locationRepository;
     /**
+     * Contains methods for communication with the aircraft_user table of the db.
+     */
+    private final AircraftUserRepository aircraftUserRepository;
+    /**
+     * Contains methods for communication with the part table of the db.
+     */
+    private final PartRepository partRepository;
+    /**
+     * Contains methods for communication with the repair table of the db.
+     */
+    private final RepairRepository repairRepository;
+    /**
      * Used to output logs of what the program is doing to the console.
      */
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
@@ -41,11 +54,21 @@ public class AircraftServiceImpl implements AircraftService {
      * The constructor.
      * @param aircraftRepository Repository used to modify aircraft data in db.
      * @param locationRepository Repository used to retrieve location data in db.
+     * @param aircraftUserRepository Repository used to modify aircraft user data in db.
+     * @param partRepository
+     * @param repairRepository
      */
     @Autowired
-    public AircraftServiceImpl(final AircraftRepository aircraftRepository, final LocationRepository locationRepository) {
+    public AircraftServiceImpl(final AircraftRepository aircraftRepository,
+                               final LocationRepository locationRepository,
+                               final AircraftUserRepository aircraftUserRepository,
+                               final PartRepository partRepository,
+                               final RepairRepository repairRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
+        this.partRepository = partRepository;
+        this.repairRepository = repairRepository;
+        this.aircraftUserRepository = aircraftUserRepository;
     }
 
     /**
@@ -65,11 +88,12 @@ public class AircraftServiceImpl implements AircraftService {
     @Override
     public String addAircraftFromJson(final HashMap<String, String> requestData) {
         //Stores error messages and tracks if any errors have occured.
+        String errorMessage = null;
 
         //Changes the json platform status from a string to an enum.
         PlatformStatus platformStatus = PlatformStatus.DESIGN;
         try {
-            PlatformStatus.valueOf(requestData.get("platformStatus"));
+            platformStatus = PlatformStatus.valueOf(requestData.get("platformStatus"));
         } catch (Exception e) {
             errorMessage = "Invalid platform status.";
         }
@@ -159,4 +183,54 @@ public class AircraftServiceImpl implements AircraftService {
         return new AircraftHoursOperationalDTO(hoursOperational);
 
     }
+
+    /**
+     * Get all aircraft assigned to a user.
+     * @param userID the id of the user.
+     * @return a list of UserAircraftDTOs.
+     */
+    public List<UserAircraftDTO> getAircraftForUser(final long userID) {
+        List<AircraftUser> aircraftUsers = aircraftUserRepository.findAllByUser_Id(userID);
+        List<UserAircraftDTO> userAircraftDTOs = new ArrayList<>();
+        for (AircraftUser aircraftUser : aircraftUsers) {
+            userAircraftDTOs.add(
+                    new UserAircraftDTO(
+                            aircraftUser.getAircraft().getTailNumber(),
+                            aircraftUser.getAircraft().getLocation().getLocationName(),
+                            aircraftUser.getAircraft().getPlatformStatus().getLabel(),
+                            aircraftUser.getAircraft().getPlatformType().getName(),
+                            aircraftUser.getUserFlyingHours(),
+                            aircraftUser.getAircraft().getFlyTimeHours()));
+        }
+        return userAircraftDTOs;
+    }
+
+    /**
+     * Used to update the flytime of an aircraft in the database.
+     * @param aircraft The aircraft that the hours are being updated for.
+     * @param flyTime The fly time to be added to the hours field.
+     */
+    public void updateAircraftFlyTime(final Aircraft aircraft, final int flyTime) {
+        //the flytime currently in the database.
+        int oldFlyTime = aircraft.getFlyTimeHours();
+
+        //sets the new flytime to the new hours logged plus the old hours
+        aircraft.setFlyTimeHours(oldFlyTime + flyTime);
+
+        //saves to the db an update aircraft entity
+        aircraftRepository.save(aircraft);
+    }
+
+    public List<Integer> calculateTotalRepairs() {
+
+        Integer totalPlatA = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_A).size();
+        Integer totalPlatB = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_B).size();
+
+        List<Integer> totalRepairs = new ArrayList<>();
+        totalRepairs.add(totalPlatA);
+        totalRepairs.add(totalPlatB);
+
+        return totalRepairs;
+    }
+
 }

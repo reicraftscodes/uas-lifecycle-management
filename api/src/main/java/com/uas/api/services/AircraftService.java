@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
@@ -23,6 +24,20 @@ public interface AircraftService {
      */
     Optional<Aircraft> findAircraftById(String id);
 
+    List<Integer> calculateTotalRepairs();
+    /**
+     * Get all aircraft assigned to a user.
+     * @param userID the id of the user.
+     * @return a list of UserAircraftDTOs.
+     */
+    List<UserAircraftDTO> getAircraftForUser(long userID);
+
+    /**
+     *  Updates the aircraft flight time hours.
+     * @param aircraft The aircraft the flight time is being updated for.
+     * @param flyTime The hours to be added to the flight time.
+     */
+    void updateAircraftFlyTime(Aircraft aircraft, int flyTime);
     /**
      * Gets the number of hours operational as a list.
      * @return the list.

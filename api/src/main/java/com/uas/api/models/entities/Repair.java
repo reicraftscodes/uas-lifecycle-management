@@ -36,4 +36,5 @@ public class Repair {
      */
     @Column(name = "cost")
     private BigDecimal cost;
+
 }

@@ -38,6 +38,11 @@ public class Aircraft {
      */
     @Column(name = "PlatformType")
     private PlatformType platformType;
+    /**
+     * The total flight time in hours.
+     */
+    @Column(name = "FlyingHours")
+    private Integer flyTimeHours;
 
     /**
      * Number of hours operational.
