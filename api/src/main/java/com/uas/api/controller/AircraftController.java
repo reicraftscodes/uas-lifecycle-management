@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
@@ -64,5 +65,14 @@ public class AircraftController {
             List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
             return ResponseEntity.ok(userAircraftDTOs);
         }
+    }
+
+    @PostMapping("/log-flight")
+    public ResponseEntity<?> updateFlightHours(@RequestBody HashMap<String, String> request){
+
+
+
+
+        return ResponseEntity.ok("");
     }
 }
