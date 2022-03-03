@@ -21,6 +21,7 @@ CREATE TABLE Aircraft (
     LocationName varchar(255) NOT NULL,
     PlatformStatus SET("Design","Production","Operation","Repair") NOT NULL,
     PlatformType SET("Platform_A","Platform_B") NOT NULL,
+    HoursOperational int,
     PRIMARY KEY (TailNumber),
     UNIQUE (TailNumber),
     FOREIGN KEY (LocationName) REFERENCES Locations(LocationName)
@@ -108,8 +109,8 @@ INSERT INTO Locations (LocationName, AddressLine1,PostCode,Country) VALUES ("Ank
 INSERT INTO Locations (LocationName, AddressLine1,PostCode,Country) VALUES ("Dublin", "123 Street name","D000AA","Ireland");
 
 #aircraft data examples from all locations with all aircraft statuses
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-001","St Athen","Design","Platform_A");
-INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-002","St Athen","Design","Platform_B");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType,HoursOperational) VALUES ("G-001","St Athen","Design","Platform_A","0");
+INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType,HoursOperational) VALUES ("G-002","St Athen","Design","Platform_B","0");
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-003","St Athen","Production","Platform_A");
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-004","St Athen","Production","Platform_B");
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType) VALUES ("G-005","St Athen","Operation","Platform_A");

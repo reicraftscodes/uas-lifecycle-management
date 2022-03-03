@@ -52,7 +52,7 @@ public class AircraftController {
         }
     }
     /**
-     * Gets a the cumulative total repairs for each platform.
+     * Gets the cumulative total repairs for each platform.
      * @return list of integers which represent the number of repairs done to each platform.
      */
     @GetMapping("/time-operational")
