@@ -1,15 +1,20 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.AircraftTotalRepairsDTO;
-import com.uas.api.models.dtos.PartStockLevelDTO;
-import com.uas.api.services.AircraftServiceImpl;
+import com.uas.api.models.dtos.LogFlightDTO;
+import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.Part;
+import com.uas.api.services.AircraftService;
+import com.uas.api.services.PartService;
+import com.uas.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")

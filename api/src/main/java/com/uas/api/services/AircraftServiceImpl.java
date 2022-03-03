@@ -4,14 +4,9 @@ import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
-import com.uas.api.repositories.AircraftRepository;
-import com.uas.api.repositories.AircraftUserRepository;
-import com.uas.api.repositories.LocationRepository;
-import com.uas.api.repositories.PartRepository;
-import com.uas.api.repositories.RepairRepository;
+import com.uas.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +55,9 @@ public class AircraftServiceImpl implements AircraftService {
     @Autowired
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
-                               final AircraftUserRepository aircraftUserRepository) {
-    public AircraftServiceImpl(final AircraftRepository aircraftRepository, final LocationRepository locationRepository, PartRepository partRepository, RepairRepository repairRepository) {
+                               final AircraftUserRepository aircraftUserRepository,
+                               final PartRepository partRepository,
+                               final RepairRepository repairRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
         this.partRepository = partRepository;
