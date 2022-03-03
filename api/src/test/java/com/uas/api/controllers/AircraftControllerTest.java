@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -84,6 +85,32 @@ public class AircraftControllerTest {
                         .content(json).characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response").value("Success"));
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void UpdateAircraftOperatingHours() throws Exception {
+        Location location = new Location();
+        location.setLocationName("London");
+        locationRepository.save(location);
+
+        String json = "{\"tailNumber\":\"G-999\",\"location\":\"London\",\"platformStatus\":\"DESIGN\",\"platformType\":\"Platform_A\", \"hoursToAdd\":\"1\"}";
+
+        mockMvc.perform(post("/aircraft/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json).characterEncoding("utf-8"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response").value("Success"));
+
+        String json1 = "{\"tailNumber\":\"G-999\",\"hoursToAdd\":\"10\"}";
+
+        MvcResult mockMvcResult = mockMvc.perform(post("/aircraft/time-operational").contentType(MediaType.APPLICATION_JSON)
+                .content(json1).characterEncoding("utf-8"))
+                .andExpect(status().isOk()).andReturn();
+
+        String response = mockMvcResult.getResponse().toString();
+
+        assertEquals("{\"hoursOperational\":\"11\"}", response);
     }
 
 }
