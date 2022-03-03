@@ -49,4 +49,12 @@ public class Aircraft {
      */
     @Column(name = "HoursOperational")
     private Integer hoursOperational;
+
+    public Aircraft(String tailNumber, Location location, PlatformStatus platformStatus, PlatformType platformType, Integer flyTimeHours) {
+        this.tailNumber = tailNumber;
+        this.location = location;
+        this.platformStatus = platformStatus;
+        this.platformType = platformType;
+        this.flyTimeHours = flyTimeHours;
+    }
 }

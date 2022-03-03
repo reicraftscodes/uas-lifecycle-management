@@ -123,8 +123,6 @@ public class AircraftControllerTest {
 
     @MockBean
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @WithMockUser(value = "user")
     @Test
