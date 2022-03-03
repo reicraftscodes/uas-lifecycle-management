@@ -4,6 +4,8 @@ import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
+import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.Part;
 
 import java.util.HashMap;
 import java.util.List;
@@ -47,4 +49,6 @@ public interface PartService {
      * @return the PartRepairsDTO list.
      */
     List<PartRepairsDTO> getMostCommonFailingParts(int topN);
+
+    List<Part> findPartsAssociatedWithAircraft(Aircraft aircraft);
 }

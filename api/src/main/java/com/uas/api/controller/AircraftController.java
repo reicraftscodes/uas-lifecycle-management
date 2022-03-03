@@ -1,13 +1,18 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.Part;
 import com.uas.api.services.AircraftService;
+
+import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/aircraft")
@@ -17,6 +22,7 @@ public class AircraftController {
      * Aircraft service used to communicate with the db about the aircraft table.
      */
     private final AircraftService aircraftService;
+    private final PartService partService;
     /**
      * User service for communication between controller and DB.
      */
@@ -25,11 +31,13 @@ public class AircraftController {
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
+     * @param partService
      * @param userService User service for communication between controller and DB.
      */
     @Autowired
-    public AircraftController(final AircraftService aircraftService, final UserService userService) {
+    public AircraftController(final AircraftService aircraftService,final PartService partService, final UserService userService) {
         this.aircraftService = aircraftService;
+        this.partService = partService;
         this.userService = userService;
     }
 
@@ -70,8 +78,20 @@ public class AircraftController {
     @PostMapping("/log-flight")
     public ResponseEntity<?> updateFlightHours(@RequestBody HashMap<String, String> request){
 
+        //{
+        //    "aircraft":"G-001",
+        //    "flyTime":12
+        //}
 
+        //get aircraft associated with user
+        System.out.println();
+        Optional<Aircraft> aircraft = aircraftService.findAircraftById(request.get("aircraft"));
 
+        List<Part> parts = partService.findPartsAssociatedWithAircraft(aircraft.get());
+
+        for(int i=0; i<parts.size(); i++){
+            System.out.println(parts.get(i));
+        }
 
         return ResponseEntity.ok("");
     }

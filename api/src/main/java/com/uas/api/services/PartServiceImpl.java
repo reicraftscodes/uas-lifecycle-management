@@ -263,5 +263,15 @@ public class PartServiceImpl implements PartService {
         return partRepairsDTOs;
     }
 
+    public List<Part> findPartsAssociatedWithAircraft(Aircraft aircraft){
+        List<Part> parts;
+
+        parts = partRepository.findAllPartsByAircraft(aircraft);
+
+        return parts;
+    }
+
+    
+
 
 }
