@@ -6,9 +6,7 @@ import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
-import com.uas.api.repositories.AircraftRepository;
-import com.uas.api.repositories.AircraftUserRepository;
-import com.uas.api.repositories.LocationRepository;
+import com.uas.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +32,14 @@ public class AircraftServiceImpl implements AircraftService {
      */
     private final AircraftUserRepository aircraftUserRepository;
     /**
+     * Contains methods for communication with the part table of the db.
+     */
+    private final PartRepository partRepository;
+    /**
+     * Contains methods for communication with the repair table of the db.
+     */
+    private final RepairRepository repairRepository;
+    /**
      * Used to output logs of what the program is doing to the console.
      */
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
@@ -43,13 +49,19 @@ public class AircraftServiceImpl implements AircraftService {
      * @param aircraftRepository Repository used to modify aircraft data in db.
      * @param locationRepository Repository used to retrieve location data in db.
      * @param aircraftUserRepository Repository used to modify aircraft user data in db.
+     * @param partRepository
+     * @param repairRepository
      */
     @Autowired
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
-                               final AircraftUserRepository aircraftUserRepository) {
+                               final AircraftUserRepository aircraftUserRepository,
+                               final PartRepository partRepository,
+                               final RepairRepository repairRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
+        this.partRepository = partRepository;
+        this.repairRepository = repairRepository;
         this.aircraftUserRepository = aircraftUserRepository;
     }
 
@@ -166,4 +178,17 @@ public class AircraftServiceImpl implements AircraftService {
         //saves to the db an update aircraft entity
         aircraftRepository.save(aircraft);
     }
+
+    public List<Integer> calculateTotalRepairs() {
+
+        Integer totalPlatA = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_A).size();
+        Integer totalPlatB = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_B).size();
+
+        List<Integer> totalRepairs = new ArrayList<>();
+        totalRepairs.add(totalPlatA);
+        totalRepairs.add(totalPlatB);
+
+        return totalRepairs;
+    }
+
 }

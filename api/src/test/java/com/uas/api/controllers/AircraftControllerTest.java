@@ -15,6 +15,11 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.LocationRepository;
+import com.uas.api.models.entities.*;
+import com.uas.api.models.entities.enums.PartStatus;
+import com.uas.api.models.entities.enums.PlatformStatus;
+import com.uas.api.models.entities.enums.PlatformType;
+import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.RoleRepository;
 import com.uas.api.repositories.auth.UserRepository;
 import com.uas.api.response.JwtResponse;
@@ -22,6 +27,7 @@ import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.AircraftServiceImpl;
+import com.uas.api.services.PartService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
@@ -39,12 +45,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -95,6 +106,15 @@ public class AircraftControllerTest {
     private RoleRepository roleRepository;
 
     @MockBean
+    private PartRepository partRepository;
+
+    @MockBean
+    private PartTypeRepository partTypeRepository;
+
+    @MockBean
+    private RepairRepository repairRepository;
+
+    @MockBean
     private PasswordEncoder passwordEncoder;
 
     @WithMockUser(value = "user")
@@ -111,6 +131,19 @@ public class AircraftControllerTest {
                         .content(json).characterEncoding("utf-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.response").value("Success"));
+    }
+    @Test
+    public void RequestAircraftRepairTotals() throws Exception {
+        List<Integer> results = new ArrayList<>();
+        results.add(6);
+        results.add(0);
+        when(aircraftService.calculateTotalRepairs()).thenReturn(results);
+        MvcResult mvcResult = mockMvc.perform(get("/aircraft/total-repairs")
+        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+
+        String jsonString = mvcResult.getResponse().getContentAsString();
+
+        assertEquals("{\"repairTotals\":[6,0]}", jsonString);
     }
 
     @WithMockUser(value = "user")
