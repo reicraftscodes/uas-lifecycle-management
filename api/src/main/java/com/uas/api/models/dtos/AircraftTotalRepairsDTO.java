@@ -13,6 +13,6 @@ public class AircraftTotalRepairsDTO {
     /**
      * List of cumulative repair totals.
      */
-    List<Integer> repairTotals;
+    private final List<Integer> repairTotals;
 
 }
