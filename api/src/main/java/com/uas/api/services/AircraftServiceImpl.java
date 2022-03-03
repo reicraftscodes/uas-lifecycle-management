@@ -221,6 +221,10 @@ public class AircraftServiceImpl implements AircraftService {
         aircraftRepository.save(aircraft);
     }
 
+    /**
+     * Calculates the total number of repairs.
+     * @return total repairs.
+     */
     public List<Integer> calculateTotalRepairs() {
 
         Integer totalPlatA = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_A).size();

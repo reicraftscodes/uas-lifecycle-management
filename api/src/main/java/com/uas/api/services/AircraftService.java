@@ -24,6 +24,10 @@ public interface AircraftService {
      */
     Optional<Aircraft> findAircraftById(String id);
 
+    /**
+     * Calculates the total number of repairs.
+     * @return the list of repairs?
+     */
     List<Integer> calculateTotalRepairs();
     /**
      * Get all aircraft assigned to a user.

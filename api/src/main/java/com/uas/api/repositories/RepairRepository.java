@@ -22,6 +22,10 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
     @Query(value = "select r.part.partNumber as partNumber, count(r.part.partNumber) as repairCount, sum(r.cost) as totalCost from Repair r group by r.part.partNumber")
     Page<Map<Object, Object>> findPartsWithMostRepairsAndTheirCost(PageRequest pageRequest);
 
-
+    /**
+     * Find all parts by aircraft and platform type?
+     * @param platform
+     * @return the list of repairs?
+     */
     List<Repair> findAllByPart_Aircraft_PlatformType(PlatformType platform);
 }
