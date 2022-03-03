@@ -10,4 +10,6 @@
               files="com[\\/]uas[\\/]api[\\/]models[\\/]entities[\\/]enums"/>
     <suppress checks="MethodName"
               files="com[\\/]uas[\\/]api[\\/]repositories[\\/]PartRepository.java"/>
+    <suppress checks="MethodName"
+              files="com[\\/]uas[\\/]api[\\/]repositories[\\/]AircraftUserRepository.java"/>
 </suppressions>

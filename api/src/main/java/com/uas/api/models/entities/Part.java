@@ -55,7 +55,6 @@ public class Part {
     @Column(name = "FlyTimeHours")
     private Integer flyTimeHours;
 
-
     /**
      *  Constructor for a part.
      * @param partType Type of part.
