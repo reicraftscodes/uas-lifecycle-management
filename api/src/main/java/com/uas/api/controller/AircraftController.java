@@ -77,20 +77,35 @@ public class AircraftController {
 
     @PostMapping("/log-flight")
     public ResponseEntity<?> updateFlightHours(@RequestBody HashMap<String, String> request){
-
         //{
         //    "aircraft":"G-001",
         //    "flyTime":12
         //}
-
-        //get aircraft associated with user
-        System.out.println();
+        String error = null;
         Optional<Aircraft> aircraft = aircraftService.findAircraftById(request.get("aircraft"));
 
-        List<Part> parts = partService.findPartsAssociatedWithAircraft(aircraft.get());
+        if(aircraft.isPresent()){
+            List<Part> parts = partService.findPartsAssociatedWithAircraft(aircraft.get());
+            try {
+                int hoursInput = Integer.parseInt(request.get("flyTime"));
 
-        partService.updatePartFlyTime(parts, 10);
+                if(hoursInput < 0){
+                    error = "Fly time value cannot be negative!";
+                } else {
+                    partService.updatePartFlyTime(parts, hoursInput);
+                }
+            } catch(Exception e){
+                error = "Fly time value isn't integer!";
+            }
+        } else {
+            error = "Aircraft not found!";
+        }
 
-        return ResponseEntity.ok("");
+        if(error==null){
+            return ResponseEntity.ok("");
+        } else {
+            return ResponseEntity.badRequest().body("response: "+error);
+        }
+
     }
 }
