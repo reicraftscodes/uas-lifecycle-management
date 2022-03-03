@@ -150,4 +150,12 @@ public class AircraftServiceImpl implements AircraftService {
         }
         return userAircraftDTOs;
     }
+
+    public void updateAircraftFlyTime(Aircraft aircraft, int flyTime){
+        int oldFlyTime = aircraft.getFlyTimeHours();
+
+        aircraft.setFlyTimeHours(oldFlyTime+flyTime);
+
+        aircraftRepository.save(aircraft);
+    }
 }

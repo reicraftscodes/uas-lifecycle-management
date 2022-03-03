@@ -93,6 +93,8 @@ public class AircraftController {
                     error = "Fly time value cannot be negative!";
                 } else {
                     partService.updatePartFlyTime(parts, hoursInput);
+
+                    aircraftService.updateAircraftFlyTime(aircraft.get(), hoursInput);
                 }
             } catch(Exception e){
                 error = "Fly time value isn't integer!";
