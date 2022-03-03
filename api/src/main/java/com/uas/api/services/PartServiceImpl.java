@@ -263,7 +263,12 @@ public class PartServiceImpl implements PartService {
         return partRepairsDTOs;
     }
 
-    public List<Part> findPartsAssociatedWithAircraft(Aircraft aircraft){
+    /**
+     * The Finds all the parts from the aircraft given.
+     * @param aircraft The aircraft with the parts we are searching for.
+     * @return returns a list of parts.
+     */
+    public List<Part> findPartsAssociatedWithAircraft(final Aircraft aircraft) {
         List<Part> parts;
 
         parts = partRepository.findAllPartsByAircraft(aircraft);
@@ -271,19 +276,24 @@ public class PartServiceImpl implements PartService {
         return parts;
     }
 
-    public void updatePartFlyTime(List<Part> parts, int flyTime) {
-        for(int i=0; i<parts.size(); i++){
+    /**
+     * Updates the fly time for parts.
+     * @param parts The list of parts to update.
+     * @param flyTime The flight time to be added to the parts flight time.
+     */
+    public void updatePartFlyTime(final List<Part> parts, final int flyTime) {
+        for (int i = 0; i < parts.size(); i++) {
             Part part = parts.get(i);
 
             int flyTimeOld;
-            if (parts.get(i).getFlyTimeHours()==null){
-                flyTimeOld=0;
+            //checks that the part flighttime isnt null and if it is sets it to 0
+            if (parts.get(i).getFlyTimeHours() == null) {
+                flyTimeOld = 0;
             } else {
                 flyTimeOld = parts.get(i).getFlyTimeHours();
             }
 
-            part.setFlyTimeHours(flyTime+flyTimeOld);
-
+            part.setFlyTimeHours(flyTime + flyTimeOld);
             partRepository.save(part);
         }
     }

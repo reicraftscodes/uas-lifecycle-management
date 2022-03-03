@@ -151,11 +151,19 @@ public class AircraftServiceImpl implements AircraftService {
         return userAircraftDTOs;
     }
 
-    public void updateAircraftFlyTime(Aircraft aircraft, int flyTime){
+    /**
+     * Used to update the flytime of an aircraft in the database.
+     * @param aircraft The aircraft that the hours are being updated for.
+     * @param flyTime The fly time to be added to the hours field.
+     */
+    public void updateAircraftFlyTime(final Aircraft aircraft, final int flyTime) {
+        //the flytime currently in the database.
         int oldFlyTime = aircraft.getFlyTimeHours();
 
-        aircraft.setFlyTimeHours(oldFlyTime+flyTime);
+        //sets the new flytime to the new hours logged plus the old hours
+        aircraft.setFlyTimeHours(oldFlyTime + flyTime);
 
+        //saves to the db an update aircraft entity
         aircraftRepository.save(aircraft);
     }
 }

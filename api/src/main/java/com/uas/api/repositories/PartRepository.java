@@ -6,7 +6,6 @@ import com.uas.api.models.entities.enums.PartName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +27,11 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
      */
     int countAllByLocation_LocationNameAndPartType_PartName(String location, PartName partName);
 
+    /**
+     *  Finds all parts associated with an aircraft.
+     * @param aircraft The aircraft the parts are being searched for.
+     * @return A list of all part entities.
+     */
     List<Part> findAllPartsByAircraft(Aircraft aircraft);
 
 }

@@ -50,7 +50,17 @@ public interface PartService {
      */
     List<PartRepairsDTO> getMostCommonFailingParts(int topN);
 
+    /**
+     *  Finds all the parts associated with an aircraft.
+     * @param aircraft The aircraft with the parts we are searching for.
+     * @return returns a list of parts associated with that aircraft.
+     */
     List<Part> findPartsAssociatedWithAircraft(Aircraft aircraft);
 
+    /**
+     * Updates a list of parts with the flight time specified.
+     * @param parts The list of parts to update.
+     * @param flyTime The flight time to be added to the parts flight time.
+     */
     void updatePartFlyTime(List<Part> parts, int flyTime);
 }
