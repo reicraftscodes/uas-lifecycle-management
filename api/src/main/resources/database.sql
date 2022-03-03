@@ -22,6 +22,7 @@ CREATE TABLE Aircraft (
     PlatformStatus SET("Design","Production","Operation","Repair") NOT NULL,
     PlatformType SET("Platform_A","Platform_B") NOT NULL,
     FlyingHours INT NOT NULL,
+    HoursOperational int,
     PRIMARY KEY (TailNumber),
     UNIQUE (TailNumber),
     FOREIGN KEY (LocationName) REFERENCES Locations(LocationName)
@@ -209,6 +210,29 @@ INSERT INTO Repairs (PartNumber, cost) VALUES ("2","100");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("3","50");
 INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
 
+CREATE TABLE ROLES(
+    RoleID INT NOT NULL AUTO_INCREMENT,
+    NAME TEXT NOT NULL,
+    PRIMARY KEY(RoleID)
+);
+
+CREATE TABLE USERS(
+    UserID INT NOT NULL AUTO_INCREMENT,
+    USERNAME TEXT NOT NULL,
+    EMAIL TEXT NOT NULL,
+    PASSWORD TEXT NOT NULL,
+    FirstName TEXT,
+    LastName TEXT,
+    ResetPasswordToken TEXT,
+    PRIMARY KEY(UserID)
+);
+
+CREATE TABLE UserRoles(
+    UserID INT,
+    RoleID INT,
+    FOREIGN KEY(UserID) REFERENCES USERS(UserID),
+    FOREIGN KEY(RoleID) REFERENCES ROLES(RoleID)
+);
 
 #USER roles
 INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");

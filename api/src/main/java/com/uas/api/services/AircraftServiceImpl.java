@@ -1,6 +1,8 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
+import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.Location;
@@ -43,6 +45,10 @@ public class AircraftServiceImpl implements AircraftService {
      * Used to output logs of what the program is doing to the console.
      */
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
+    /**
+     * The error message?
+     */
+    private String errorMessage = null;
 
     /**
      * The constructor.
@@ -139,6 +145,42 @@ public class AircraftServiceImpl implements AircraftService {
     public Optional<Aircraft> findAircraftById(final String id) {
 
         return (aircraftRepository.findById(id));
+
+    }
+
+    /**
+     * For each aircraft saved in the DB, get the hours operational and add it to the list.
+     * @return returns a list of hours operational for each platform.
+     */
+    @Override
+    public List<Integer> getHoursOperational() {
+        List<Integer> hoursOperationalList = new ArrayList<>();
+        List<Aircraft> aircraftList = aircraftRepository.findAll();
+        for (Aircraft aircraft: aircraftList
+             ) {
+            hoursOperationalList.add(aircraft.getHoursOperational());
+        }
+        return hoursOperationalList;
+    }
+
+    /**
+     * Updates the number of hours an aircraft has been operational.
+     * @param aircraftAddHoursOperationalDTO aircraft and the hours.
+     * @return the updated hours.
+     */
+    @Override
+    public AircraftHoursOperationalDTO updateHoursOperational(final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
+        Aircraft aircraft = aircraftRepository.findById(aircraftAddHoursOperationalDTO.getTailNumber()).get();
+        Integer hoursToAdd = aircraftAddHoursOperationalDTO.getHoursToAdd();
+        List<Integer> hoursOperational = new ArrayList<>();
+        if (aircraft.getHoursOperational() != null) {
+            hoursToAdd += aircraft.getHoursOperational();
+
+        }
+        hoursOperational.add(hoursToAdd);
+        aircraft.setHoursOperational(hoursToAdd);
+        aircraftRepository.save(aircraft);
+        return new AircraftHoursOperationalDTO(hoursOperational);
 
     }
 

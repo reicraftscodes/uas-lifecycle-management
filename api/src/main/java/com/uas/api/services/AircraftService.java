@@ -1,6 +1,8 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
+import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
 
 import java.util.HashMap;
@@ -36,4 +38,17 @@ public interface AircraftService {
      * @param flyTime The hours to be added to the flight time.
      */
     void updateAircraftFlyTime(Aircraft aircraft, int flyTime);
+    /**
+     * Gets the number of hours operational as a list.
+     * @return the list.
+     */
+    List<Integer> getHoursOperational();
+
+    /**
+     * Updates the number of operational hours.
+     * @param aircraftAddHoursOperationalDTO the aircraft and the hours.
+     * @return the number of hours total.
+     */
+    AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
+
 }

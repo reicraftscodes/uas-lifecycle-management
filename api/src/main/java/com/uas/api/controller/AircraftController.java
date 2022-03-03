@@ -8,6 +8,9 @@ import com.uas.api.models.entities.Part;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
+import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
+import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
+import com.uas.api.services.AircraftServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")
@@ -140,4 +144,27 @@ public class AircraftController {
 
         return ResponseEntity.ok(aircraftTotalRepairsDTO);
     }
+    /**
+     * Gets the cumulative total repairs for each platform.
+     * @return list of integers which represent the number of repairs done to each platform.
+     */
+    @GetMapping("/time-operational")
+    public ResponseEntity<AircraftHoursOperationalDTO> getHoursOperational() {
+        List<Integer> hoursOperational = aircraftService.getHoursOperational();
+        AircraftHoursOperationalDTO aircraftTotalRepairsDTO = new AircraftHoursOperationalDTO(hoursOperational);
+
+        return ResponseEntity.ok(aircraftTotalRepairsDTO);
+    }
+
+    /**
+     * Updates the hours operational of an aircraft.
+     * @param aircraftAddHoursOperationalDTO request body.
+     * @return response entity indicating success/failure.
+     */
+    @PostMapping("/time-operational")
+    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
+        AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
+        return ResponseEntity.ok(aircraft);
+    }
+
 }

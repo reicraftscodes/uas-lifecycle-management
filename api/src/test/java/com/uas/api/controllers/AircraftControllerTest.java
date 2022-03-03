@@ -2,11 +2,14 @@ package com.uas.api.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.uas.api.controller.AircraftController;
 import com.uas.api.models.auth.ERole;
 import com.uas.api.models.auth.Role;
 import com.uas.api.models.auth.User;
+import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
+import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.dtos.LogFlightDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.entities.Aircraft;
@@ -44,7 +47,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -60,6 +65,8 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -227,5 +234,38 @@ public class AircraftControllerTest {
                 .andExpect(content().string("response: Fly time value cannot be negative!"));
     }
 
+
+    //This test needs looking at for the return.
+    @WithMockUser(value = "user")
+    @Test
+    public void UpdateAircraftOperatingHours() throws Exception {
+        Location location = new Location();
+        location.setLocationName("London");
+        locationRepository.save(location);
+
+        String json = "{\"tailNumber\":\"G-999\",\"location\":\"London\",\"platformStatus\":\"DESIGN\",\"platformType\":\"Platform_A\", \"hoursToAdd\":\"1\"}";
+
+        mockMvc.perform(post("/aircraft/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json).characterEncoding("utf-8"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.response").value("Success"));
+
+        List<Integer> serviceResponse = new ArrayList<>();
+        serviceResponse.add(11);
+        AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO = new AircraftAddHoursOperationalDTO("G-999", 10);
+        AircraftHoursOperationalDTO result = new AircraftHoursOperationalDTO(serviceResponse);
+        when(aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO)).thenReturn(result);
+        String json1 = objectMapper.writeValueAsString(aircraftAddHoursOperationalDTO);
+        MvcResult mockMvcResult = mockMvc.perform(post("/aircraft/time-operational")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json1))
+                        .andExpect(status().isOk()).andReturn();
+
+        String response = mockMvcResult.getResponse().getContentAsString();
+
+        assertEquals("", response);
+    }
 
 }
