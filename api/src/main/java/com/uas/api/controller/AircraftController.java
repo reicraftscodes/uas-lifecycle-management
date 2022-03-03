@@ -2,16 +2,11 @@ package com.uas.api.controller;
 
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.AircraftServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,7 +51,7 @@ public class AircraftController {
      * @return list of integers which represent the number of repairs done to each platform.
      */
     @GetMapping("/time-operational")
-    public ResponseEntity <AircraftHoursOperationalDTO> getHoursOperational() {
+    public ResponseEntity<AircraftHoursOperationalDTO> getHoursOperational() {
         List<Integer> hoursOperational = aircraftService.getHoursOperational();
         AircraftHoursOperationalDTO aircraftTotalRepairsDTO = new AircraftHoursOperationalDTO(hoursOperational);
 
@@ -65,6 +60,7 @@ public class AircraftController {
 
     /**
      * Updates the hours operational of an aircraft.
+     * @param aircraftAddHoursOperationalDTO request body.
      * @return response entity indicating success/failure.
      */
     @PostMapping("/time-operational")

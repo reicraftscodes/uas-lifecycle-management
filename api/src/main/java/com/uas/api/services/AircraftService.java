@@ -23,8 +23,17 @@ public interface AircraftService {
      */
     Optional<Aircraft> findAircraftById(String id);
 
+    /**
+     * Gets the number of hours operational as a list.
+     * @return the list.
+     */
     List<Integer> getHoursOperational();
 
+    /**
+     * Updates the number of operational hours.
+     * @param aircraftAddHoursOperationalDTO the aircraft and the hours.
+     * @return the number of hours total.
+     */
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
 
 }

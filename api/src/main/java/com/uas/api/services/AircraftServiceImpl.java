@@ -32,6 +32,10 @@ public class AircraftServiceImpl implements AircraftService {
      * Used to output logs of what the program is doing to the console.
      */
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
+    /**
+     * The error message?
+     */
+    private String errorMessage = null;
 
     /**
      * The constructor.
@@ -43,8 +47,6 @@ public class AircraftServiceImpl implements AircraftService {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
     }
-
-    String errorMessage = null;
 
     /**
      * Used to save an aircraft to the database.
@@ -137,8 +139,13 @@ public class AircraftServiceImpl implements AircraftService {
         return hoursOperationalList;
     }
 
+    /**
+     * Updates the number of hours an aircraft has been operational.
+     * @param aircraftAddHoursOperationalDTO aircraft and the hours.
+     * @return the updated hours.
+     */
     @Override
-    public AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
+    public AircraftHoursOperationalDTO updateHoursOperational(final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
         Aircraft aircraft = aircraftRepository.findById(aircraftAddHoursOperationalDTO.getTailNumber()).get();
         Integer hoursToAdd = aircraftAddHoursOperationalDTO.getHoursToAdd();
         List<Integer> hoursOperational = new ArrayList<>();
