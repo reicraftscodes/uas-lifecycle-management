@@ -31,10 +31,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -102,7 +105,10 @@ public class AircraftControllerTest {
     }
     @Test
     public void RequestAircraftRepairTotals() throws Exception {
-
+        List<Integer> results = new ArrayList<>();
+        results.add(6);
+        results.add(0);
+        when(aircraftService.calculateTotalRepairs()).thenReturn(results);
         MvcResult mvcResult = mockMvc.perform(get("/aircraft/total-repairs")
         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
 
