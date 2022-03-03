@@ -51,4 +51,6 @@ public interface PartService {
     List<PartRepairsDTO> getMostCommonFailingParts(int topN);
 
     List<Part> findPartsAssociatedWithAircraft(Aircraft aircraft);
+
+    void updatePartFlyTime(List<Part> parts, int flyTime);
 }

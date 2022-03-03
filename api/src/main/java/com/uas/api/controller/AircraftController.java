@@ -89,9 +89,7 @@ public class AircraftController {
 
         List<Part> parts = partService.findPartsAssociatedWithAircraft(aircraft.get());
 
-        for(int i=0; i<parts.size(); i++){
-            System.out.println(parts.get(i));
-        }
+        partService.updatePartFlyTime(parts, 10);
 
         return ResponseEntity.ok("");
     }

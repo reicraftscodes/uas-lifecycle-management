@@ -271,7 +271,24 @@ public class PartServiceImpl implements PartService {
         return parts;
     }
 
-    
+    public void updatePartFlyTime(List<Part> parts, int flyTime) {
+        for(int i=0; i<parts.size(); i++){
+            Part part = parts.get(i);
+
+            int flyTimeOld;
+            if (parts.get(i).getFlyTimeHours()==null){
+                flyTimeOld=0;
+            } else {
+                flyTimeOld = parts.get(i).getFlyTimeHours();
+            }
+
+            part.setFlyTimeHours(flyTime+flyTimeOld);
+
+            partRepository.save(part);
+        }
+    }
+
+
 
 
 }
