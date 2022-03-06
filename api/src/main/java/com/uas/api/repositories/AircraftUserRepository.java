@@ -19,5 +19,6 @@ public interface AircraftUserRepository extends JpaRepository<AircraftUser, Airc
      */
     List<AircraftUser> findAllByUser_Id(long userId);
 
-    Aircraft findAircraftUserByAircraft_TailNumber(String tailNumber);
+    AircraftUser findAircraftUsersByAircraft_TailNumber(String tailNumber);
+
 }

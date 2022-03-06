@@ -15,7 +15,7 @@ public class PlatformStatusDTO {
     /**
      * The hours operational.
      */
-    private final Integer hoursOperational;
+    private final Integer flyTimeHours;
     /**
      * The Aircraft status.
      */
@@ -25,13 +25,13 @@ public class PlatformStatusDTO {
      */
     private PlatformAvailability platformAvailability;
     /**
-     * The total cost of the Aircraft.
+     * The cost of the Aircraft.
      */
     private Integer totalCost;
 
-    public PlatformStatusDTO(String tailNumber, Integer hoursOperational, PlatformStatus platformStatus) {
+    public PlatformStatusDTO(String tailNumber, Integer flyTimeHours, PlatformStatus platformStatus) {
         this.tailNumber = tailNumber;
-        this.hoursOperational = hoursOperational;
+        this.flyTimeHours = flyTimeHours;
         this.platformStatus = platformStatus;
     }
 }
