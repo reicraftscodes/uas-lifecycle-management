@@ -3,6 +3,7 @@ package com.uas.api.controller;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Part;
+import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
@@ -159,6 +160,12 @@ public class AircraftController {
     public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
         AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
         return ResponseEntity.ok(aircraft);
+    }
+
+    @GetMapping("/platform-status")
+    public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWeb() {
+        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
+        return ResponseEntity.ok(platformStatusDTOList);
     }
 
 }

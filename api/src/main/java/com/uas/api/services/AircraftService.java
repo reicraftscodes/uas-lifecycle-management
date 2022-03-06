@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.PlatformStatusDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
@@ -55,4 +56,5 @@ public interface AircraftService {
      */
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
 
+    List<PlatformStatusDTO> getPlatformStatus();
 }
