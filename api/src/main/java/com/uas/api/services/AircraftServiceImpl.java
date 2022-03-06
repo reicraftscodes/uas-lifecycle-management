@@ -7,6 +7,7 @@ import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.enums.PlatformAvailability;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
@@ -187,7 +188,28 @@ public class AircraftServiceImpl implements AircraftService {
 
     @Override
     public List<PlatformStatusDTO> getPlatformStatus() {
-        return null;
+        List<Aircraft> aircraftList = aircraftRepository.findAll();
+        List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
+        //Until total repairs method is implemented use dummy data of 12.
+        Integer totalCost = 12;
+
+        for (Aircraft aircraft: aircraftList
+             ) {
+            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getHoursOperational(), aircraft.getPlatformStatus(), getAircraftAvailability(aircraft), totalCost);
+            platformStatusDTOList.add(platformStatusDTO);
+        }
+
+        return platformStatusDTOList;
+    }
+
+    @Override
+    public PlatformAvailability getAircraftAvailability(Aircraft aircraft) {
+        try {
+            aircraftUserRepository.findAircraftUserByAircraft_TailNumber(aircraft.getTailNumber());
+            return PlatformAvailability.ASSIGNED;
+        } catch (Exception e) {
+            return PlatformAvailability.UNASSIGNED;
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.enums.PlatformAvailability;
 
 import java.util.HashMap;
 import java.util.List;
@@ -57,4 +58,6 @@ public interface AircraftService {
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
 
     List<PlatformStatusDTO> getPlatformStatus();
+
+    PlatformAvailability getAircraftAvailability(Aircraft aircraft);
 }

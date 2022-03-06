@@ -1,5 +1,6 @@
 package com.uas.api.repositories;
 
+import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.AircraftUserKey;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,9 @@ public interface AircraftUserRepository extends JpaRepository<AircraftUser, Airc
      * Retrieve all aircraft assigned to a user.
      * @param userId the id of the user.
      * @return a listr of AircraftUser.
+     *
      */
     List<AircraftUser> findAllByUser_Id(long userId);
+
+    Aircraft findAircraftUserByAircraft_TailNumber(String tailNumber);
 }
