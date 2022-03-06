@@ -237,4 +237,9 @@ public class AircraftServiceImpl implements AircraftService {
         return totalRepairs;
     }
 
+    public List<Aircraft> getAllAircraft(){
+
+        return aircraftRepository.findAll();
+    }
+
 }

@@ -55,4 +55,6 @@ public interface AircraftService {
      */
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
 
+    List<Aircraft> getAllAircraft();
+
 }

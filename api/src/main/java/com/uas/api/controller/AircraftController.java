@@ -161,4 +161,16 @@ public class AircraftController {
         return ResponseEntity.ok(aircraft);
     }
 
+    @GetMapping("/overall-cost")
+    public ResponseEntity<?> getOverallRunningCost(){
+
+        List<Aircraft> aircrafts = aircraftService.getAllAircraft();
+
+        for(Aircraft aircraft : aircrafts){
+            System.out.println(aircraft);
+        }
+
+        return ResponseEntity.ok("");
+    }
+
 }
