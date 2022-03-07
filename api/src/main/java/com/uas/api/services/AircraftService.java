@@ -56,8 +56,14 @@ public interface AircraftService {
      * @return the number of hours total.
      */
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
-
+    /**
+     * Gets a list of platform status dto objects, with useful data.
+     * @return the dto list.
+     */
     List<PlatformStatusDTO> getPlatformStatus();
-
+    /**
+     * Checks whether an aircraft has an assigned user.
+     * @return the availability of the platform using the PlatformAvailability enumerator.
+     */
     PlatformAvailability getAircraftAvailability(Aircraft aircraft);
 }

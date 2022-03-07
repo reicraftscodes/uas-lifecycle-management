@@ -185,7 +185,10 @@ public class AircraftServiceImpl implements AircraftService {
         return new AircraftHoursOperationalDTO(hoursOperational);
 
     }
-
+    /**
+     * Gets a list of platform status dto objects, which display an overall platform status of the aircraft.
+     * @return the list of platform status dto objects.
+     */
     @Override
     public List<PlatformStatusDTO> getPlatformStatus() {
         List<Aircraft> aircraftList = aircraftRepository.findAll();
@@ -209,7 +212,7 @@ public class AircraftServiceImpl implements AircraftService {
     @Override
     public PlatformAvailability getAircraftAvailability(Aircraft aircraft) {
         try {
-            Optional<AircraftUser> aircraftUser = Optional.ofNullable(aircraftUserRepository.findAircraftUsersByAircraft_TailNumber(aircraft.getTailNumber()));
+            Optional<AircraftUser> aircraftUser = Optional.ofNullable(aircraftUserRepository.findAircraftUsersByAircraft_TailNumber(aircraft.getTailNumber()).get(0));
             if (aircraftUser.get().getAircraft().getTailNumber().equals(aircraft.getTailNumber())) {
                 return PlatformAvailability.ASSIGNED;
             } else {
