@@ -6,6 +6,7 @@ import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.Repair;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
@@ -240,6 +241,18 @@ public class AircraftServiceImpl implements AircraftService {
     public List<Aircraft> getAllAircraft(){
 
         return aircraftRepository.findAll();
+    }
+
+    public double getAllAircraftTotalRepairCost(){
+        double totalRepairCost = 0;
+
+        List<Repair> repairs = repairRepository.findAll();
+
+        for(Repair repair : repairs){
+            totalRepairCost += repair.getCost().doubleValue();
+        }
+
+        return totalRepairCost;
     }
 
 }

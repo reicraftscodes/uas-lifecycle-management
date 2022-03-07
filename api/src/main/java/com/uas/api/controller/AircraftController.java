@@ -166,9 +166,7 @@ public class AircraftController {
 
         List<Aircraft> aircrafts = aircraftService.getAllAircraft();
 
-        for(Aircraft aircraft : aircrafts){
-            System.out.println(aircraft);
-        }
+        System.out.println(aircraftService.getAllAircraftTotalRepairCost());
 
         return ResponseEntity.ok("");
     }

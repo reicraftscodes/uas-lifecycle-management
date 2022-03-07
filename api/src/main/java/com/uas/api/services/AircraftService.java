@@ -57,4 +57,6 @@ public interface AircraftService {
 
     List<Aircraft> getAllAircraft();
 
+    double getAllAircraftTotalRepairCost();
+
 }
