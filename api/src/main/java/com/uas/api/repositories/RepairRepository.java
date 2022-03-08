@@ -1,5 +1,6 @@
 package com.uas.api.repositories;
 
+import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.Repair;
 import com.uas.api.models.entities.enums.PlatformType;
 import org.springframework.data.domain.Page;
@@ -28,4 +29,6 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      * @return the list of repairs?
      */
     List<Repair> findAllByPart_Aircraft_PlatformType(PlatformType platform);
+
+    List<Repair> findAllByPart(Part part);
 }

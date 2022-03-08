@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.CEOAircraftDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
 import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
@@ -58,5 +59,13 @@ public interface AircraftService {
     List<Aircraft> getAllAircraft();
 
     double getAllAircraftTotalRepairCost();
+
+    double getAllTotalAircraftPartCost();
+
+    double getTotalPartCostForSpecificAircraft(Aircraft aircraft);
+
+    double getTotalRepairCostForSpecificAircraft(Aircraft aircraft);
+
+    List<CEOAircraftDTO> getAircraftForCEOReturn();
 
 }

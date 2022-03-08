@@ -163,12 +163,17 @@ public class AircraftController {
 
     @GetMapping("/overall-cost")
     public ResponseEntity<?> getOverallRunningCost(){
+        double spentOnParts = aircraftService.getAllTotalAircraftPartCost();
+        double spentOnRepairs = aircraftService.getAllAircraftTotalRepairCost();
 
-        List<Aircraft> aircrafts = aircraftService.getAllAircraft();
+        CEOAircraftCostsDTO ceoAircraftCostsDTO = new CEOAircraftCostsDTO();
+        ceoAircraftCostsDTO.setAircraft(aircraftService.getAircraftForCEOReturn());
+        ceoAircraftCostsDTO.setTotalSpent(spentOnParts+spentOnRepairs);
+        ceoAircraftCostsDTO.setTotalSpentOnParts(spentOnParts);
+        ceoAircraftCostsDTO.setTotalSpentOnRepairs(spentOnRepairs);
 
-        System.out.println(aircraftService.getAllAircraftTotalRepairCost());
 
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(ceoAircraftCostsDTO);
     }
 
 }
