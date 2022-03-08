@@ -3,6 +3,7 @@ package com.uas.api.repositories;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -33,5 +34,7 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
      * @return A list of all part entities.
      */
     List<Part> findAllPartsByAircraft(Aircraft aircraft);
+
+    List<Part> findAllByPartStatus(PartStatus partStatus);
 
 }

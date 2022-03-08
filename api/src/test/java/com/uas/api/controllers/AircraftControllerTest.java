@@ -161,6 +161,8 @@ public class AircraftControllerTest {
         assertEquals("{\"repairTotalForAircraft\":0}", jsonString1);
     }
 
+   
+
     @WithMockUser(value = "user")
     @Test
     public void whenGetAllUserAircraft_Return2Aircraft() throws Exception {
