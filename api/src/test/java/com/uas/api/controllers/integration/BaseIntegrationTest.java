@@ -72,8 +72,8 @@ public abstract class BaseIntegrationTest {
                 "    \"password\": \"" + CORRECT_PASSWORD + "\"\n" +
                 "}";
         MvcResult mvcResult = mockMvc.perform(post("/api/auth/signin")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginRequestAsJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequestAsJson))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -83,14 +83,39 @@ public abstract class BaseIntegrationTest {
     }
 
     private User createUserAccount() {
-        Role logisticRole = new Role();
-        logisticRole.setName(ERole.ROLE_USER_LOGISTIC);
+        Role role = new Role();
+        role.setName(ERole.ROLE_USER_LOGISTIC);
+        role.setName(ERole.ROLE_USER);
+        role.setName(ERole.ROLE_USER_CTO);
+        role.setName(ERole.ROLE_USER_CEO);
+        role.setName(ERole.ROLE_USER_COO);
 
         Set<Role> roles = new HashSet<>();
         Role userLogisticOfficerRoleDb = roleRepository.
                 findRoleByRoleName(ERole.ROLE_USER_LOGISTIC)
-                .orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
+                .orElseThrow(() -> new RuntimeException("Error: User Role is not found."));
         roles.add(userLogisticOfficerRoleDb);
+
+        Role userRoleDb = roleRepository.
+                findRoleByRoleName(ERole.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
+        roles.add(userRoleDb);
+
+        Role ctoRoleDb = roleRepository.
+                findRoleByRoleName(ERole.ROLE_USER_LOGISTIC)
+                .orElseThrow(() -> new RuntimeException("Error: Cto Role is not found."));
+        roles.add(ctoRoleDb);
+
+        Role ceoRoleDb = roleRepository.
+                findRoleByRoleName(ERole.ROLE_USER_LOGISTIC)
+                .orElseThrow(() -> new RuntimeException("Error: Ceo Role is not found."));
+        roles.add(ceoRoleDb);
+
+        Role cooRoleDb = roleRepository.
+                findRoleByRoleName(ERole.ROLE_USER_LOGISTIC)
+                .orElseThrow(() -> new RuntimeException("Error: Coo Role is not found."));
+        roles.add(cooRoleDb);
+
 
         User user = new User(EMAIL, EMAIL,
                 passwordEncoder.encode(CORRECT_PASSWORD),
