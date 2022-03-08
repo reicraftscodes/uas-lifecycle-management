@@ -1,5 +1,6 @@
-package com.uas.api.controllers.integration;
+package com.uas.api.controllers;
 
+import com.uas.api.controllers.integration.BaseIntegrationTest;
 import com.uas.api.repositories.auth.RoleRepository;
 import com.uas.api.repositories.auth.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -7,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -19,7 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("dev")
 @AutoConfigureMockMvc
-@Transactional
 class SignupControllerIT extends BaseIntegrationTest {
 
     private static final String EMAIL = "maytests@gmail.com";
@@ -28,10 +28,10 @@ class SignupControllerIT extends BaseIntegrationTest {
     private static final String INCORRECT_CONFIRM_PASSWORD = "incorrectpassword";
 
 //    @Autowired
-//    private UserRepository userRepository;
-//
+    private UserRepository userRepository;
+
 //    @Autowired
-//    private RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,6 +47,8 @@ class SignupControllerIT extends BaseIntegrationTest {
 
     @AfterEach
     void tearDown() {
+        userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
 //    @Test
@@ -60,8 +62,8 @@ class SignupControllerIT extends BaseIntegrationTest {
                 "}";
 
         mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(signupRequestAsJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(signupRequestAsJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Email already exist! Please use another email."))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
@@ -79,8 +81,8 @@ class SignupControllerIT extends BaseIntegrationTest {
                 "}";
 
         mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(signupRequestAsJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(signupRequestAsJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("User registered successfully!"));
     }
@@ -96,11 +98,12 @@ class SignupControllerIT extends BaseIntegrationTest {
                 "}";
 
         mockMvc.perform(post("/api/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(signupRequestAsJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(signupRequestAsJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("Please retype your password!"))
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"));
     }
 
 }
+

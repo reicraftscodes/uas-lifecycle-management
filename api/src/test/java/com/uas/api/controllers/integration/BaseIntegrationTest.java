@@ -43,13 +43,13 @@ public abstract class BaseIntegrationTest {
 
     protected String token;
 
-    @MockBean
+//    @Autowired
     private UserRepository userRepository;
 
-    @MockBean
+//    @Autowired
     private RoleRepository roleRepository;
 
-    @MockBean
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     protected abstract void afterEach();
@@ -83,6 +83,9 @@ public abstract class BaseIntegrationTest {
     }
 
     private User createUserAccount() {
+        Role logisticRole = new Role();
+        logisticRole.setName(ERole.ROLE_USER_LOGISTIC);
+
         Set<Role> roles = new HashSet<>();
         Role userLogisticOfficerRoleDb = roleRepository.
                 findRoleByRoleName(ERole.ROLE_USER_LOGISTIC)
