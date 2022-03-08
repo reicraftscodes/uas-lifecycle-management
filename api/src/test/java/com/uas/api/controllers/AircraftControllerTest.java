@@ -144,13 +144,21 @@ public class AircraftControllerTest {
         List<Integer> results = new ArrayList<>();
         results.add(6);
         results.add(0);
-        when(aircraftService.calculateTotalRepairs()).thenReturn(results);
-        MvcResult mvcResult = mockMvc.perform(get("/aircraft/total-repairs")
+        when(aircraftService.calculateTotalRepairs("G-001")).thenReturn(results.get(0));
+        MvcResult mvcResult = mockMvc.perform(get("/aircraft/total-repairs/G-001")
         .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
 
         String jsonString = mvcResult.getResponse().getContentAsString();
 
-        assertEquals("{\"repairTotals\":[6,0]}", jsonString);
+        assertEquals("{\"repairTotalForAircraft\":6}", jsonString);
+
+        when(aircraftService.calculateTotalRepairs("G-002")).thenReturn(results.get(1));
+        MvcResult mvcResult1 = mockMvc.perform(get("/aircraft/total-repairs/G-002")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+
+        String jsonString1 = mvcResult1.getResponse().getContentAsString();
+
+        assertEquals("{\"repairTotalForAircraft\":0}", jsonString1);
     }
 
     @WithMockUser(value = "user")
