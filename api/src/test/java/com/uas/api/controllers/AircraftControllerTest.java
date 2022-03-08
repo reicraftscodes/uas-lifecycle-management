@@ -161,7 +161,18 @@ public class AircraftControllerTest {
         assertEquals("{\"repairTotalForAircraft\":0}", jsonString1);
     }
 
-   
+    @Test
+    public void RequestAircraftNeedingRepair() throws Exception {
+
+        when(aircraftService.getNumberOfAircraftWithPartsNeedingRepair()).thenReturn(4);
+        MvcResult mvcResult = mockMvc.perform(get("/aircraft/needing-repair")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+
+        String jsonString = mvcResult.getResponse().getContentAsString();
+
+        assertEquals("{\"aircraftNeedingRepair\":4}", jsonString);
+
+    }
 
     @WithMockUser(value = "user")
     @Test
