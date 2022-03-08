@@ -225,16 +225,18 @@ public class AircraftServiceImpl implements AircraftService {
      * Calculates the total number of repairs.
      * @return total repairs.
      */
-    public List<Integer> calculateTotalRepairs() {
+    public Integer calculateTotalRepairs(final String tailNumber) {
 
-        Integer totalPlatA = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_A).size();
-        Integer totalPlatB = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_B).size();
-
-        List<Integer> totalRepairs = new ArrayList<>();
-        totalRepairs.add(totalPlatA);
-        totalRepairs.add(totalPlatB);
+        Integer totalRepairs = repairRepository.findAllByPart_Aircraft_TailNumber(tailNumber).size();
 
         return totalRepairs;
+    }
+
+    @Override
+    public Integer getNumberOfAircraftWithPartsNeedingRepair() {
+
+        return null;
+
     }
 
 }

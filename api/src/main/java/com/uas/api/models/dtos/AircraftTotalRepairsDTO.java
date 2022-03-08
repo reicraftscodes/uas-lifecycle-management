@@ -11,8 +11,8 @@ import java.util.List;
 public class AircraftTotalRepairsDTO {
 
     /**
-     * List of cumulative repair totals.
+     * Cumulative repair total for an aircraft.
      */
-    private final List<Integer> repairTotals;
+    private final Integer repairTotalForAircraft;
 
 }

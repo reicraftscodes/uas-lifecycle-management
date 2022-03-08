@@ -25,10 +25,10 @@ public interface AircraftService {
     Optional<Aircraft> findAircraftById(String id);
 
     /**
-     * Calculates the total number of repairs.
-     * @return the list of repairs?
+     * Calculates the total number of repairs for an aircraft.
+     * @return the number of repairs for a specific aircraft.
      */
-    List<Integer> calculateTotalRepairs();
+    Integer calculateTotalRepairs(String tailNumber);
     /**
      * Get all aircraft assigned to a user.
      * @param userID the id of the user.
@@ -55,4 +55,5 @@ public interface AircraftService {
      */
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
 
+    Integer getNumberOfAircraftWithPartsNeedingRepair();
 }

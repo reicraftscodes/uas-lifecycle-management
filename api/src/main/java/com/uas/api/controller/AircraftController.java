@@ -131,12 +131,18 @@ public class AircraftController {
      * Gets a the cumulative total repairs for each platform.
      * @return list of integers which represent the number of repairs done to each platform.
      */
-    @GetMapping("/total-repairs")
-    public ResponseEntity<AircraftTotalRepairsDTO> getTotalRepairs() {
-        List<Integer> aircraftRepairsList = aircraftService.calculateTotalRepairs();
-        AircraftTotalRepairsDTO aircraftTotalRepairsDTO = new AircraftTotalRepairsDTO(aircraftRepairsList);
+    @GetMapping("/total-repairs/{tailNumber}")
+    public ResponseEntity<AircraftTotalRepairsDTO> getTotalRepairs(@PathVariable final String tailNumber) {
+        Integer aircraftRepairsCount = aircraftService.calculateTotalRepairs(tailNumber);
+        AircraftTotalRepairsDTO aircraftTotalRepairsDTO = new AircraftTotalRepairsDTO(aircraftRepairsCount);
 
         return ResponseEntity.ok(aircraftTotalRepairsDTO);
+    }
+
+    @GetMapping("/needing-repair")
+    public Integer getNumberOfAircraftWithPartsNeedingRepair() {
+        Integer aircraftNeedingRepair = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
+        return aircraftNeedingRepair;
     }
     /**
      * Gets the cumulative total repairs for each platform.
