@@ -19,7 +19,7 @@ public enum ERole {
      */
     ROLE_USER,
     /**
-     * COO
+     * COO.
      */
     ROLE_USER_COO
 }
