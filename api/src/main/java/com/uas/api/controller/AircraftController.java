@@ -138,11 +138,15 @@ public class AircraftController {
 
         return ResponseEntity.ok(aircraftTotalRepairsDTO);
     }
-
+    /**
+     * Gets the number of aircraft that need repairing.
+     * @return a DTO representing the number of aircraft with at least one part with the status of 'Awaiting Repair'.
+     */
     @GetMapping("/needing-repair")
-    public Integer getNumberOfAircraftWithPartsNeedingRepair() {
+    public ResponseEntity<AircraftNeedingRepairsDTO> getNumberOfAircraftWithPartsNeedingRepair() {
         Integer aircraftNeedingRepair = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
-        return aircraftNeedingRepair;
+        AircraftNeedingRepairsDTO aircraftNeedingRepairsDTO = new AircraftNeedingRepairsDTO(aircraftNeedingRepair);
+        return ResponseEntity.ok(aircraftNeedingRepairsDTO);
     }
     /**
      * Gets the cumulative total repairs for each platform.
