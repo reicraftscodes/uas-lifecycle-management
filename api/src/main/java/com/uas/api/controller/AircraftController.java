@@ -131,12 +131,22 @@ public class AircraftController {
      * Gets a the cumulative total repairs for each platform.
      * @return list of integers which represent the number of repairs done to each platform.
      */
-    @GetMapping("/total-repairs")
-    public ResponseEntity<AircraftTotalRepairsDTO> getTotalRepairs() {
-        List<Integer> aircraftRepairsList = aircraftService.calculateTotalRepairs();
-        AircraftTotalRepairsDTO aircraftTotalRepairsDTO = new AircraftTotalRepairsDTO(aircraftRepairsList);
+    @GetMapping("/total-repairs/{tailNumber}")
+    public ResponseEntity<AircraftTotalRepairsDTO> getTotalRepairs(@PathVariable final String tailNumber) {
+        Integer aircraftRepairsCount = aircraftService.calculateTotalRepairs(tailNumber);
+        AircraftTotalRepairsDTO aircraftTotalRepairsDTO = new AircraftTotalRepairsDTO(aircraftRepairsCount);
 
         return ResponseEntity.ok(aircraftTotalRepairsDTO);
+    }
+    /**
+     * Gets the number of aircraft that need repairing.
+     * @return a DTO representing the number of aircraft with at least one part with the status of 'Awaiting Repair'.
+     */
+    @GetMapping("/needing-repair")
+    public ResponseEntity<AircraftNeedingRepairsDTO> getNumberOfAircraftWithPartsNeedingRepair() {
+        Integer aircraftNeedingRepair = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
+        AircraftNeedingRepairsDTO aircraftNeedingRepairsDTO = new AircraftNeedingRepairsDTO(aircraftNeedingRepair);
+        return ResponseEntity.ok(aircraftNeedingRepairsDTO);
     }
     /**
      * Gets the cumulative total repairs for each platform.
