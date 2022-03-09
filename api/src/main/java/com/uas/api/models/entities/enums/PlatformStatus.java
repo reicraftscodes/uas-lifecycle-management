@@ -3,7 +3,7 @@ package com.uas.api.models.entities.enums;
 public enum PlatformStatus {
     DESIGN("Design"),
     PRODUCTION("Production"),
-    OPERATION("Operation"),
+    OPERATION("Operational"),
     REPAIR("Repair");
 
     private final String label;
