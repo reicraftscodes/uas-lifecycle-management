@@ -3,8 +3,6 @@ package com.uas.api.controller;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Part;
-import com.uas.api.models.entities.enums.PlatformAvailability;
-import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -163,7 +160,10 @@ public class AircraftController {
         AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
         return ResponseEntity.ok(aircraft);
     }
-
+    /**
+     * Gets the status of the platforms for the web.
+     * @return response entity of the platformStatusDTO list containing DTO's which display platform status data.
+     */
     @GetMapping("/platform-status")
     public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWeb() {
 

@@ -29,9 +29,4 @@ public class PlatformStatusDTO {
      */
     private Integer totalCost;
 
-    public PlatformStatusDTO(String tailNumber, Integer flyTimeHours, PlatformStatus platformStatus) {
-        this.tailNumber = tailNumber;
-        this.flyTimeHours = flyTimeHours;
-        this.platformStatus = platformStatus;
-    }
 }

@@ -63,6 +63,7 @@ public interface AircraftService {
     List<PlatformStatusDTO> getPlatformStatus();
     /**
      * Checks whether an aircraft has an assigned user.
+     * @param aircraft Aircraft to get the availability of.
      * @return the availability of the platform using the PlatformAvailability enumerator.
      */
     PlatformAvailability getAircraftAvailability(Aircraft aircraft);

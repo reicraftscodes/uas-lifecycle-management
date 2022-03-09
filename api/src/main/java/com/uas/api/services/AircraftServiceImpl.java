@@ -36,10 +36,6 @@ public class AircraftServiceImpl implements AircraftService {
      */
     private final AircraftUserRepository aircraftUserRepository;
     /**
-     * Contains methods for communication with the part table of the db.
-     */
-    private final PartRepository partRepository;
-    /**
      * Contains methods for communication with the repair table of the db.
      */
     private final RepairRepository repairRepository;
@@ -57,18 +53,15 @@ public class AircraftServiceImpl implements AircraftService {
      * @param aircraftRepository Repository used to modify aircraft data in db.
      * @param locationRepository Repository used to retrieve location data in db.
      * @param aircraftUserRepository Repository used to modify aircraft user data in db.
-     * @param partRepository
      * @param repairRepository
      */
     @Autowired
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
-                               final PartRepository partRepository,
                                final RepairRepository repairRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
-        this.partRepository = partRepository;
         this.repairRepository = repairRepository;
         this.aircraftUserRepository = aircraftUserRepository;
     }
@@ -210,7 +203,7 @@ public class AircraftServiceImpl implements AircraftService {
      * @return a platform status of assigned or unassigned.
      */
     @Override
-    public PlatformAvailability getAircraftAvailability(Aircraft aircraft) {
+    public PlatformAvailability getAircraftAvailability(final Aircraft aircraft) {
         try {
             Optional<AircraftUser> aircraftUser = Optional.ofNullable(aircraftUserRepository.findAircraftUsersByAircraft_TailNumber(aircraft.getTailNumber()).get(0));
             if (aircraftUser.get().getAircraft().getTailNumber().equals(aircraft.getTailNumber())) {

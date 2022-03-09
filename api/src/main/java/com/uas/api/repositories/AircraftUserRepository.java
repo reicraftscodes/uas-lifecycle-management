@@ -1,6 +1,5 @@
 package com.uas.api.repositories;
 
-import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.AircraftUserKey;
 import org.springframework.data.jpa.repository.JpaRepository;
