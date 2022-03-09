@@ -24,9 +24,8 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
 
     /**
      * Find all parts by aircraft and platform type?
-     * @param tailNumber
+     * @param platform
      * @return the list of repairs?
      */
-    List<Repair> findAllByPart_Aircraft_TailNumber(String tailNumber);
-
+    List<Repair> findAllByPart_Aircraft_PlatformType(PlatformType platform);
 }
