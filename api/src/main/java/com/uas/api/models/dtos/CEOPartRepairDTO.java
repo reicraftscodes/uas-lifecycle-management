@@ -10,8 +10,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CEOPartRepairDTO {
+    /**
+     * The id of the repair.
+     */
     private long repairID;
+    /**
+     * The part Type that was repaired.
+     */
     private String partType;
+    /**
+     * The cost of the repair.
+     */
     private double cost;
 
 }

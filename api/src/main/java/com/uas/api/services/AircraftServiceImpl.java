@@ -330,6 +330,7 @@ public class AircraftServiceImpl implements AircraftService {
                 aircraftPartDTO.setPartCost(part.getPartType().getPrice().doubleValue());
                 aircraftPartDTO.setPartStatus(part.getPartStatus().getLabel());
 
+
                 List<Repair> repairs = repairRepository.findAllByPart(part);
                 List<CEOPartRepairDTO> totalRepairs = new ArrayList<>();
                 for (Repair repair : repairs){
@@ -352,8 +353,34 @@ public class AircraftServiceImpl implements AircraftService {
         return ceoAircraftDTOList;
     }
 
+    public List<CEOAircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised(){
+        List<CEOAircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOS = new ArrayList<>();
+        List<Aircraft> aircrafts = getAllAircraft();
 
+        for (Aircraft aircraft : aircrafts) {
+            Double totalPartCost = aircraftRepository.getTotalPartCostofAircraft(aircraft.getTailNumber());
+            Double totalRepairCost = repairRepository.FindTotalRepairCostForAircraft(aircraft.getTailNumber());
 
+            if (totalRepairCost == null) {
+                totalRepairCost = 0.0;
+            }
+
+            if (totalPartCost == null) {
+                totalPartCost = 0.0;
+            }
+
+            CEOAircraftCostsAndRepairsDTO ceoAircraftCostsAndRepairsDTO = new CEOAircraftCostsAndRepairsDTO();
+            ceoAircraftCostsAndRepairsDTO.setTailNumber(aircraft.getTailNumber());
+            ceoAircraftCostsAndRepairsDTO.setRepairCost(totalRepairCost);
+            ceoAircraftCostsAndRepairsDTO.setPartCost(totalPartCost);
+            ceoAircraftCostsAndRepairsDTO.setTotalCost(totalRepairCost + totalPartCost);
+
+            ceoAircraftCostsAndRepairsDTOS.add(ceoAircraftCostsAndRepairsDTO);
+        }
+
+        return ceoAircraftCostsAndRepairsDTOS;
+
+    }
 
 
 }

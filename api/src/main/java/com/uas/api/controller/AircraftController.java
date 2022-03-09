@@ -161,7 +161,7 @@ public class AircraftController {
         return ResponseEntity.ok(aircraft);
     }
 
-    @GetMapping("/overall-cost")
+    @GetMapping("/ceo-aircraft-cost-full")
     public ResponseEntity<?> getOverallRunningCost(){
         double spentOnParts = aircraftService.getAllTotalAircraftPartCost();
         double spentOnRepairs = aircraftService.getAllAircraftTotalRepairCost();
@@ -174,6 +174,12 @@ public class AircraftController {
 
 
         return ResponseEntity.ok(ceoAircraftCostsDTO);
+    }
+
+    @GetMapping("ceo-aircraft-cost")
+    public ResponseEntity<?> getStreamlinedRunningCost() {
+
+        return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
     }
 
 }

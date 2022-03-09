@@ -1,10 +1,9 @@
 package com.uas.api.services;
 
-import com.uas.api.models.dtos.CEOAircraftDTO;
-import com.uas.api.models.dtos.UserAircraftDTO;
-import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
-import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +55,10 @@ public interface AircraftService {
      */
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
 
+    /**
+     *
+     * @return
+     */
     List<Aircraft> getAllAircraft();
 
     double getAllAircraftTotalRepairCost();
@@ -67,5 +70,11 @@ public interface AircraftService {
     double getTotalRepairCostForSpecificAircraft(Aircraft aircraft);
 
     List<CEOAircraftDTO> getAircraftForCEOReturn();
+
+    List<CEOAircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised();
+
+
+
+
 
 }

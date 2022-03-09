@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CEOAircraftDTO {
+public class CEOAircraftCostsAndRepairsDTO {
     /**
      * The tailnumber of a specific aircraft.
      */
@@ -28,8 +28,5 @@ public class CEOAircraftDTO {
      * The total spent on a specific aircraft.
      */
     private double totalCost;
-    /**
-     * A List of DTOs which contain part names, costs, statuses, and any repairs on that part.
-     */
-    private List<CEOAircraftPartDTO> parts;
+
 }

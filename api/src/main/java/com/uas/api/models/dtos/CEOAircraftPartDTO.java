@@ -1,6 +1,5 @@
 package com.uas.api.models.dtos;
 
-import com.uas.api.models.entities.Repair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +12,20 @@ import java.util.List;
 @Getter
 @Setter
 public class CEOAircraftPartDTO {
+    /**
+     * The partName of a specific part.
+     */
     private String partName;
+    /**
+     * The cost of a part.
+     */
     private double partCost;
+    /**
+     * The status of a specific part.
+     */
     private String partStatus;
+    /**
+     * A list of DTOs for any repairs that have taken place on a part.
+     */
     private List<CEOPartRepairDTO> repairs;
 }

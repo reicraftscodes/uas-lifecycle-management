@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -30,5 +31,17 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      */
     List<Repair> findAllByPart_Aircraft_PlatformType(PlatformType platform);
 
+    /**
+     * Find all repairs of a specific part.
+     * @param part The part repairs are being found for.
+     * @return returns a list of repairs for the given part.
+     */
     List<Repair> findAllByPart(Part part);
+
+    @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
+    Double FindTotalRepairCostForAircraft(@Param("tailNumber") String tailNumber);
+
+
+
+
 }
