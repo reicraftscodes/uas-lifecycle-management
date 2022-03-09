@@ -242,64 +242,57 @@ public class AircraftServiceImpl implements AircraftService {
         return totalRepairs;
     }
 
+    /**
+     * Gets a list of all aircrafts in the db.
+     * @return A list of aircraft objects.
+     */
     public List<Aircraft> getAllAircraft(){
-
         return aircraftRepository.findAll();
     }
 
+    /**
+     * Gets the total repair cost for all aircraft.
+     * @return A double variable of the total amount spent on repairs.
+     */
     public double getAllAircraftTotalRepairCost(){
-        double totalRepairCost = 0;
+        Double totalRepairCost = repairRepository.findTotalRepairCostForAllAircraft();
 
-        List<Repair> repairs = repairRepository.findAll();
-
-        for(Repair repair : repairs){
-            totalRepairCost += repair.getCost().doubleValue();
+        if (totalRepairCost == null) {
+            totalRepairCost = 0.0;
         }
 
         return totalRepairCost;
     }
 
+    /**
+     * Gets the total amount spent on parts for aircraft.
+     * @return A double variable of amount spent on parts.
+     */
     public double getAllTotalAircraftPartCost(){
-        double totalcost = 0;
+        Double totalcost = aircraftRepository.getTotalPartCostofAllAircraft();
 
-        List<Aircraft> aircrafts = getAllAircraft();
-
-        for (Aircraft aircraft : aircrafts){
-            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft);
-
-            for (Part part : parts){
-                totalcost += part.getPartType().getPrice().doubleValue();
-            }
+        if (totalcost == null) {
+            totalcost = 0.0;
         }
 
         return totalcost;
     }
 
     public double getTotalPartCostForSpecificAircraft(Aircraft aircraft){
-        double totalcost = 0;
+        Double totalcost = aircraftRepository.getTotalPartCostofAircraft(aircraft.getTailNumber());
 
-        List<Part> parts = partRepository.findAllPartsByAircraft(aircraft);
-
-        for (Part part : parts){
-            totalcost += part.getPartType().getPrice().doubleValue();
+        if (totalcost == null){
+            totalcost = 0.0;
         }
 
         return totalcost;
     }
 
     public double getTotalRepairCostForSpecificAircraft(Aircraft aircraft){
+        Double repairTotal = repairRepository.findTotalRepairCostForAircraft(aircraft.getTailNumber());
 
-        double repairTotal = 0;
-
-        List<Part> parts = partRepository.findAllPartsByAircraft(aircraft);
-
-        for(Part part : parts){
-            List<Repair> repairs = repairRepository.findAllByPart(part);
-
-            for (Repair repair : repairs) {
-                repairTotal += repair.getCost().doubleValue();
-            }
-
+        if (repairTotal == null) {
+            repairTotal = 0.0;
         }
 
         return(repairTotal);
@@ -330,7 +323,6 @@ public class AircraftServiceImpl implements AircraftService {
                 aircraftPartDTO.setPartCost(part.getPartType().getPrice().doubleValue());
                 aircraftPartDTO.setPartStatus(part.getPartStatus().getLabel());
 
-
                 List<Repair> repairs = repairRepository.findAllByPart(part);
                 List<CEOPartRepairDTO> totalRepairs = new ArrayList<>();
                 for (Repair repair : repairs){
@@ -340,16 +332,12 @@ public class AircraftServiceImpl implements AircraftService {
                     repairDTO.setCost(repair.getCost().doubleValue());
                     totalRepairs.add(repairDTO);
                 }
-
                 aircraftPartDTO.setRepairs(totalRepairs);
-
                 partsForAircraft.add(aircraftPartDTO);
-
             }
             aircraftDTO.setParts(partsForAircraft);
             ceoAircraftDTOList.add(aircraftDTO);
         }
-
         return ceoAircraftDTOList;
     }
 
@@ -358,16 +346,8 @@ public class AircraftServiceImpl implements AircraftService {
         List<Aircraft> aircrafts = getAllAircraft();
 
         for (Aircraft aircraft : aircrafts) {
-            Double totalPartCost = aircraftRepository.getTotalPartCostofAircraft(aircraft.getTailNumber());
-            Double totalRepairCost = repairRepository.FindTotalRepairCostForAircraft(aircraft.getTailNumber());
-
-            if (totalRepairCost == null) {
-                totalRepairCost = 0.0;
-            }
-
-            if (totalPartCost == null) {
-                totalPartCost = 0.0;
-            }
+            double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft);
+            double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft);
 
             CEOAircraftCostsAndRepairsDTO ceoAircraftCostsAndRepairsDTO = new CEOAircraftCostsAndRepairsDTO();
             ceoAircraftCostsAndRepairsDTO.setTailNumber(aircraft.getTailNumber());

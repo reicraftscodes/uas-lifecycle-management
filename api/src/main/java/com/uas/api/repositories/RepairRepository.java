@@ -39,8 +39,10 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
     List<Repair> findAllByPart(Part part);
 
     @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
-    Double FindTotalRepairCostForAircraft(@Param("tailNumber") String tailNumber);
+    Double findTotalRepairCostForAircraft(@Param("tailNumber") String tailNumber);
 
+    @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts)", nativeQuery = true)
+    Double findTotalRepairCostForAllAircraft();
 
 
 
