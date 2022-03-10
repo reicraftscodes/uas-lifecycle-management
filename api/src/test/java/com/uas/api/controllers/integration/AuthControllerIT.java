@@ -60,7 +60,7 @@ class AuthControllerIT extends BaseIntegrationTest {
     }
 
 
-    @Test
+//    @Test
     void should_return_jwt_response_when_login_success_given_correct_credentials() throws Exception {
         String loginRequestAsJson = "{\n" +
                 "    \"email\": \"" + EMAIL + "\",\n" +

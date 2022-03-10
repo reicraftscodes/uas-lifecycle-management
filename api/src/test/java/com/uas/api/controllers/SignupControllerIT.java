@@ -27,10 +27,10 @@ class SignupControllerIT extends BaseIntegrationTest {
     private static final String CORRECT_PASSWORD = "maycraftscodes";
     private static final String INCORRECT_CONFIRM_PASSWORD = "incorrectpassword";
 
-//    @Autowired
+    @Autowired
     private UserRepository userRepository;
 
-//    @Autowired
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
