@@ -1,13 +1,7 @@
 package com.uas.api.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.uas.api.controller.AircraftController;
-import com.uas.api.models.auth.ERole;
-import com.uas.api.models.auth.Role;
-import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
@@ -15,23 +9,15 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.LocationRepository;
-import com.uas.api.models.entities.*;
-import com.uas.api.models.entities.enums.PartStatus;
-import com.uas.api.models.entities.enums.PlatformStatus;
-import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.RoleRepository;
 import com.uas.api.repositories.auth.UserRepository;
-import com.uas.api.response.JwtResponse;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.AircraftService;
-import com.uas.api.services.AircraftServiceImpl;
-import com.uas.api.services.PartService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,17 +29,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -63,7 +42,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -268,8 +246,8 @@ public class AircraftControllerTest {
     @WithMockUser(value = "user")
     @Test
     public void viewCEOFullAircraftCosts() throws Exception {
-        List<CEOAircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOList = new ArrayList<>();
-        ceoAircraftCostsAndRepairsDTOList.add(new CEOAircraftCostsAndRepairsDTO("G-001",1001.0,1002.0,2003.0));
+        List<AircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOList = new ArrayList<>();
+        ceoAircraftCostsAndRepairsDTOList.add(new AircraftCostsAndRepairsDTO("G-001",1001.0,1002.0,2003.0));
         List<Aircraft> aircrafts = new ArrayList<>();
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         aircrafts.add(new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286));

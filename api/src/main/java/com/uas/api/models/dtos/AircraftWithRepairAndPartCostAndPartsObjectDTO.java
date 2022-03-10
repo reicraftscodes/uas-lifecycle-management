@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CEOAircraftCostsAndRepairsDTO {
+public class AircraftWithRepairAndPartCostAndPartsObjectDTO {
     /**
      * The tailnumber of a specific aircraft.
      */
@@ -26,5 +28,8 @@ public class CEOAircraftCostsAndRepairsDTO {
      * The total spent on a specific aircraft.
      */
     private double totalCost;
-
+    /**
+     * A List of DTOs which contain part names, costs, statuses, and any repairs on that part.
+     */
+    private List<AircraftPartCostDTO> parts;
 }

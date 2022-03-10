@@ -89,13 +89,13 @@ public interface AircraftService {
      * Method for creating a list of aircraft dtos and their parts and costs to be returned to the user.
      * @return returns a list of aircraft dtos.
      */
-    List<CEOAircraftDTO> getAircraftForCEOReturn();
+    List<AircraftWithRepairAndPartCostAndPartsObjectDTO> getAircraftForCEOReturn();
 
     /**
      * Method for creating a list of aircraft objects with just their repair and parts cost.
      * @return returns a list of aircraft dtos.
      */
-    List<CEOAircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised();
+    List<AircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised();
 
 
 

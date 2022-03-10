@@ -303,15 +303,15 @@ public class AircraftServiceImpl implements AircraftService {
      * Creates a List of aircraft DTO objects to insert into aircraft costs cto to return to the user.
      * @return list of aircraft dto.
      */
-    public List<CEOAircraftDTO> getAircraftForCEOReturn() {
-        List<CEOAircraftDTO> ceoAircraftDTOList = new ArrayList<>();
+    public List<AircraftWithRepairAndPartCostAndPartsObjectDTO> getAircraftForCEOReturn() {
+        List<AircraftWithRepairAndPartCostAndPartsObjectDTO> ceoAircraftDTOList = new ArrayList<>();
         List<Aircraft> aircrafts = getAllAircraft();
 
         for (Aircraft aircraft : aircrafts) {
             double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft);
             double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft);
 
-            CEOAircraftDTO aircraftDTO = new CEOAircraftDTO();
+            AircraftWithRepairAndPartCostAndPartsObjectDTO aircraftDTO = new AircraftWithRepairAndPartCostAndPartsObjectDTO();
 
             aircraftDTO.setTailNumber(aircraft.getTailNumber());
             aircraftDTO.setRepairCost(totalRepairCost);
@@ -320,18 +320,18 @@ public class AircraftServiceImpl implements AircraftService {
 
             List<Part> parts = partRepository.findAllPartsByAircraft(aircraft);
 
-            List<CEOAircraftPartDTO> partsForAircraft = new ArrayList<>();
+            List<AircraftPartCostDTO> partsForAircraft = new ArrayList<>();
             for (Part part : parts) {
-                CEOAircraftPartDTO aircraftPartDTO = new CEOAircraftPartDTO();
+                AircraftPartCostDTO aircraftPartDTO = new AircraftPartCostDTO();
 
                 aircraftPartDTO.setPartName(part.getPartType().getPartName().getName());
                 aircraftPartDTO.setPartCost(part.getPartType().getPrice().doubleValue());
                 aircraftPartDTO.setPartStatus(part.getPartStatus().getLabel());
 
                 List<Repair> repairs = repairRepository.findAllByPart(part);
-                List<CEOPartRepairDTO> totalRepairs = new ArrayList<>();
+                List<AircraftPartRepairDTO> totalRepairs = new ArrayList<>();
                 for (Repair repair : repairs) {
-                    CEOPartRepairDTO repairDTO = new CEOPartRepairDTO();
+                    AircraftPartRepairDTO repairDTO = new AircraftPartRepairDTO();
                     repairDTO.setRepairID(repair.getId());
                     repairDTO.setPartType(repair.getPart().getPartType().getPartName().getName());
                     repairDTO.setCost(repair.getCost().doubleValue());
@@ -350,15 +350,15 @@ public class AircraftServiceImpl implements AircraftService {
      * Creates another aircraft dto but with less information to reduce request time.
      * @return returns list of aircraft costs and repair costs dto.
      */
-    public List<CEOAircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised() {
-        List<CEOAircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOS = new ArrayList<>();
+    public List<AircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised() {
+        List<AircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOS = new ArrayList<>();
         List<Aircraft> aircrafts = getAllAircraft();
 
         for (Aircraft aircraft : aircrafts) {
             double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft);
             double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft);
 
-            CEOAircraftCostsAndRepairsDTO ceoAircraftCostsAndRepairsDTO = new CEOAircraftCostsAndRepairsDTO();
+            AircraftCostsAndRepairsDTO ceoAircraftCostsAndRepairsDTO = new AircraftCostsAndRepairsDTO();
             ceoAircraftCostsAndRepairsDTO.setTailNumber(aircraft.getTailNumber());
             ceoAircraftCostsAndRepairsDTO.setRepairCost(totalRepairCost);
             ceoAircraftCostsAndRepairsDTO.setPartCost(totalPartCost);

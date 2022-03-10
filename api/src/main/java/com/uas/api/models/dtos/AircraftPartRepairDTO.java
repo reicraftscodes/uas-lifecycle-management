@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class CEOPartRepairDTO {
+public class AircraftPartRepairDTO {
     /**
      * The id of the repair.
      */

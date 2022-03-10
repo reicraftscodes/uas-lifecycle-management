@@ -170,7 +170,7 @@ public class AircraftController {
         double spentOnParts = aircraftService.getAllTotalAircraftPartCost();
         double spentOnRepairs = aircraftService.getAllAircraftTotalRepairCost();
 
-        CEOAircraftCostsDTO ceoAircraftCostsDTO = new CEOAircraftCostsDTO();
+        AircraftAndTotalCostForPartsAndRepairs ceoAircraftCostsDTO = new AircraftAndTotalCostForPartsAndRepairs();
         ceoAircraftCostsDTO.setAircraft(aircraftService.getAircraftForCEOReturn());
         ceoAircraftCostsDTO.setTotalSpent(spentOnParts + spentOnRepairs);
         ceoAircraftCostsDTO.setTotalSpentOnParts(spentOnParts);
