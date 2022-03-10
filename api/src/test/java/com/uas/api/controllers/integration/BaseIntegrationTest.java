@@ -43,10 +43,10 @@ public abstract class BaseIntegrationTest {
 
     protected String token;
 
-//    @Autowired
+    @Autowired
     private UserRepository userRepository;
 
-//    @Autowired
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
