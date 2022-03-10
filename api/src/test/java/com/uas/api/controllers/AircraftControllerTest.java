@@ -8,10 +8,7 @@ import com.uas.api.controller.AircraftController;
 import com.uas.api.models.auth.ERole;
 import com.uas.api.models.auth.Role;
 import com.uas.api.models.auth.User;
-import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
-import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
-import com.uas.api.models.dtos.LogFlightDTO;
-import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
@@ -266,6 +263,32 @@ public class AircraftControllerTest {
         String response = mockMvcResult.getResponse().getContentAsString();
 
         assertEquals("", response);
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void viewCEOFullAircraftCosts() throws Exception {
+        List<CEOAircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOList = new ArrayList<>();
+        ceoAircraftCostsAndRepairsDTOList.add(new CEOAircraftCostsAndRepairsDTO("G-001",1001.0,1002.0,2003.0));
+        List<Aircraft> aircrafts = new ArrayList<>();
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        aircrafts.add(new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286));
+
+        when(aircraftService.getTotalPartCostForSpecificAircraft(any())).thenReturn(1002.0);
+        when(aircraftService.getTotalRepairCostForSpecificAircraft(any())).thenReturn(1001.0);
+        when(aircraftService.getAllAircraft()).thenReturn(aircrafts);
+        when(aircraftService.getAircraftForCEOReturnMinimised()).thenReturn(ceoAircraftCostsAndRepairsDTOList);
+
+        mockMvc.perform(get("http://localhost:8080/aircraft/ceo-aircraft-cost")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].repairCost").value(1001.0))
+                .andExpect(jsonPath("$[0].partCost").value(1002.0))
+                .andExpect(jsonPath("$[0].totalCost").value(2003.0));
     }
 
 }
