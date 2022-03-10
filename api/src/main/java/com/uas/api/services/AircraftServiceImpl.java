@@ -191,30 +191,11 @@ public class AircraftServiceImpl implements AircraftService {
 
         for (Aircraft aircraft: aircraftList
              ) {
-            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getFlyTimeHours(), aircraft.getPlatformStatus(), getAircraftAvailability(aircraft), totalCost);
+            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getFlyTimeHours(), aircraft.getPlatformStatus(), totalCost);
             platformStatusDTOList.add(platformStatusDTO);
         }
 
         return platformStatusDTOList;
-    }
-    /**
-     * Return a platform status object based on the result of if the aircraft is currently assigned.
-     * @param aircraft the aircraft to check the availability of.
-     * @return a platform status of assigned or unassigned.
-     */
-    @Override
-    public PlatformAvailability getAircraftAvailability(final Aircraft aircraft) {
-        try {
-            Optional<AircraftUser> aircraftUser = Optional.ofNullable(aircraftUserRepository.findAircraftUsersByAircraft_TailNumber(aircraft.getTailNumber()).get(0));
-            if (aircraftUser.get().getAircraft().getTailNumber().equals(aircraft.getTailNumber())) {
-                return PlatformAvailability.ASSIGNED;
-            } else {
-                return PlatformAvailability.UNASSIGNED;
-            }
-        } catch (Exception e) {
-            System.out.println("Error thrown");
-            return PlatformAvailability.UNASSIGNED;
-        }
     }
 
     /**

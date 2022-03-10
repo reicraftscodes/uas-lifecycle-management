@@ -17,11 +17,5 @@ public interface AircraftUserRepository extends JpaRepository<AircraftUser, Airc
      *
      */
     List<AircraftUser> findAllByUser_Id(long userId);
-    /**
-     * Retrieve all aircraft users that have been assigned to an Aircraft based on its tailNumber.
-     * @param tailNumber the id of the Aircraft.
-     * @return a list of AircraftUser.
-     *
-     */
-    List<AircraftUser> findAircraftUsersByAircraft_TailNumber(String tailNumber);
+
 }

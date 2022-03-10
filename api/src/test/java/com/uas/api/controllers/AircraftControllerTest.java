@@ -268,8 +268,8 @@ public class AircraftControllerTest {
     public void GetPlatformStatus() throws Exception {
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
 
-        platformStatusDTOList.add(new PlatformStatusDTO("G-001", 100, PlatformStatus.REPAIR, PlatformAvailability.UNASSIGNED, 12));
-        platformStatusDTOList.add(new PlatformStatusDTO("G-002", 60, PlatformStatus.OPERATION, PlatformAvailability.ASSIGNED, 12));
+        platformStatusDTOList.add(new PlatformStatusDTO("G-001", 100, PlatformStatus.REPAIR,  12));
+        platformStatusDTOList.add(new PlatformStatusDTO("G-002", 60, PlatformStatus.OPERATION, 12));
 
         when(aircraftService.getPlatformStatus()).thenReturn(platformStatusDTOList);
 
@@ -287,7 +287,7 @@ public class AircraftControllerTest {
 
 
 
-        assertEquals("[{\"tailNumber\":\"G-001\",\"flyTimeHours\":100,\"platformStatus\":\"REPAIR\",\"platformAvailability\":\"UNASSIGNED\",\"totalCost\":12},{\"tailNumber\":\"G-002\",\"flyTimeHours\":60,\"platformStatus\":\"OPERATION\",\"platformAvailability\":\"ASSIGNED\",\"totalCost\":12}]", jsonString);
+        assertEquals("[{\"tailNumber\":\"G-001\",\"flyTimeHours\":100,\"platformStatus\":\"REPAIR\",\"totalCost\":12},{\"tailNumber\":\"G-002\",\"flyTimeHours\":60,\"platformStatus\":\"OPERATION\",\"totalCost\":12}]", jsonString);
     }
 
 

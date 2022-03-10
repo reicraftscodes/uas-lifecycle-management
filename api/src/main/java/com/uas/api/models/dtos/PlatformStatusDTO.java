@@ -21,10 +21,6 @@ public class PlatformStatusDTO {
      */
     private final PlatformStatus platformStatus;
     /**
-     * The availability of the Aircraft.
-     */
-    private PlatformAvailability platformAvailability;
-    /**
      * The cost of the Aircraft.
      */
     private Integer totalCost;
