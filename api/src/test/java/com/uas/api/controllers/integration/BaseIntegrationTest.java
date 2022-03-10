@@ -93,12 +93,12 @@ public abstract class BaseIntegrationTest {
         Set<Role> roles = new HashSet<>();
         Role userLogisticOfficerRoleDb = roleRepository.
                 findRoleByRoleName(ERole.ROLE_USER_LOGISTIC)
-                .orElseThrow(() -> new RuntimeException("Error: User Role is not found."));
+                .orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
         roles.add(userLogisticOfficerRoleDb);
 
         Role userRoleDb = roleRepository.
                 findRoleByRoleName(ERole.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Error: Logistic Role is not found."));
+                .orElseThrow(() -> new RuntimeException("Error: User Role is not found."));
         roles.add(userRoleDb);
 
         Role ctoRoleDb = roleRepository.
