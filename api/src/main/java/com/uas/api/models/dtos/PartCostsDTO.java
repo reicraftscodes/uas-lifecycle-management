@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AircraftPartCostDTO {
+public class PartCostsDTO {
     /**
      * The partName of a specific part.
      */
@@ -27,5 +27,5 @@ public class AircraftPartCostDTO {
     /**
      * A list of DTOs for any repairs that have taken place on a part.
      */
-    private List<AircraftPartRepairDTO> repairs;
+    private List<PartRepairDTO> repairs;
 }

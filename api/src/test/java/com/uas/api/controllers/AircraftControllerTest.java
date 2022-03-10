@@ -246,8 +246,8 @@ public class AircraftControllerTest {
     @WithMockUser(value = "user")
     @Test
     public void viewCEOFullAircraftCosts() throws Exception {
-        List<AircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOList = new ArrayList<>();
-        ceoAircraftCostsAndRepairsDTOList.add(new AircraftCostsAndRepairsDTO("G-001",1001.0,1002.0,2003.0));
+        List<AircraftCostsOverviewDTO> ceoAircraftCostsOverviewDTOList = new ArrayList<>();
+        ceoAircraftCostsOverviewDTOList.add(new AircraftCostsOverviewDTO("G-001",1001.0,1002.0,2003.0));
         List<Aircraft> aircrafts = new ArrayList<>();
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         aircrafts.add(new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286));
@@ -255,7 +255,7 @@ public class AircraftControllerTest {
         when(aircraftService.getTotalPartCostForSpecificAircraft(any())).thenReturn(1002.0);
         when(aircraftService.getTotalRepairCostForSpecificAircraft(any())).thenReturn(1001.0);
         when(aircraftService.getAllAircraft()).thenReturn(aircrafts);
-        when(aircraftService.getAircraftForCEOReturnMinimised()).thenReturn(ceoAircraftCostsAndRepairsDTOList);
+        when(aircraftService.getAircraftForCEOReturnMinimised()).thenReturn(ceoAircraftCostsOverviewDTOList);
 
         mockMvc.perform(get("http://localhost:8080/aircraft/ceo-aircraft-cost")
                 .accept(MediaType.APPLICATION_JSON))

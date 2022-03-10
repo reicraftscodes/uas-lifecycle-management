@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AircraftAndTotalCostForPartsAndRepairs {
+public class AllAircraftCostsDTO {
     /**
      * Stores the total spent on repairs for all aircraft.
      */
@@ -27,7 +27,7 @@ public class AircraftAndTotalCostForPartsAndRepairs {
     /**
      *  Stores a list of DTOs which contains aircraft and their costs parts and repairs.
      */
-    private List<AircraftWithRepairAndPartCostAndPartsObjectDTO> aircraft;
+    private List<AircraftCostsDetailDTO> aircraft;
 
 
 

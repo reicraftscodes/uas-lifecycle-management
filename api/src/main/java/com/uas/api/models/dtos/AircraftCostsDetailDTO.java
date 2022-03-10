@@ -5,11 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class AircraftCostsAndRepairsDTO {
+/**
+ * This DTO is used for returning aircraft costs with specific part costs and repair costs.
+ */
+public class AircraftCostsDetailDTO {
     /**
      * The tailnumber of a specific aircraft.
      */
@@ -26,5 +31,8 @@ public class AircraftCostsAndRepairsDTO {
      * The total spent on a specific aircraft.
      */
     private double totalCost;
-
+    /**
+     * A List of DTOs which contain part names, costs, statuses, and any repairs on that part.
+     */
+    private List<PartCostsDTO> parts;
 }
