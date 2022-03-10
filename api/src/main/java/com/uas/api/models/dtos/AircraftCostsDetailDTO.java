@@ -7,14 +7,15 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * This DTO is used for returning aircraft costs with specific part costs and repair costs.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-/**
- * This DTO is used for returning aircraft costs with specific part costs and repair costs.
- */
 public class AircraftCostsDetailDTO {
+
     /**
      * The tailnumber of a specific aircraft.
      */

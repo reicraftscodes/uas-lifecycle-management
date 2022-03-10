@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ *    This DTO is used for returning aircraft costs without specific parts and repairs
+ *     for the android version to allow for a quicker response time.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-/**
- * This DTO is used for returning aircraft costs without specific parts and repairs
- *  for the android version to allow for a quicker response time.
- */
 public class AircraftCostsOverviewDTO {
+
+
     /**
      * The tailnumber of a specific aircraft.
      */
