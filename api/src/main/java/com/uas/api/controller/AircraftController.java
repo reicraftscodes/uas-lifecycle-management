@@ -161,4 +161,32 @@ public class AircraftController {
         return ResponseEntity.ok(aircraft);
     }
 
+    /**
+     * Get method that returns a list of aircraft costs for parts and repairs aswell as total repair and part costs.
+     * @return returns a response entity with the dto object.
+     */
+    @GetMapping("/ceo-aircraft-cost-full")
+    public ResponseEntity<?> getOverallRunningCost() {
+        double spentOnParts = aircraftService.getAllTotalAircraftPartCost();
+        double spentOnRepairs = aircraftService.getAllAircraftTotalRepairCost();
+
+        AllAircraftCostsDTO ceoAircraftCostsDTO = new AllAircraftCostsDTO();
+        ceoAircraftCostsDTO.setAircraft(aircraftService.getAircraftForCEOReturn());
+        ceoAircraftCostsDTO.setTotalSpent(spentOnParts + spentOnRepairs);
+        ceoAircraftCostsDTO.setTotalSpentOnParts(spentOnParts);
+        ceoAircraftCostsDTO.setTotalSpentOnRepairs(spentOnRepairs);
+
+        return ResponseEntity.ok(ceoAircraftCostsDTO);
+    }
+
+    /**
+     * Get method that returns a smaller list with less information that getOverallRunningCost() to improve request performance.
+     * @return returns a response entity with a dto object.
+     */
+    @GetMapping("ceo-aircraft-cost")
+    public ResponseEntity<?> getStreamlinedRunningCost() {
+
+        return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
+    }
+
 }
