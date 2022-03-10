@@ -1,6 +1,4 @@
 package com.uas.api.controller.User;
-
-
 import com.uas.api.mapper.UserMapper;
 import com.uas.api.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/test")
 
-public class UserApi {
+public class UserController {
 
     @GetMapping("/all")
     public String allAccess() {
@@ -24,11 +22,14 @@ public class UserApi {
     public String userAccess() {
         return "User Content.";
     }
+
     @GetMapping("/cto")
     @PreAuthorize("hasRole('ROLE_USER_CTO')")
     public String ctoAccess() {
         return "CTO Board.";
     }
+
+
     @GetMapping("/ceo")
     @PreAuthorize("hasRole('USER_CEO')")
     public String ceoAccess() {
