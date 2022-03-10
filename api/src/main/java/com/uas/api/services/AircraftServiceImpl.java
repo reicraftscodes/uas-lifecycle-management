@@ -37,10 +37,6 @@ public class AircraftServiceImpl implements AircraftService {
      * Contains methods for communication with the repair table of the db.
      */
     private final RepairRepository repairRepository;
-    private final PartTypeRepository partTypeRepository;
-
-
-
     /**
      * Used to output logs of what the program is doing to the console.
      */
@@ -55,25 +51,20 @@ public class AircraftServiceImpl implements AircraftService {
      * @param aircraftRepository Repository used to modify aircraft data in db.
      * @param locationRepository Repository used to retrieve location data in db.
      * @param aircraftUserRepository Repository used to modify aircraft user data in db.
-     * @param partRepository
-     * @param repairRepository
-     * @param partTypeRepository
+     * @param partRepository Repository used to fetch and modify part information in the db.
+     * @param repairRepository Repository used to fetch and modify repair information in the db.
      */
     @Autowired
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
                                final PartRepository partRepository,
-                               final RepairRepository repairRepository,
-                               PartTypeRepository partTypeRepository) {
+                               final RepairRepository repairRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
         this.partRepository = partRepository;
         this.repairRepository = repairRepository;
         this.aircraftUserRepository = aircraftUserRepository;
-
-
-        this.partTypeRepository = partTypeRepository;
     }
 
     /**
@@ -246,7 +237,7 @@ public class AircraftServiceImpl implements AircraftService {
      * Gets a list of all aircrafts in the db.
      * @return A list of aircraft objects.
      */
-    public List<Aircraft> getAllAircraft(){
+    public List<Aircraft> getAllAircraft() {
         return aircraftRepository.findAll();
     }
 
@@ -254,7 +245,7 @@ public class AircraftServiceImpl implements AircraftService {
      * Gets the total repair cost for all aircraft.
      * @return A double variable of the total amount spent on repairs.
      */
-    public double getAllAircraftTotalRepairCost(){
+    public double getAllAircraftTotalRepairCost() {
         Double totalRepairCost = repairRepository.findTotalRepairCostForAllAircraft();
 
         if (totalRepairCost == null) {
@@ -268,7 +259,7 @@ public class AircraftServiceImpl implements AircraftService {
      * Gets the total amount spent on parts for aircraft.
      * @return A double variable of amount spent on parts.
      */
-    public double getAllTotalAircraftPartCost(){
+    public double getAllTotalAircraftPartCost() {
         Double totalcost = aircraftRepository.getTotalPartCostofAllAircraft();
 
         if (totalcost == null) {
@@ -278,27 +269,41 @@ public class AircraftServiceImpl implements AircraftService {
         return totalcost;
     }
 
-    public double getTotalPartCostForSpecificAircraft(Aircraft aircraft){
+    /**
+     * Gets the part cost for a specific aircraft.
+     * @param aircraft The aircraft the part cost is being fetched for.
+     * @return The total amount spent on parts for the given aircraft.
+     */
+    public double getTotalPartCostForSpecificAircraft(final Aircraft aircraft) {
         Double totalcost = aircraftRepository.getTotalPartCostofAircraft(aircraft.getTailNumber());
 
-        if (totalcost == null){
+        if (totalcost == null) {
             totalcost = 0.0;
         }
 
         return totalcost;
     }
 
-    public double getTotalRepairCostForSpecificAircraft(Aircraft aircraft){
+    /**
+     * Gets the repair cost for a specific aircraft.
+     * @param aircraft The aircraft that the repair cost total is being calculated for.
+     * @return The total amount spent on repairs for the given aircraft.
+     */
+    public double getTotalRepairCostForSpecificAircraft(final Aircraft aircraft) {
         Double repairTotal = repairRepository.findTotalRepairCostForAircraft(aircraft.getTailNumber());
 
         if (repairTotal == null) {
             repairTotal = 0.0;
         }
 
-        return(repairTotal);
+        return (repairTotal);
     }
 
-    public List<CEOAircraftDTO> getAircraftForCEOReturn(){
+    /**
+     * Creates a List of aircraft DTO objects to insert into aircraft costs cto to return to the user.
+     * @return list of aircraft dto.
+     */
+    public List<CEOAircraftDTO> getAircraftForCEOReturn() {
         List<CEOAircraftDTO> ceoAircraftDTOList = new ArrayList<>();
         List<Aircraft> aircrafts = getAllAircraft();
 
@@ -311,12 +316,12 @@ public class AircraftServiceImpl implements AircraftService {
             aircraftDTO.setTailNumber(aircraft.getTailNumber());
             aircraftDTO.setRepairCost(totalRepairCost);
             aircraftDTO.setPartCost(totalPartCost);
-            aircraftDTO.setTotalCost(totalPartCost+totalRepairCost);
+            aircraftDTO.setTotalCost(totalPartCost + totalRepairCost);
 
             List<Part> parts = partRepository.findAllPartsByAircraft(aircraft);
 
             List<CEOAircraftPartDTO> partsForAircraft = new ArrayList<>();
-            for (Part part : parts){
+            for (Part part : parts) {
                 CEOAircraftPartDTO aircraftPartDTO = new CEOAircraftPartDTO();
 
                 aircraftPartDTO.setPartName(part.getPartType().getPartName().getName());
@@ -325,7 +330,7 @@ public class AircraftServiceImpl implements AircraftService {
 
                 List<Repair> repairs = repairRepository.findAllByPart(part);
                 List<CEOPartRepairDTO> totalRepairs = new ArrayList<>();
-                for (Repair repair : repairs){
+                for (Repair repair : repairs) {
                     CEOPartRepairDTO repairDTO = new CEOPartRepairDTO();
                     repairDTO.setRepairID(repair.getId());
                     repairDTO.setPartType(repair.getPart().getPartType().getPartName().getName());
@@ -341,7 +346,11 @@ public class AircraftServiceImpl implements AircraftService {
         return ceoAircraftDTOList;
     }
 
-    public List<CEOAircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised(){
+    /**
+     * Creates another aircraft dto but with less information to reduce request time.
+     * @return returns list of aircraft costs and repair costs dto.
+     */
+    public List<CEOAircraftCostsAndRepairsDTO> getAircraftForCEOReturnMinimised() {
         List<CEOAircraftCostsAndRepairsDTO> ceoAircraftCostsAndRepairsDTOS = new ArrayList<>();
         List<Aircraft> aircrafts = getAllAircraft();
 
@@ -357,10 +366,6 @@ public class AircraftServiceImpl implements AircraftService {
 
             ceoAircraftCostsAndRepairsDTOS.add(ceoAircraftCostsAndRepairsDTO);
         }
-
         return ceoAircraftCostsAndRepairsDTOS;
-
     }
-
-
 }

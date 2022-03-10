@@ -38,9 +38,18 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      */
     List<Repair> findAllByPart(Part part);
 
+    /**
+     * Gets the total repair cost for a specific aircraft using an sql query.
+     * @param tailNumber the tailnumber that has the repairs associated with it.
+     * @return returns the total cost of repairs.
+     */
     @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
     Double findTotalRepairCostForAircraft(@Param("tailNumber") String tailNumber);
 
+    /**
+     * Gets the total cost of repairs for all aircraft using an sql query.
+     * @return the total cost of repairs for all aircraft.
+     */
     @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts)", nativeQuery = true)
     Double findTotalRepairCostForAllAircraft();
 
