@@ -2,14 +2,6 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.*;
-import com.uas.api.models.dtos.PlatformStatusDTO;
-import com.uas.api.models.dtos.UserAircraftDTO;
-import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
-import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.AircraftUser;
-import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.enums.PlatformAvailability;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
@@ -42,6 +34,10 @@ public class AircraftServiceImpl implements AircraftService {
      */
     private final RepairRepository repairRepository;
     /**
+     * Contains methods for communication with the parts table of the db.
+     */
+    private final PartRepository partRepository;
+    /**
      * Used to output logs of what the program is doing to the console.
      */
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
@@ -56,16 +52,19 @@ public class AircraftServiceImpl implements AircraftService {
      * @param locationRepository Repository used to retrieve location data in db.
      * @param aircraftUserRepository Repository used to modify aircraft user data in db.
      * @param repairRepository
+     * @param partRepository
      */
     @Autowired
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
-                               final RepairRepository repairRepository) {
+                               final RepairRepository repairRepository,
+                               final PartRepository partRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
         this.repairRepository = repairRepository;
         this.aircraftUserRepository = aircraftUserRepository;
+        this.partRepository = partRepository;
     }
 
     /**

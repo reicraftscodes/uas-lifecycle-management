@@ -1,12 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.dtos.PlatformStatusDTO;
-import com.uas.api.models.dtos.UserAircraftDTO;
-import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
-import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
 import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.enums.PlatformAvailability;
 
 import java.util.HashMap;
 import java.util.List;

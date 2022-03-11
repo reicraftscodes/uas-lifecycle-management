@@ -1,5 +1,5 @@
 package com.uas.api.models.dtos;
-import com.uas.api.models.entities.enums.PlatformAvailability;
+
 import com.uas.api.models.entities.enums.PlatformStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
