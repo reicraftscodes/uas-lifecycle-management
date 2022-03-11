@@ -1,14 +1,11 @@
 package com.uas.api.models.entities.enums;
 
-public enum PlatformStatus {
-    DESIGN("Design"),
-    PRODUCTION("Production"),
-    OPERATION("Operational"),
-    REPAIR("Repair");
-
+public enum PlatformAvailability {
+    ASSIGNED("Assigned"),
+    UNASSIGNED("Unassigned");
     private final String label;
 
-    PlatformStatus(final String label) {
+    PlatformAvailability(final String label) {
         this.label = label;
     }
 

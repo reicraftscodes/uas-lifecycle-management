@@ -1,40 +1,29 @@
 package com.uas.api.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.uas.api.controller.AircraftController;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.auth.ERole;
 import com.uas.api.models.auth.Role;
 import com.uas.api.models.auth.User;
-import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
-import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
-import com.uas.api.models.dtos.LogFlightDTO;
-import com.uas.api.models.dtos.UserAircraftDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.enums.PlatformStatus;
-import com.uas.api.models.entities.enums.PlatformType;
+import com.uas.api.models.entities.enums.*;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.LocationRepository;
 import com.uas.api.models.entities.*;
-import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.RoleRepository;
 import com.uas.api.repositories.auth.UserRepository;
-import com.uas.api.response.JwtResponse;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.AircraftService;
-import com.uas.api.services.AircraftServiceImpl;
-import com.uas.api.services.PartService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,17 +35,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -66,7 +48,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -267,5 +248,59 @@ public class AircraftControllerTest {
 
         assertEquals("", response);
     }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void viewCEOFullAircraftCosts() throws Exception {
+        List<AircraftCostsOverviewDTO> ceoAircraftCostsOverviewDTOList = new ArrayList<>();
+        ceoAircraftCostsOverviewDTOList.add(new AircraftCostsOverviewDTO("G-001",1001.0,1002.0,2003.0));
+        List<Aircraft> aircrafts = new ArrayList<>();
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        aircrafts.add(new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286));
+
+        when(aircraftService.getTotalPartCostForSpecificAircraft(any())).thenReturn(1002.0);
+        when(aircraftService.getTotalRepairCostForSpecificAircraft(any())).thenReturn(1001.0);
+        when(aircraftService.getAllAircraft()).thenReturn(aircrafts);
+        when(aircraftService.getAircraftForCEOReturnMinimised()).thenReturn(ceoAircraftCostsOverviewDTOList);
+
+        mockMvc.perform(get("http://localhost:8080/aircraft/ceo-aircraft-cost")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].repairCost").value(1001.0))
+                .andExpect(jsonPath("$[0].partCost").value(1002.0))
+                .andExpect(jsonPath("$[0].totalCost").value(2003.0));
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void GetPlatformStatus() throws Exception {
+        List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
+
+        platformStatusDTOList.add(new PlatformStatusDTO("G-001", 100, PlatformStatus.REPAIR,  12));
+        platformStatusDTOList.add(new PlatformStatusDTO("G-002", 60, PlatformStatus.OPERATION, 12));
+
+        when(aircraftService.getPlatformStatus()).thenReturn(platformStatusDTOList);
+
+        MvcResult mvcResult = mockMvc.perform(get("/aircraft/platform-status")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].platformStatus").value("REPAIR"))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002")).andReturn();
+
+       String jsonString = mvcResult.getResponse().getContentAsString();
+
+
+
+        assertEquals("[{\"tailNumber\":\"G-001\",\"flyTimeHours\":100,\"platformStatus\":\"REPAIR\",\"totalCost\":12},{\"tailNumber\":\"G-002\",\"flyTimeHours\":60,\"platformStatus\":\"OPERATION\",\"totalCost\":12}]", jsonString);
+    }
+
 
 }

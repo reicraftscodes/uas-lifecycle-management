@@ -34,4 +34,5 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
      */
     List<Part> findAllPartsByAircraft(Aircraft aircraft);
 
+
 }

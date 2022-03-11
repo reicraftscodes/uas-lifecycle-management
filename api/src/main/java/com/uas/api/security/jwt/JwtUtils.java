@@ -61,6 +61,7 @@ public class JwtUtils {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
+
     /**
      * Validate JWT token.
      * @param authToken auth token.

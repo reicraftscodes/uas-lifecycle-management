@@ -1,11 +1,13 @@
 package com.uas.api.repositories;
 
+import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.Repair;
 import com.uas.api.models.entities.enums.PlatformType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +30,29 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      * @return the list of repairs?
      */
     List<Repair> findAllByPart_Aircraft_PlatformType(PlatformType platform);
+
+    /**
+     * Find all repairs of a specific part.
+     * @param part The part repairs are being found for.
+     * @return returns a list of repairs for the given part.
+     */
+    List<Repair> findAllByPart(Part part);
+
+    /**
+     * Gets the total repair cost for a specific aircraft using an sql query.
+     * @param tailNumber the tailnumber that has the repairs associated with it.
+     * @return returns the total cost of repairs.
+     */
+    @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
+    Double findTotalRepairCostForAircraft(@Param("tailNumber") String tailNumber);
+
+    /**
+     * Gets the total cost of repairs for all aircraft using an sql query.
+     * @return the total cost of repairs for all aircraft.
+     */
+    @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts)", nativeQuery = true)
+    Double findTotalRepairCostForAllAircraft();
+
+
+
 }

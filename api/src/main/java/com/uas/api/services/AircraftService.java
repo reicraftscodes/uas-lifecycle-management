@@ -1,8 +1,6 @@
 package com.uas.api.services;
 
-import com.uas.api.models.dtos.UserAircraftDTO;
-import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
-import com.uas.api.models.dtos.AircraftHoursOperationalDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 
 import java.util.HashMap;
@@ -54,5 +52,58 @@ public interface AircraftService {
      * @return the number of hours total.
      */
     AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
+    /**
+     * Gets a list of platform status dto objects, with useful data.
+     * @return the dto list.
+     */
+    List<PlatformStatusDTO> getPlatformStatus();
+
+    /**
+     * Gets a list of all aircraft in the database.
+     * @return returns a list of aircraft objects.
+     */
+    List<Aircraft> getAllAircraft();
+
+    /**
+     * Gets the value of all aircrafts total repair cost.
+     * @return total repair cost.
+     */
+    double getAllAircraftTotalRepairCost();
+
+    /**
+     * Gets the value of all aircraft part cost.
+     * @return total part cost.
+     */
+    double getAllTotalAircraftPartCost();
+
+    /**
+     * Gets the total value of parts for a given aircraft.
+     * @param aircraft The aircraft parts are being summed for.
+     * @return The total amount spent on parts.
+     */
+    double getTotalPartCostForSpecificAircraft(Aircraft aircraft);
+
+    /**
+     * Gets the total repair cost for a given aircraft.
+     * @param aircraft The aircraft repairs are being found for.
+     * @return The total amount spent on repairs.
+     */
+    double getTotalRepairCostForSpecificAircraft(Aircraft aircraft);
+
+    /**
+     * Method for creating a list of aircraft dtos and their parts and costs to be returned to the user.
+     * @return returns a list of aircraft dtos.
+     */
+    List<AircraftCostsDetailDTO> getAircraftForCEOReturn();
+
+    /**
+     * Method for creating a list of aircraft objects with just their repair and parts cost.
+     * @return returns a list of aircraft dtos.
+     */
+    List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
+
+
+
+
 
 }
