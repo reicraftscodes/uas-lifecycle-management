@@ -30,13 +30,13 @@ public class AircraftServiceImpl implements AircraftService {
      */
     private final AircraftUserRepository aircraftUserRepository;
     /**
-     * Contains methods for communication with the part table of the db.
-     */
-    private final PartRepository partRepository;
-    /**
      * Contains methods for communication with the repair table of the db.
      */
     private final RepairRepository repairRepository;
+    /**
+     * Contains methods for communication with the parts table of the db.
+     */
+    private final PartRepository partRepository;
     /**
      * Used to output logs of what the program is doing to the console.
      */
@@ -51,20 +51,20 @@ public class AircraftServiceImpl implements AircraftService {
      * @param aircraftRepository Repository used to modify aircraft data in db.
      * @param locationRepository Repository used to retrieve location data in db.
      * @param aircraftUserRepository Repository used to modify aircraft user data in db.
-     * @param partRepository Repository used to fetch and modify part information in the db.
-     * @param repairRepository Repository used to fetch and modify repair information in the db.
+     * @param repairRepository
+     * @param partRepository
      */
     @Autowired
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
-                               final PartRepository partRepository,
-                               final RepairRepository repairRepository) {
+                               final RepairRepository repairRepository,
+                               final PartRepository partRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
-        this.partRepository = partRepository;
         this.repairRepository = repairRepository;
         this.aircraftUserRepository = aircraftUserRepository;
+        this.partRepository = partRepository;
     }
 
     /**
@@ -178,6 +178,25 @@ public class AircraftServiceImpl implements AircraftService {
         aircraftRepository.save(aircraft);
         return new AircraftHoursOperationalDTO(hoursOperational);
 
+    }
+    /**
+     * Gets a list of platform status dto objects, which display an overall platform status of the aircraft.
+     * @return the list of platform status dto objects.
+     */
+    @Override
+    public List<PlatformStatusDTO> getPlatformStatus() {
+        List<Aircraft> aircraftList = aircraftRepository.findAll();
+        List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
+        //Until total repairs method is implemented use dummy data of 12.
+        Integer totalCost = 12;
+
+        for (Aircraft aircraft: aircraftList
+             ) {
+            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getFlyTimeHours(), aircraft.getPlatformStatus(), totalCost);
+            platformStatusDTOList.add(platformStatusDTO);
+        }
+
+        return platformStatusDTOList;
     }
 
     /**

@@ -3,12 +3,18 @@ package com.uas.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.AircraftController;
 import com.uas.api.models.dtos.*;
+import com.uas.api.models.auth.ERole;
+import com.uas.api.models.auth.Role;
+import com.uas.api.models.auth.User;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.enums.PlatformStatus;
-import com.uas.api.models.entities.enums.PlatformType;
+import com.uas.api.models.entities.enums.*;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.LocationRepository;
+import com.uas.api.models.entities.*;
+import com.uas.api.models.entities.enums.PlatformStatus;
+import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.RoleRepository;
 import com.uas.api.repositories.auth.UserRepository;
@@ -268,5 +274,33 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$[0].partCost").value(1002.0))
                 .andExpect(jsonPath("$[0].totalCost").value(2003.0));
     }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void GetPlatformStatus() throws Exception {
+        List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
+
+        platformStatusDTOList.add(new PlatformStatusDTO("G-001", 100, PlatformStatus.REPAIR,  12));
+        platformStatusDTOList.add(new PlatformStatusDTO("G-002", 60, PlatformStatus.OPERATION, 12));
+
+        when(aircraftService.getPlatformStatus()).thenReturn(platformStatusDTOList);
+
+        MvcResult mvcResult = mockMvc.perform(get("/aircraft/platform-status")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].platformStatus").value("REPAIR"))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002")).andReturn();
+
+       String jsonString = mvcResult.getResponse().getContentAsString();
+
+
+
+        assertEquals("[{\"tailNumber\":\"G-001\",\"flyTimeHours\":100,\"platformStatus\":\"REPAIR\",\"totalCost\":12},{\"tailNumber\":\"G-002\",\"flyTimeHours\":60,\"platformStatus\":\"OPERATION\",\"totalCost\":12}]", jsonString);
+    }
+
 
 }

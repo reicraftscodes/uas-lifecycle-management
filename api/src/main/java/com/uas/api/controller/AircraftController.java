@@ -160,6 +160,17 @@ public class AircraftController {
         AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
         return ResponseEntity.ok(aircraft);
     }
+    /**
+     * Gets the status of the platforms for the web.
+     * @return response entity of the platformStatusDTO list containing DTO's which display platform status data.
+     */
+    @GetMapping("/platform-status")
+    public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWeb() {
+
+        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
+
+        return ResponseEntity.ok(platformStatusDTOList);
+    }
 
     /**
      * Get method that returns a list of aircraft costs for parts and repairs aswell as total repair and part costs.
