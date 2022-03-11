@@ -299,7 +299,7 @@ public class AircraftControllerTest {
 
 
 
-        assertEquals("[{\"tailNumber\":\"G-001\",\"flyTimeHours\":100,\"platformStatus\":\"REPAIR\",\"totalCost\":12},{\"tailNumber\":\"G-002\",\"flyTimeHours\":60,\"platformStatus\":\"OPERATION\",\"totalCost\":12}]", jsonString);
+        assertEquals("[{\"tailNumber\":\"G-001\",\"platformStatus\":\"REPAIR\",\"flyTimeHours\":100,\"totalCost\":12},{\"tailNumber\":\"G-002\",\"platformStatus\":\"OPERATION\",\"flyTimeHours\":60,\"totalCost\":12}]", jsonString);
     }
 
 

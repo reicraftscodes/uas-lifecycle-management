@@ -190,8 +190,7 @@ public class AircraftServiceImpl implements AircraftService {
         //Until total repairs method is implemented use dummy data of 12.
         Integer totalCost = 12;
 
-        for (Aircraft aircraft: aircraftList
-             ) {
+        for (Aircraft aircraft: aircraftList) {
             PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getFlyTimeHours(), aircraft.getPlatformStatus(), totalCost);
             platformStatusDTOList.add(platformStatusDTO);
         }
