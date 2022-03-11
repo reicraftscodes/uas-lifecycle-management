@@ -198,6 +198,17 @@ public class AircraftServiceImpl implements AircraftService {
         return platformStatusDTOList;
     }
 
+    @Override
+    public List<PlatformStatusAndroidDTO> getPlatformStatusAndroid() {
+        List<PlatformStatusAndroidDTO> platforms = new ArrayList<>();
+        List<Aircraft> currentAircraft = aircraftRepository.findAll();
+        for(Aircraft aircraft:currentAircraft) {
+            platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName()));
+        }
+        return platforms;
+
+    }
+
     /**
      * Get all aircraft assigned to a user.
      * @param userID the id of the user.

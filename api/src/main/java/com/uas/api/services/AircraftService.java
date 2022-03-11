@@ -59,6 +59,13 @@ public interface AircraftService {
     List<PlatformStatusDTO> getPlatformStatus();
 
     /**
+     * Gets a list of the platform status containing the name,
+     * location and its operational status.
+     * @return the list.
+     */
+    List<PlatformStatusAndroidDTO> getPlatformStatusAndroid();
+
+    /**
      * Gets a list of all aircraft in the database.
      * @return returns a list of aircraft objects.
      */
