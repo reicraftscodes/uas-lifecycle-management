@@ -1,5 +1,7 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.*;
+import com.uas.api.models.entities.*;
 import com.uas.api.models.dtos.PlatformStatusDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.dtos.AircraftAddHoursOperationalDTO;
@@ -251,4 +253,139 @@ public class AircraftServiceImpl implements AircraftService {
         return totalRepairs;
     }
 
+    /**
+     * Gets a list of all aircrafts in the db.
+     * @return A list of aircraft objects.
+     */
+    public List<Aircraft> getAllAircraft() {
+        return aircraftRepository.findAll();
+    }
+
+    /**
+     * Gets the total repair cost for all aircraft.
+     * @return A double variable of the total amount spent on repairs.
+     */
+    public double getAllAircraftTotalRepairCost() {
+        Double totalRepairCost = repairRepository.findTotalRepairCostForAllAircraft();
+
+        if (totalRepairCost == null) {
+            totalRepairCost = 0.0;
+        }
+
+        return totalRepairCost;
+    }
+
+    /**
+     * Gets the total amount spent on parts for aircraft.
+     * @return A double variable of amount spent on parts.
+     */
+    public double getAllTotalAircraftPartCost() {
+        Double totalcost = aircraftRepository.getTotalPartCostofAllAircraft();
+
+        if (totalcost == null) {
+            totalcost = 0.0;
+        }
+
+        return totalcost;
+    }
+
+    /**
+     * Gets the part cost for a specific aircraft.
+     * @param aircraft The aircraft the part cost is being fetched for.
+     * @return The total amount spent on parts for the given aircraft.
+     */
+    public double getTotalPartCostForSpecificAircraft(final Aircraft aircraft) {
+        Double totalcost = aircraftRepository.getTotalPartCostofAircraft(aircraft.getTailNumber());
+
+        if (totalcost == null) {
+            totalcost = 0.0;
+        }
+
+        return totalcost;
+    }
+
+    /**
+     * Gets the repair cost for a specific aircraft.
+     * @param aircraft The aircraft that the repair cost total is being calculated for.
+     * @return The total amount spent on repairs for the given aircraft.
+     */
+    public double getTotalRepairCostForSpecificAircraft(final Aircraft aircraft) {
+        Double repairTotal = repairRepository.findTotalRepairCostForAircraft(aircraft.getTailNumber());
+
+        if (repairTotal == null) {
+            repairTotal = 0.0;
+        }
+
+        return (repairTotal);
+    }
+
+    /**
+     * Creates a List of aircraft DTO objects to insert into aircraft costs cto to return to the user.
+     * @return list of aircraft dto.
+     */
+    public List<AircraftCostsDetailDTO> getAircraftForCEOReturn() {
+        List<AircraftCostsDetailDTO> ceoAircraftDTOList = new ArrayList<>();
+        List<Aircraft> aircrafts = getAllAircraft();
+
+        for (Aircraft aircraft : aircrafts) {
+            double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft);
+            double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft);
+
+            AircraftCostsDetailDTO aircraftDTO = new AircraftCostsDetailDTO();
+
+            aircraftDTO.setTailNumber(aircraft.getTailNumber());
+            aircraftDTO.setRepairCost(totalRepairCost);
+            aircraftDTO.setPartCost(totalPartCost);
+            aircraftDTO.setTotalCost(totalPartCost + totalRepairCost);
+
+            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft);
+
+            List<PartCostsDTO> partsForAircraft = new ArrayList<>();
+            for (Part part : parts) {
+                PartCostsDTO aircraftPartDTO = new PartCostsDTO();
+
+                aircraftPartDTO.setPartName(part.getPartType().getPartName().getName());
+                aircraftPartDTO.setPartCost(part.getPartType().getPrice().doubleValue());
+                aircraftPartDTO.setPartStatus(part.getPartStatus().getLabel());
+
+                List<Repair> repairs = repairRepository.findAllByPart(part);
+                List<PartRepairDTO> totalRepairs = new ArrayList<>();
+                for (Repair repair : repairs) {
+                    PartRepairDTO repairDTO = new PartRepairDTO();
+                    repairDTO.setRepairID(repair.getId());
+                    repairDTO.setPartType(repair.getPart().getPartType().getPartName().getName());
+                    repairDTO.setCost(repair.getCost().doubleValue());
+                    totalRepairs.add(repairDTO);
+                }
+                aircraftPartDTO.setRepairs(totalRepairs);
+                partsForAircraft.add(aircraftPartDTO);
+            }
+            aircraftDTO.setParts(partsForAircraft);
+            ceoAircraftDTOList.add(aircraftDTO);
+        }
+        return ceoAircraftDTOList;
+    }
+
+    /**
+     * Creates another aircraft dto but with less information to reduce request time.
+     * @return returns list of aircraft costs and repair costs dto.
+     */
+    public List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised() {
+        List<AircraftCostsOverviewDTO> ceoAircraftCostsOverviewDTOS = new ArrayList<>();
+        List<Aircraft> aircrafts = getAllAircraft();
+
+        for (Aircraft aircraft : aircrafts) {
+            double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft);
+            double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft);
+
+            AircraftCostsOverviewDTO ceoAircraftCostsOverviewDTO = new AircraftCostsOverviewDTO();
+            ceoAircraftCostsOverviewDTO.setTailNumber(aircraft.getTailNumber());
+            ceoAircraftCostsOverviewDTO.setRepairCost(totalRepairCost);
+            ceoAircraftCostsOverviewDTO.setPartCost(totalPartCost);
+            ceoAircraftCostsOverviewDTO.setTotalCost(totalRepairCost + totalPartCost);
+
+            ceoAircraftCostsOverviewDTOS.add(ceoAircraftCostsOverviewDTO);
+        }
+        return ceoAircraftCostsOverviewDTOS;
+    }
 }
