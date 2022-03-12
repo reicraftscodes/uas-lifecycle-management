@@ -199,14 +199,22 @@ public class AircraftServiceImpl implements AircraftService {
     }
 
     @Override
-    public List<PlatformStatusAndroidDTO> getPlatformStatusAndroid() {
+    public PlatformStatusAndroidFullDTO getPlatformStatusAndroid() {
+        List<PlatformStatusAndroidDTO> operational = getListOfPlatformsWithStatus(PlatformStatus.OPERATION);
+        List<PlatformStatusAndroidDTO> beingRepaired = getListOfPlatformsWithStatus(PlatformStatus.PRODUCTION);
+        List<PlatformStatusAndroidDTO> awaitingRepair = getListOfPlatformsWithStatus(PlatformStatus.REPAIR);
+        List<PlatformStatusAndroidDTO> beyondRepair = getListOfPlatformsWithStatus(PlatformStatus.DESIGN);
+        return new PlatformStatusAndroidFullDTO(operational, beingRepaired, awaitingRepair, beyondRepair);
+
+    }
+
+    private List<PlatformStatusAndroidDTO> getListOfPlatformsWithStatus(PlatformStatus platformStatus) {
         List<PlatformStatusAndroidDTO> platforms = new ArrayList<>();
-        List<Aircraft> currentAircraft = aircraftRepository.findAll();
+        List<Aircraft> currentAircraft = aircraftRepository.findAircraftsByPlatformStatus(platformStatus);
         for(Aircraft aircraft:currentAircraft) {
             platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName()));
         }
         return platforms;
-
     }
 
     /**

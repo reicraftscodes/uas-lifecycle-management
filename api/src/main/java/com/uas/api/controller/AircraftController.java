@@ -171,8 +171,8 @@ public class AircraftController {
     }
 
     @GetMapping("/android/platform-status")
-    public ResponseEntity<List<PlatformStatusAndroidDTO>> getPlatformStatusAndroid() {
-        List<PlatformStatusAndroidDTO> platformStatusAndroidDTOS = aircraftService.getPlatformStatusAndroid();
+    public ResponseEntity<PlatformStatusAndroidFullDTO> getPlatformStatusAndroid() {
+        PlatformStatusAndroidFullDTO platformStatusAndroidDTOS = aircraftService.getPlatformStatusAndroid();
         return ResponseEntity.ok(platformStatusAndroidDTOS);
     }
 
