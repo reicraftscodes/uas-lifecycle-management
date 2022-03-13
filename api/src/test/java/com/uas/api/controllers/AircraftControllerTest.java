@@ -168,7 +168,7 @@ public class AircraftControllerTest {
     public void updateFlightHours() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO("G-001",12);
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",12);
 
         when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
         Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
@@ -185,7 +185,7 @@ public class AircraftControllerTest {
     public void updateFlightHoursNoAircraft() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO("G-001",12);
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",12);
 
         Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
         String json = objectMapper.writeValueAsString(logFlightDTO);
@@ -202,7 +202,7 @@ public class AircraftControllerTest {
     public void updateFlightHoursInvalidTime() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO("G-001",-12);
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",-12);
 
         when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
         Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());

@@ -80,13 +80,14 @@ public class AircraftController {
 
     /**
      * Post mapping used for updating the aircrafts and the parts associated with that aircrafts flight hours.
-     * @param request takes json request body for the aircraft tailnumber and flytime to be logged.
+     * @param request takes json request body for the aircraft tailnumber, user Id and flytime to be logged.
      * @return returns a response with ok for no errors or a bad request with a body with the error message.
      */
     @PostMapping(value = "/log-flight", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> updateFlightHours(@RequestBody final LogFlightDTO request) {
         // A request body example that a post would have
         //{
+        //    "userId: 2,
         //    "aircraft":"G-001",
         //    "flyTime":12
         //}
@@ -110,9 +111,11 @@ public class AircraftController {
                     partService.updatePartFlyTime(parts, hoursInput);
                     //updates the aircraft flight hours
                     aircraftService.updateAircraftFlyTime(aircraft.get(), hoursInput);
+
+                    aircraftService.updateUserAircraftFlyTime(request.getAircraft(), request.getUserId(), request.getFlyTime());
                 }
             } catch (Exception e) {
-                error = "Fly time value isn't integer!";
+                error = "Unable to update flight time.";
             }
         } else {
             error = "Aircraft not found!";

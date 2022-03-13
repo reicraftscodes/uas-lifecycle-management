@@ -9,6 +9,10 @@ import lombok.Setter;
 @Setter
 public class LogFlightDTO {
     /**
+     * User Id.
+     */
+    private long userId;
+    /**
      * aircraft from the user input.
      */
     private String aircraft;

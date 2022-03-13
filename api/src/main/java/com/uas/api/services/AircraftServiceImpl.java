@@ -387,4 +387,24 @@ public class AircraftServiceImpl implements AircraftService {
         }
         return ceoAircraftCostsOverviewDTOS;
     }
+
+    /**
+     * Used to update the user flytime of an aircraft in the database.
+     * @param tailNumber The tail number of the aircraft that the hours are being updated for.
+     * @param userId The user Id whose personal flight time is being updated.
+     * @param flyTime The fly time to be added to the hours field.
+     */
+    public void updateUserAircraftFlyTime(final String tailNumber, final long userId, final int flyTime) throws IllegalArgumentException {
+        AircraftUser aircraftUser = null;
+        Optional<AircraftUser> aircraftUserOpt = aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(tailNumber, userId);
+        if (aircraftUserOpt.isPresent()) {
+            aircraftUser = aircraftUserOpt.get();
+        } else {
+            LOG.debug("Failed to update user aircraft flight time because the AircraftUser could not be found.");
+            throw new IllegalArgumentException("Aircraft user does not exist!");
+        }
+        long oldFlyTime = aircraftUser.getUserFlyingHours();
+        aircraftUser.setUserFlyingHours(oldFlyTime + flyTime);
+        aircraftUserRepository.save(aircraftUser);
+    }
 }
