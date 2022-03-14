@@ -108,6 +108,13 @@ public interface AircraftService {
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
 
+    /**
+     * Used to update the user flytime of an aircraft in the database.
+     * @param tailNumber The tail number of the aircraft that the hours are being updated for.
+     * @param userId The user Id whose personal flight time is being updated.
+     * @param flyTime The fly time to be added to the hours field.
+     */
+    void updateUserAircraftFlyTime(String tailNumber, long userId, int flyTime);
 
 
 

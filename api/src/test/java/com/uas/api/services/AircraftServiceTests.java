@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
+import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
 import com.uas.api.models.dtos.PlatformStatusDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
@@ -21,8 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -94,6 +99,27 @@ public class AircraftServiceTests {
         assertEquals("Should return tail number G-001", "G-001", platformStatusDTOList.get(0).getTailNumber());
         assertEquals("Should return tail number G-002", "G-002", platformStatusDTOList.get(1).getTailNumber());
     }
+
+    @Test
+    public void givenLogFlightHoursThenUpdateAircraftUser() throws IllegalArgumentException{
+        AircraftUser aircraftUser = new AircraftUser();
+        aircraftUser.setUserFlyingHours(20L);
+        when(aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(any(), anyLong())).thenReturn(Optional.of(aircraftUser));
+        when(aircraftUserRepository.save(any())).thenReturn(aircraftUser);
+
+        aircraftService.updateUserAircraftFlyTime("G-001", 2, 5);
+
+        assertEquals("Aircraft user should have 25 flight hours!", 25L, aircraftUser.getUserFlyingHours());
+    }
+
+    @Test
+    public void givenLogFlightHoursThenThrowIllegalArgumentException() {
+        AircraftUser aircraftUser = new AircraftUser();
+        when(aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(any(), anyLong())).thenThrow(IllegalArgumentException.class);
+
+        assertThrows(IllegalArgumentException.class, () -> aircraftService.updateUserAircraftFlyTime("G-001", 2, 5));
+    }
+
 
     @Test
     public void whenAircraftOfAllStatusExistThenAllShouldBeReturned() {
