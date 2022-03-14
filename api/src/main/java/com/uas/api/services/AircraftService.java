@@ -13,7 +13,7 @@ public interface AircraftService {
      * @param requestData The json body turned into a hashmap
      * @return returns a string with any errors encountered adding the aircraft.
      */
-    String addAircraftFromJson(HashMap<String, String> requestData);
+    String addAircraftFromJson(AircraftAddNewDTO requestData);
 
     /**
      * trys to find an aircraft from the database.

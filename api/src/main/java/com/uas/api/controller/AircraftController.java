@@ -50,7 +50,7 @@ public class AircraftController {
      * @return A response to the request with either a confirmation or the error received.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    ResponseEntity<?> addAircraft(@RequestBody final HashMap<String, String> requestData) {
+    ResponseEntity<?> addAircraft(@RequestBody final AircraftAddNewDTO requestData) {
         //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
         // as enums weren't created from the json strings.
 

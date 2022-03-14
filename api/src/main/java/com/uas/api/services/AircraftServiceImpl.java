@@ -82,47 +82,56 @@ public class AircraftServiceImpl implements AircraftService {
      * it can be returned in the response body.
      */
     @Override
-    public String addAircraftFromJson(final HashMap<String, String> requestData) {
+    public String addAircraftFromJson(final AircraftAddNewDTO requestData) {
         //Stores error messages and tracks if any errors have occured.
         String errorMessage = null;
 
         //Changes the json platform status from a string to an enum.
         PlatformStatus platformStatus = PlatformStatus.DESIGN;
-        try {
-            platformStatus = PlatformStatus.valueOf(requestData.get("platformStatus"));
-        } catch (Exception e) {
-            errorMessage = "Invalid platform status.";
+        switch (requestData.getPlatformStatus()) {
+            case "Design": break;
+            case "Production" :
+                platformStatus = PlatformStatus.PRODUCTION;
+                break;
+            case "Operational" :
+                platformStatus = PlatformStatus.OPERATION;
+                break;
+            case "Repair":
+                platformStatus = PlatformStatus.REPAIR;
+                break;
+            default:  errorMessage = "Invalid platform status.";
+
         }
 
         //Checks that the location entered exists and creates a location object.
-        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
+        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.getLocation());
         if (location.isEmpty()) {
             errorMessage = "Invalid location not found.";
         }
 
         //Changes the json platform type to enum.
         PlatformType platformType = PlatformType.PLATFORM_A;
-        switch (requestData.get("platformType")) {
-            case "Platform_A" : break;
-            case "Platform_B" : platformType = PlatformType.PLATFORM_B; break;
+        switch (requestData.getPlatformType()) {
+            case "Platform A" : break;
+            case "Platform B" : platformType = PlatformType.PLATFORM_B; break;
             default: errorMessage = "Invalid platform type."; break;
         }
 
-        Optional<Aircraft> aircraftCheck = aircraftRepository.findById(requestData.get("tailNumber"));
+        Optional<Aircraft> aircraftCheck = aircraftRepository.findById(requestData.getTailNumber());
         if (aircraftCheck.isPresent()) {
             errorMessage = "Invalid aircraft with specified tail number already present.";
         }
 
         //Checks if any errors have happened and if so doesn't save the aircraft to the db.
         if (errorMessage == null) {
-            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType, 0);
+            Aircraft aircraft = new Aircraft(requestData.getTailNumber(), location.get(), platformStatus, platformType, 0);
             try {
                 aircraftRepository.save(aircraft);
                 //Logs the aircraft added to the console.
-                LOG.info("Aircraft added by user. Tailnumber:" + requestData.get("tailNumber")
-                        + " Location:" + requestData.get("location")
-                        + " Platform Status:" + requestData.get("platformStatus")
-                        + " Platform Type:" + requestData.get("platformType"));
+                LOG.info("Aircraft added by user. Tailnumber:" + requestData.getTailNumber()
+                        + " Location:" + requestData.getLocation()
+                        + " Platform Status:" + requestData.getPlatformStatus()
+                        + " Platform Type:" + requestData.getPlatformType());
             } catch (Exception e) {
                 //Catches any other exceptions and sets the error message to them.
                 errorMessage = e.getMessage();
