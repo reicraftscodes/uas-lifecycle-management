@@ -2,6 +2,7 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
+import org.springframework.http.ResponseEntity;
 
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +102,8 @@ public interface AircraftService {
      * @return returns a list of aircraft dtos.
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
+
+    ResponseEntity<?> modifyAircraftStatus(String tailNumber, String platformStatus);
 
 
 

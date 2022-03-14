@@ -8,6 +8,7 @@ import com.uas.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -386,5 +387,20 @@ public class AircraftServiceImpl implements AircraftService {
             ceoAircraftCostsOverviewDTOS.add(ceoAircraftCostsOverviewDTO);
         }
         return ceoAircraftCostsOverviewDTOS;
+    }
+
+    public ResponseEntity<?> modifyAircraftStatus(String tailNumber, String platformStatus) {
+        Optional<Aircraft> aircraft = findAircraftById(tailNumber);
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.badRequest().body("Error: Aircraft not found!");
+        }
+
+        PlatformStatus platformStatusEnum = PlatformStatus.valueOf(platformStatus);
+
+        aircraft.get().setPlatformStatus(platformStatusEnum);
+        aircraftRepository.save(aircraft.get());
+
+        return ResponseEntity.ok(" ");
+
     }
 }

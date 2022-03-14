@@ -6,6 +6,7 @@ import com.uas.api.models.entities.Part;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -198,6 +199,11 @@ public class AircraftController {
     public ResponseEntity<?> getStreamlinedRunningCost() {
 
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
+    }
+
+    @GetMapping("update-aircraft-status")
+    public ResponseEntity<?> updateAircraftStatus() {
+        return aircraftService.modifyAircraftStatus("G-001","DESIGN");
     }
 
 }
