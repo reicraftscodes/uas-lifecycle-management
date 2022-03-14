@@ -11,14 +11,14 @@ public class LogFlightDTO {
     /**
      * User Id.
      */
-    private long userId;
+    private final long userId;
     /**
      * aircraft from the user input.
      */
-    private String aircraft;
+    private final String aircraft;
 
     /**
      * flytime from the user input.
      */
-    private int flyTime;
+    private final int flyTime;
 }
