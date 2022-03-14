@@ -215,6 +215,8 @@ INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
 INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
 INSERT INTO ROLES (roleid, NAME) VALUES ("2", "ROLE_USER_CTO");
 INSERT INTO ROLES (roleid, NAME) VALUES ("3", "ROLE_USER");
+INSERT INTO ROLES (roleid, NAME) VALUES ("4", "ROLE_USER_CEO");
+INSERT INTO ROLES (roleid, NAME) VALUES ("5", "ROLE_USER_COO");
 
 #Users
 INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('1', 'logisticOne@snc.ac.uk', 'Logistic', 'One', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'logisticOne@snc.ac.uk');
