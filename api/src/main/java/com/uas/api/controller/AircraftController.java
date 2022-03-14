@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -170,6 +169,10 @@ public class AircraftController {
         return ResponseEntity.ok(platformStatusDTOList);
     }
 
+    /**
+     * Gets the platform status for android.
+     * @return the platform status.
+     */
     @GetMapping("/android/platform-status")
     public ResponseEntity<PlatformStatusAndroidFullDTO> getPlatformStatusAndroid() {
         PlatformStatusAndroidFullDTO platformStatusAndroidDTOS = aircraftService.getPlatformStatusAndroid();

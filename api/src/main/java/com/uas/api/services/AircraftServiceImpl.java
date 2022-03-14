@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -207,6 +206,11 @@ public class AircraftServiceImpl implements AircraftService {
         return platformStatusDTOList;
     }
 
+    /**
+     * For each type of platform status, it gets the list of aircraft.
+     * Adds each of these lists to the DTO and returns this.
+     * @return the DTO.
+     */
     @Override
     public PlatformStatusAndroidFullDTO getPlatformStatusAndroid() {
         List<PlatformStatusAndroidDTO> operational = getListOfPlatformsWithStatus(PlatformStatus.OPERATION);
@@ -217,10 +221,16 @@ public class AircraftServiceImpl implements AircraftService {
 
     }
 
-    private List<PlatformStatusAndroidDTO> getListOfPlatformsWithStatus(PlatformStatus platformStatus) {
+    /**
+     * Takes in a platform status, finds all aircraft with this status
+     * then adds details from the aircraft and adds this to a DTO list.
+     * @param platformStatus
+     * @return the list of platforms with this status.
+     */
+    private List<PlatformStatusAndroidDTO> getListOfPlatformsWithStatus(final PlatformStatus platformStatus) {
         List<PlatformStatusAndroidDTO> platforms = new ArrayList<>();
         List<Aircraft> currentAircraft = aircraftRepository.findAircraftsByPlatformStatus(platformStatus);
-        for(Aircraft aircraft:currentAircraft) {
+        for (Aircraft aircraft:currentAircraft) {
             platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName()));
         }
         return platforms;

@@ -24,6 +24,11 @@ public interface AircraftRepository extends JpaRepository<Aircraft, String> {
     @Query(value = "SELECT SUM(price) FROM parttypes WHERE partID = ANY(SELECT PartID FROM parts WHERE AircraftTailNumber IS NOT NULL)", nativeQuery = true)
     Double getTotalPartCostofAllAircraft();
 
+    /**
+     * Finds aircraft by platform status.
+     * @param platformStatus
+     * @return the list of aircraft with that status.
+     */
     List<Aircraft> findAircraftsByPlatformStatus(PlatformStatus platformStatus);
 
 
