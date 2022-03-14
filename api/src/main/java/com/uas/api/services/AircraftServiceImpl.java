@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,47 +81,56 @@ public class AircraftServiceImpl implements AircraftService {
      * it can be returned in the response body.
      */
     @Override
-    public String addAircraftFromJson(final HashMap<String, String> requestData) {
+    public String addAircraftFromJson(final AircraftAddNewDTO requestData) {
         //Stores error messages and tracks if any errors have occured.
         String errorMessage = null;
 
         //Changes the json platform status from a string to an enum.
         PlatformStatus platformStatus = PlatformStatus.DESIGN;
-        try {
-            platformStatus = PlatformStatus.valueOf(requestData.get("platformStatus"));
-        } catch (Exception e) {
-            errorMessage = "Invalid platform status.";
+        switch (requestData.getPlatformStatus()) {
+            case "Design": break;
+            case "Production" :
+                platformStatus = PlatformStatus.PRODUCTION;
+                break;
+            case "Operational" :
+                platformStatus = PlatformStatus.OPERATION;
+                break;
+            case "Repair":
+                platformStatus = PlatformStatus.REPAIR;
+                break;
+            default:  errorMessage = "Invalid platform status.";
+
         }
 
         //Checks that the location entered exists and creates a location object.
-        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
+        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.getLocation());
         if (location.isEmpty()) {
             errorMessage = "Invalid location not found.";
         }
 
         //Changes the json platform type to enum.
         PlatformType platformType = PlatformType.PLATFORM_A;
-        switch (requestData.get("platformType")) {
-            case "Platform_A" : break;
-            case "Platform_B" : platformType = PlatformType.PLATFORM_B; break;
+        switch (requestData.getPlatformType()) {
+            case "Platform A" : break;
+            case "Platform B" : platformType = PlatformType.PLATFORM_B; break;
             default: errorMessage = "Invalid platform type."; break;
         }
 
-        Optional<Aircraft> aircraftCheck = aircraftRepository.findById(requestData.get("tailNumber"));
+        Optional<Aircraft> aircraftCheck = aircraftRepository.findById(requestData.getTailNumber());
         if (aircraftCheck.isPresent()) {
             errorMessage = "Invalid aircraft with specified tail number already present.";
         }
 
         //Checks if any errors have happened and if so doesn't save the aircraft to the db.
         if (errorMessage == null) {
-            Aircraft aircraft = new Aircraft(requestData.get("tailNumber"), location.get(), platformStatus, platformType, 0);
+            Aircraft aircraft = new Aircraft(requestData.getTailNumber(), location.get(), platformStatus, platformType, 0);
             try {
                 aircraftRepository.save(aircraft);
                 //Logs the aircraft added to the console.
-                LOG.info("Aircraft added by user. Tailnumber:" + requestData.get("tailNumber")
-                        + " Location:" + requestData.get("location")
-                        + " Platform Status:" + requestData.get("platformStatus")
-                        + " Platform Type:" + requestData.get("platformType"));
+                LOG.info("Aircraft added by user. Tailnumber:" + requestData.getTailNumber()
+                        + " Location:" + requestData.getLocation()
+                        + " Platform Status:" + requestData.getPlatformStatus()
+                        + " Platform Type:" + requestData.getPlatformType());
             } catch (Exception e) {
                 //Catches any other exceptions and sets the error message to them.
                 errorMessage = e.getMessage();
@@ -190,13 +198,42 @@ public class AircraftServiceImpl implements AircraftService {
         //Until total repairs method is implemented use dummy data of 12.
         Integer totalCost = 12;
 
-        for (Aircraft aircraft: aircraftList
-             ) {
+        for (Aircraft aircraft: aircraftList) {
             PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getFlyTimeHours(), aircraft.getPlatformStatus(), totalCost);
             platformStatusDTOList.add(platformStatusDTO);
         }
 
         return platformStatusDTOList;
+    }
+
+    /**
+     * For each type of platform status, it gets the list of aircraft.
+     * Adds each of these lists to the DTO and returns this.
+     * @return the DTO.
+     */
+    @Override
+    public PlatformStatusAndroidFullDTO getPlatformStatusAndroid() {
+        List<PlatformStatusAndroidDTO> operational = getListOfPlatformsWithStatus(PlatformStatus.OPERATION);
+        List<PlatformStatusAndroidDTO> beingRepaired = getListOfPlatformsWithStatus(PlatformStatus.PRODUCTION);
+        List<PlatformStatusAndroidDTO> awaitingRepair = getListOfPlatformsWithStatus(PlatformStatus.REPAIR);
+        List<PlatformStatusAndroidDTO> beyondRepair = getListOfPlatformsWithStatus(PlatformStatus.DESIGN);
+        return new PlatformStatusAndroidFullDTO(operational, beingRepaired, awaitingRepair, beyondRepair);
+
+    }
+
+    /**
+     * Takes in a platform status, finds all aircraft with this status
+     * then adds details from the aircraft and adds this to a DTO list.
+     * @param platformStatus
+     * @return the list of platforms with this status.
+     */
+    private List<PlatformStatusAndroidDTO> getListOfPlatformsWithStatus(final PlatformStatus platformStatus) {
+        List<PlatformStatusAndroidDTO> platforms = new ArrayList<>();
+        List<Aircraft> currentAircraft = aircraftRepository.findAircraftsByPlatformStatus(platformStatus);
+        for (Aircraft aircraft:currentAircraft) {
+            platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName()));
+        }
+        return platforms;
     }
 
     /**
@@ -386,5 +423,25 @@ public class AircraftServiceImpl implements AircraftService {
             ceoAircraftCostsOverviewDTOS.add(ceoAircraftCostsOverviewDTO);
         }
         return ceoAircraftCostsOverviewDTOS;
+    }
+
+    /**
+     * Used to update the user flytime of an aircraft in the database.
+     * @param tailNumber The tail number of the aircraft that the hours are being updated for.
+     * @param userId The user Id whose personal flight time is being updated.
+     * @param flyTime The fly time to be added to the hours field.
+     */
+    public void updateUserAircraftFlyTime(final String tailNumber, final long userId, final int flyTime) throws IllegalArgumentException {
+        AircraftUser aircraftUser = null;
+        Optional<AircraftUser> aircraftUserOpt = aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(tailNumber, userId);
+        if (aircraftUserOpt.isPresent()) {
+            aircraftUser = aircraftUserOpt.get();
+        } else {
+            LOG.debug("Failed to update user aircraft flight time because the AircraftUser could not be found.");
+            throw new IllegalArgumentException("Aircraft user does not exist!");
+        }
+        long oldFlyTime = aircraftUser.getUserFlyingHours();
+        aircraftUser.setUserFlyingHours(oldFlyTime + flyTime);
+        aircraftUserRepository.save(aircraftUser);
     }
 }

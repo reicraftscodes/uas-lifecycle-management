@@ -168,7 +168,7 @@ public class AircraftControllerTest {
     public void updateFlightHours() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO("G-001",12);
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",12);
 
         when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
         Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
@@ -185,7 +185,7 @@ public class AircraftControllerTest {
     public void updateFlightHoursNoAircraft() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO("G-001",12);
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",12);
 
         Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
         String json = objectMapper.writeValueAsString(logFlightDTO);
@@ -202,7 +202,7 @@ public class AircraftControllerTest {
     public void updateFlightHoursInvalidTime() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO("G-001",-12);
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",-12);
 
         when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
         Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
@@ -299,7 +299,30 @@ public class AircraftControllerTest {
 
 
 
-        assertEquals("[{\"tailNumber\":\"G-001\",\"flyTimeHours\":100,\"platformStatus\":\"REPAIR\",\"totalCost\":12},{\"tailNumber\":\"G-002\",\"flyTimeHours\":60,\"platformStatus\":\"OPERATION\",\"totalCost\":12}]", jsonString);
+        assertEquals("[{\"tailNumber\":\"G-001\",\"platformStatus\":\"REPAIR\",\"flyTimeHours\":100,\"totalCost\":12},{\"tailNumber\":\"G-002\",\"platformStatus\":\"OPERATION\",\"flyTimeHours\":60,\"totalCost\":12}]", jsonString);
+    }
+
+    @WithMockUser("user")
+    @Test
+    public void whenIRequestThePlatformStatusForAndroidIShouldRecieveA200FullResponse() throws Exception {
+        List<PlatformStatusAndroidDTO> mockOperational = new ArrayList<>();
+        List<PlatformStatusAndroidDTO> mockBeingRepaired = new ArrayList<>();
+        List<PlatformStatusAndroidDTO> mockAwaitingRepair = new ArrayList<>();
+        List<PlatformStatusAndroidDTO> mockBeyondRepair = new ArrayList<>();
+        PlatformStatusAndroidDTO mockAircraft = new PlatformStatusAndroidDTO("M100", PlatformStatus.REPAIR, "Cardiff");
+        mockOperational.add(mockAircraft);
+        mockBeingRepaired.add(mockAircraft);
+        mockAwaitingRepair.add(mockAircraft);
+        mockBeyondRepair.add(mockAircraft);
+        PlatformStatusAndroidFullDTO mockResult = new PlatformStatusAndroidFullDTO(mockOperational, mockBeingRepaired, mockAwaitingRepair, mockBeyondRepair);
+        when(aircraftService.getPlatformStatusAndroid()).thenReturn(mockResult);
+
+        mockMvc.perform(get("/aircraft/android/platform-status")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.operational[0].tailNumber").value("M100"))
+                .andExpect(jsonPath("$.operational[0].platformStatus").value("REPAIR"))
+                .andExpect(jsonPath("$.operational[0].location").value("Cardiff"));;
     }
 
 

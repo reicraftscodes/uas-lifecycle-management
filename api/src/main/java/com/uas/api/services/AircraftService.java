@@ -3,7 +3,6 @@ package com.uas.api.services;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +12,7 @@ public interface AircraftService {
      * @param requestData The json body turned into a hashmap
      * @return returns a string with any errors encountered adding the aircraft.
      */
-    String addAircraftFromJson(HashMap<String, String> requestData);
+    String addAircraftFromJson(AircraftAddNewDTO requestData);
 
     /**
      * trys to find an aircraft from the database.
@@ -59,6 +58,13 @@ public interface AircraftService {
     List<PlatformStatusDTO> getPlatformStatus();
 
     /**
+     * Gets a list of the platform status containing the name,
+     * location and its operational status.
+     * @return the list.
+     */
+    PlatformStatusAndroidFullDTO getPlatformStatusAndroid();
+
+    /**
      * Gets a list of all aircraft in the database.
      * @return returns a list of aircraft objects.
      */
@@ -102,6 +108,13 @@ public interface AircraftService {
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
 
+    /**
+     * Used to update the user flytime of an aircraft in the database.
+     * @param tailNumber The tail number of the aircraft that the hours are being updated for.
+     * @param userId The user Id whose personal flight time is being updated.
+     * @param flyTime The fly time to be added to the hours field.
+     */
+    void updateUserAircraftFlyTime(String tailNumber, long userId, int flyTime);
 
 
 
