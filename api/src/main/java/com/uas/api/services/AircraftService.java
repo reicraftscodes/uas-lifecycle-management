@@ -3,7 +3,6 @@ package com.uas.api.services;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,7 +12,7 @@ public interface AircraftService {
      * @param requestData The json body turned into a hashmap
      * @return returns a string with any errors encountered adding the aircraft.
      */
-    String addAircraftFromJson(HashMap<String, String> requestData);
+    String addAircraftFromJson(AircraftAddNewDTO requestData);
 
     /**
      * trys to find an aircraft from the database.
@@ -57,6 +56,13 @@ public interface AircraftService {
      * @return the dto list.
      */
     List<PlatformStatusDTO> getPlatformStatus();
+
+    /**
+     * Gets a list of the platform status containing the name,
+     * location and its operational status.
+     * @return the list.
+     */
+    PlatformStatusAndroidFullDTO getPlatformStatusAndroid();
 
     /**
      * Gets a list of all aircraft in the database.
