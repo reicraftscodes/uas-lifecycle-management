@@ -83,5 +83,18 @@ If the request is unsuccessful the response will show an error for bad request a
     "response": "Invalid part status."
 }`
 
+<h3>Assigning an User to an Aircraft</h3>
+
+A pre-existing user in the database can be assigned to a pre-existing aircraft in the database to form an AircraftUser entity
+
+The POST request should be sent to /aircraft/assign-user. 
+
+Example of JSON body:
+
+{"userID":"2", "tailNumber":"G-004"}
+
+-Both the userID and tailNumber must reference pre-existing entities in the database.
+
+
 
 
