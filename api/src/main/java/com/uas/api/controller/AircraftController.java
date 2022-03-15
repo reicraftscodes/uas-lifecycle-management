@@ -6,7 +6,6 @@ import com.uas.api.models.entities.Part;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -207,8 +206,15 @@ public class AircraftController {
 
     @PostMapping("update-aircraft-status")
     public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) {
-        return aircraftService.modifyAircraftStatus(aircraftStatusDTO);
+        return aircraftService.updateAircraftStatus(aircraftStatusDTO);
     }
+
+    @PostMapping("update-aircraft-part")
+    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) {
+        return aircraftService.updateAircraftPart(aircraftPartDTO);
+    }
+
+
 
 
 

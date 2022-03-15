@@ -390,7 +390,7 @@ public class AircraftServiceImpl implements AircraftService {
         return ceoAircraftCostsOverviewDTOS;
     }
 
-    public ResponseEntity<?> modifyAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO) {
+    public ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO) {
         Optional<Aircraft> aircraft = findAircraftById(aircraftStatusDTO.getTailNumber());
 
         if (aircraft.isEmpty()) {
@@ -435,6 +435,29 @@ public class AircraftServiceImpl implements AircraftService {
 
             return ResponseEntity.ok(aircraftPartsDTO);
         }
+    }
+
+    public ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO){
+        Optional<Part> currentPart = partRepository.findPartBypartNumber(aircraftPartDTO.getCurrentPartNumber());
+        if (currentPart.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current part being replaced is not found!");
+        }
+
+        Optional<Part> newPart = partRepository.findPartBypartNumber(aircraftPartDTO.getNewPartNumber());
+        if (newPart.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("New part not found!");
+        }
+        if (currentPart.get().getPartType() != newPart.get().getPartType()) {
+            return ResponseEntity.badRequest().body("The part being replaced doesn't have the same part type as the new part!");
+        }
+
+        newPart.get().setAircraft(currentPart.get().getAircraft());
+        partRepository.save(newPart.get());
+
+        currentPart.get().setAircraft(null);
+        partRepository.save(currentPart.get());
+
+        return ResponseEntity.ok("");
     }
 
 
