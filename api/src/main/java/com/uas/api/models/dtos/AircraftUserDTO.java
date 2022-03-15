@@ -2,16 +2,9 @@ package com.uas.api.models.dtos;
 
 import com.uas.api.models.auth.User;
 import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.AircraftUserKey;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-
 
 @AllArgsConstructor
 @Getter
@@ -19,12 +12,12 @@ import javax.persistence.MapsId;
 public class AircraftUserDTO {
 
     /**
-     * User.
+     * The user assigned to the aircraft.
      */
     private User user;
 
     /**
-     * Aircraft.
+     * The Aircraft the user is assigned to.
      */
     private Aircraft aircraft;
 

@@ -40,9 +40,12 @@ public class AircraftServiceImpl implements AircraftService {
      */
     private final PartRepository partRepository;
     /**
-     * Used to output logs of what the program is doing to the console.
+     * Contains methods for communication with the users table of the db.
      */
     private final UserRepository userRepository;
+    /**
+     * Used to output logs of what the program is doing to the console.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
     /**
      * The error message?
@@ -63,7 +66,7 @@ public class AircraftServiceImpl implements AircraftService {
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
                                final RepairRepository repairRepository,
-                               final PartRepository partRepository, UserRepository userRepository) {
+                               final PartRepository partRepository, final UserRepository userRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
         this.repairRepository = repairRepository;
@@ -413,8 +416,13 @@ public class AircraftServiceImpl implements AircraftService {
         aircraftUserRepository.save(aircraftUser);
     }
 
+    /**
+     * Used to assign an user to an aircraft.
+     * @param aircraftUserKeyDTO The tail number of the aircraft that the hours are being updated for.
+     * @return returns the AircraftUserDTO that is constructed from the saved AircraftUser.
+     */
     @Override
-    public AircraftUserDTO assignUserToAircraft(AircraftUserKeyDTO aircraftUserKeyDTO) {
+    public AircraftUserDTO assignUserToAircraft(final AircraftUserKeyDTO aircraftUserKeyDTO) {
         AircraftUserKey aircraftUserKey = new AircraftUserKey(aircraftUserKeyDTO.getUserID(), aircraftUserKeyDTO.getTailNumber());
         Optional<User> user = userRepository.findById(aircraftUserKeyDTO.getUserID());
         Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftUserKeyDTO.getTailNumber());
