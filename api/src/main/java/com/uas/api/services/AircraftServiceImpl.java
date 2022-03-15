@@ -1,10 +1,12 @@
 package com.uas.api.services;
 
+import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.*;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
+import com.uas.api.repositories.auth.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,7 @@ public class AircraftServiceImpl implements AircraftService {
     /**
      * Used to output logs of what the program is doing to the console.
      */
+    private final UserRepository userRepository;
     private static final Logger LOG = LoggerFactory.getLogger(AircraftServiceImpl.class);
     /**
      * The error message?
@@ -53,18 +56,20 @@ public class AircraftServiceImpl implements AircraftService {
      * @param aircraftUserRepository Repository used to modify aircraft user data in db.
      * @param repairRepository
      * @param partRepository
+     * @param userRepository
      */
     @Autowired
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
                                final RepairRepository repairRepository,
-                               final PartRepository partRepository) {
+                               final PartRepository partRepository, UserRepository userRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
         this.repairRepository = repairRepository;
         this.aircraftUserRepository = aircraftUserRepository;
         this.partRepository = partRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -407,4 +412,16 @@ public class AircraftServiceImpl implements AircraftService {
         aircraftUser.setUserFlyingHours(oldFlyTime + flyTime);
         aircraftUserRepository.save(aircraftUser);
     }
+
+    @Override
+    public AircraftUserDTO assignUserToAircraft(AircraftUserKeyDTO aircraftUserKeyDTO) {
+        AircraftUserKey aircraftUserKey = new AircraftUserKey(aircraftUserKeyDTO.getUserID(), aircraftUserKeyDTO.getTailNumber());
+        Optional<User> user = userRepository.findById(aircraftUserKeyDTO.getUserID());
+        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftUserKeyDTO.getTailNumber());
+        AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user.get(), aircraft.get(), 0L);
+        AircraftUser savedAircraftUser = aircraftUserRepository.save(aircraftUser);
+        AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(user.get(), aircraft.get(), savedAircraftUser.getUserFlyingHours());
+        return aircraftUserDTO;
+    }
 }
+

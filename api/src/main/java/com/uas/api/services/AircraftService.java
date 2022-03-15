@@ -111,6 +111,5 @@ public interface AircraftService {
     void updateUserAircraftFlyTime(String tailNumber, long userId, int flyTime);
 
 
-
-
+    AircraftUserDTO assignUserToAircraft(AircraftUserKeyDTO aircraftUserKeyDTO);
 }

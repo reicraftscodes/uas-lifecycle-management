@@ -203,4 +203,15 @@ public class AircraftController {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
     }
 
+    /**
+     * Assigns a user to an aircraft by creating a new AircraftUser entity and saving it to db.
+     * @param aircraftUserKeyDTO request body.
+     * @return response entity with a dto object.
+     */
+    @PostMapping("/assign-user")
+    public ResponseEntity<?> assignUserToAircraft(@RequestBody final AircraftUserKeyDTO aircraftUserKeyDTO) {
+        AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(aircraftUserKeyDTO);
+        return ResponseEntity.ok(aircraftUserDTO);
+    }
+
 }
