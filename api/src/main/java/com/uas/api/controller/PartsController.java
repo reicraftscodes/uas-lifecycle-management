@@ -127,4 +127,9 @@ public class PartsController {
         List<PartRepairsDTO> partRepairsDTOs = partService.getMostCommonFailingParts(topN);
         return ResponseEntity.ok(partRepairsDTOs);
     }
+
+    @GetMapping("/get-by-type")
+    public ResponseEntity<?> getPartsAvailableByParttype(@RequestBody final long partType){
+        return ResponseEntity.ok(partService.availablePartsForParttype(partType));
+    }
 }

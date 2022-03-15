@@ -64,5 +64,7 @@ public interface PartService {
      */
     void updatePartFlyTime(List<Part> parts, int flyTime);
 
+    List<String> availablePartsForParttype(long partType);
+
 
 }

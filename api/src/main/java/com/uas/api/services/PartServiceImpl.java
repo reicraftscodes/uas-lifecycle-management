@@ -1,9 +1,6 @@
 package com.uas.api.services;
 
-import com.uas.api.models.dtos.LocationStockLevelsDTO;
-import com.uas.api.models.dtos.PartRepairsDTO;
-import com.uas.api.models.dtos.PartStockLevelDTO;
-import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.Part;
@@ -296,6 +293,10 @@ public class PartServiceImpl implements PartService {
             part.setFlyTimeHours(flyTime + flyTimeOld);
             partRepository.save(part);
         }
+    }
+
+    public List<String> availablePartsForParttype(long partType) {
+        return partRepository.findAllAvailbleByType(partType);
     }
 
 
