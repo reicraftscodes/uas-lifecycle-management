@@ -103,7 +103,9 @@ public interface AircraftService {
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
 
-    ResponseEntity<?> modifyAircraftStatus(String tailNumber, String platformStatus);
+    ResponseEntity<?> modifyAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO);
+
+    ResponseEntity<?> getAircraftParts(String tailNumber);
 
 
 

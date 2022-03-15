@@ -197,13 +197,19 @@ public class AircraftController {
      */
     @GetMapping("ceo-aircraft-cost")
     public ResponseEntity<?> getStreamlinedRunningCost() {
-
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
     }
 
-    @GetMapping("update-aircraft-status")
-    public ResponseEntity<?> updateAircraftStatus() {
-        return aircraftService.modifyAircraftStatus("G-001","DESIGN");
+    @GetMapping("aircraft-parts-status")
+    public ResponseEntity<?> getAircraftParts(@RequestBody final String tailNumber) {
+        return aircraftService.getAircraftParts(tailNumber);
     }
+
+    @PostMapping("update-aircraft-status")
+    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) {
+        return aircraftService.modifyAircraftStatus(aircraftStatusDTO);
+    }
+
+
 
 }

@@ -8,6 +8,7 @@ import com.uas.api.repositories.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -389,18 +390,52 @@ public class AircraftServiceImpl implements AircraftService {
         return ceoAircraftCostsOverviewDTOS;
     }
 
-    public ResponseEntity<?> modifyAircraftStatus(String tailNumber, String platformStatus) {
-        Optional<Aircraft> aircraft = findAircraftById(tailNumber);
+    public ResponseEntity<?> modifyAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO) {
+        Optional<Aircraft> aircraft = findAircraftById(aircraftStatusDTO.getTailNumber());
+
         if (aircraft.isEmpty()) {
-            return ResponseEntity.badRequest().body("Error: Aircraft not found!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
+        } else {
+
+            PlatformStatus platformStatusEnum;
+            try {
+                platformStatusEnum = PlatformStatus.valueOf(aircraftStatusDTO.getStatus());
+            } catch(Exception e) {
+                return ResponseEntity.badRequest().body("Invalid aircraft status!");
+            }
+
+            aircraft.get().setPlatformStatus(platformStatusEnum);
+            aircraftRepository.save(aircraft.get());
+            return ResponseEntity.ok("");
         }
-
-        PlatformStatus platformStatusEnum = PlatformStatus.valueOf(platformStatus);
-
-        aircraft.get().setPlatformStatus(platformStatusEnum);
-        aircraftRepository.save(aircraft.get());
-
-        return ResponseEntity.ok(" ");
-
     }
+
+    public ResponseEntity<?> getAircraftParts(String tailNumber) {
+        AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
+        Optional<Aircraft> aircraft = findAircraftById(tailNumber);
+
+        if(aircraft.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
+        } else {
+            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+
+            List<List<String>> partsReturn = new ArrayList<>();
+            for (Part part : parts){
+                List<String> partInformation = new ArrayList<>();
+
+                partInformation.add(part.getPartNumber().toString());
+                partInformation.add(part.getPartType().getPartName().getName());
+                partInformation.add(part.getPartStatus().getLabel());
+
+                partsReturn.add(partInformation);
+            }
+
+            aircraftPartsDTO.setTailNumber(aircraft.get().getTailNumber());
+            aircraftPartsDTO.setParts(partsReturn);
+
+            return ResponseEntity.ok(aircraftPartsDTO);
+        }
+    }
+
+
 }
