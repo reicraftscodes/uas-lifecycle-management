@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,7 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AircraftPartsDTO {
-    String tailNumber;
-
-    List<List<String>> parts;
+    /**
+     * The tailNumber of the aircraft the parts are being retrieved for.
+     */
+    private String tailNumber;
+    /**
+     * The parts with their part number, part type, and part status.
+     */
+    private List<List<String>> parts;
 }

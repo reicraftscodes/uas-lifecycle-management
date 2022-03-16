@@ -10,6 +10,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateAircraftStatusDTO {
-    String tailNumber;
-    String status;
+    /**
+     * The tailnumber of the aircraft that is having its status changed.
+     */
+    private String tailNumber;
+    /**
+     * The status that the aircraft is being set to.
+     */
+    private String status;
 }

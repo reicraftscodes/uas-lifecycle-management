@@ -390,7 +390,12 @@ public class AircraftServiceImpl implements AircraftService {
         return ceoAircraftCostsOverviewDTOS;
     }
 
-    public ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO) {
+    /**
+     * Used to update the status of a given aircraft.
+     * @param aircraftStatusDTO A dto containing tail number and status to be gathered from the user.
+     * @return returns a response entity for success or if there is a failure what the error is.
+     */
+    public ResponseEntity<?> updateAircraftStatus(final UpdateAircraftStatusDTO aircraftStatusDTO) {
         Optional<Aircraft> aircraft = findAircraftById(aircraftStatusDTO.getTailNumber());
 
         if (aircraft.isEmpty()) {
@@ -400,7 +405,7 @@ public class AircraftServiceImpl implements AircraftService {
             PlatformStatus platformStatusEnum;
             try {
                 platformStatusEnum = PlatformStatus.valueOf(aircraftStatusDTO.getStatus());
-            } catch(Exception e) {
+            } catch (Exception e) {
                 return ResponseEntity.badRequest().body("Invalid aircraft status!");
             }
 
@@ -410,17 +415,23 @@ public class AircraftServiceImpl implements AircraftService {
         }
     }
 
-    public ResponseEntity<?> getAircraftParts(String tailNumber) {
+    /**
+     * Gets the parts associated with a specific aircraft.
+     * @param tailNumber The tailnumber for the aircraft/
+     * @return returns a response entity with a body containing the tailnumber and a list of parts with statuses.
+     */
+    public ResponseEntity<?> getAircraftParts(final String tailNumber) {
         AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
         Optional<Aircraft> aircraft = findAircraftById(tailNumber);
 
-        if(aircraft.isEmpty()){
+        if (aircraft.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
         } else {
             List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
 
             List<List<String>> partsReturn = new ArrayList<>();
-            for (Part part : parts){
+            for (Part part : parts) {
+                //creates a list of part number, type, and status to return.
                 List<String> partInformation = new ArrayList<>();
 
                 partInformation.add(part.getPartNumber().toString());
@@ -437,7 +448,12 @@ public class AircraftServiceImpl implements AircraftService {
         }
     }
 
-    public ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO){
+    /**
+     * Updates the part assigned to a specific aircraft with a new selected part.
+     * @param aircraftPartDTO has a current part and a new part field.
+     * @return returns a response entity with an ok status or an error status with an error body.
+     */
+    public ResponseEntity<?> updateAircraftPart(final UpdateAircraftPartDTO aircraftPartDTO) {
         Optional<Part> currentPart = partRepository.findPartBypartNumber(aircraftPartDTO.getCurrentPartNumber());
         if (currentPart.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current part being replaced is not found!");
@@ -459,6 +475,4 @@ public class AircraftServiceImpl implements AircraftService {
 
         return ResponseEntity.ok("");
     }
-
-
 }
