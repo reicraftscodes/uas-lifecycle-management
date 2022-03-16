@@ -50,7 +50,7 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      * Gets the total cost of repairs for all aircraft using an sql query.
      * @return the total cost of repairs for all aircraft.
      */
-    @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartID FROM parts)", nativeQuery = true)
+    @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartNumber FROM parts)", nativeQuery = true)
     Double findTotalRepairCostForAllAircraft();
 
     @Query(value = "SELECT COUNT(RepairID) FROM Repairs WHERE PartNumber IN (SELECT PartNumber FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
