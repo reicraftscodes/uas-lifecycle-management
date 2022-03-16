@@ -10,7 +10,7 @@ public class PlatformStatusInterface {
     /**
      * The status of the aircraft. Operational, Beyond Repair, Awaiting Repair, Being Repaired.
      */
-    private final PlatformStatus platformStatus;
+    private final String platformStatus;
 
     /**
      * Constructor.
@@ -19,7 +19,7 @@ public class PlatformStatusInterface {
      */
     public PlatformStatusInterface(final String tailNumber, final PlatformStatus platformStatus) {
         this.tailNumber = tailNumber;
-        this.platformStatus = platformStatus;
+        this.platformStatus = platformStatus.getLabel();
     }
 
     /**
@@ -34,7 +34,7 @@ public class PlatformStatusInterface {
      * Gets the platform status.
      * @return the platform status.
      */
-    public PlatformStatus getPlatformStatus() {
+    public String getPlatformStatus() {
         return platformStatus;
     }
 }

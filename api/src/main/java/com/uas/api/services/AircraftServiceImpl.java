@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -195,14 +196,24 @@ public class AircraftServiceImpl implements AircraftService {
     public List<PlatformStatusDTO> getPlatformStatus() {
         List<Aircraft> aircraftList = aircraftRepository.findAll();
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
-        //Until total repairs method is implemented use dummy data of 12.
-        Integer totalCost = 12;
-
+        //todo - implement get parts cost method
         for (Aircraft aircraft: aircraftList) {
-            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getFlyTimeHours(), aircraft.getPlatformStatus(), totalCost);
+            Integer repairsCount = repairRepository.findRepairsCountForAircraft(aircraft.getTailNumber());
+            Double repairsCost = getTotalRepairCostForSpecificAircraft(aircraft);
+            BigDecimal partsCost = BigDecimal.valueOf(3000);
+            BigDecimal totalCost = partsCost.add(BigDecimal.valueOf(repairsCost));
+            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(
+                    aircraft.getTailNumber(),
+                    aircraft.getPlatformType(),
+                    aircraft.getPlatformStatus(),
+                    aircraft.getFlyTimeHours(),
+                    totalCost,
+                    aircraft.getLocation().getLocationName(),
+                    repairsCount,
+                    BigDecimal.valueOf(repairsCost),
+                    BigDecimal.valueOf(3000));
             platformStatusDTOList.add(platformStatusDTO);
         }
-
         return platformStatusDTOList;
     }
 
