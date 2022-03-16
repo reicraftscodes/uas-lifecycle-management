@@ -10,6 +10,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateAircraftPartDTO {
-    long currentPartNumber;
-    long newPartNumber;
+    /**
+     * The part number of the part being replaced.
+     */
+    private long currentPartNumber;
+    /**
+     * The part number of the new part.
+     */
+    private long newPartNumber;
 }

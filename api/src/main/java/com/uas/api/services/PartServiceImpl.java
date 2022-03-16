@@ -295,7 +295,12 @@ public class PartServiceImpl implements PartService {
         }
     }
 
-    public List<String> availablePartsForParttype(long partType) {
+    /**
+     * Gets all the parts for a specific part type that aren't assigned to an aircraft.
+     * @param partType The part type being searched for.
+     * @return returns a list of part numbers.
+     */
+    public List<String> availablePartsForParttype(final long partType) {
         return partRepository.findAllAvailbleByType(partType);
     }
 

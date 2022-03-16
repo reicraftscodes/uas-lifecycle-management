@@ -128,8 +128,13 @@ public class PartsController {
         return ResponseEntity.ok(partRepairsDTOs);
     }
 
+    /**
+     * Gets all the parts that are unassigned to aircraft for a specific part type.
+     * @param partType The type of part being searched for.
+     * @return returns a response entity with ok response and a body with a list of part numbers or an error response with an error message.
+     */
     @GetMapping("/get-by-type")
-    public ResponseEntity<?> getPartsAvailableByParttype(@RequestBody final long partType){
+    public ResponseEntity<?> getPartsAvailableByParttype(@RequestBody final long partType) {
         return ResponseEntity.ok(partService.availablePartsForParttype(partType));
     }
 }

@@ -103,10 +103,25 @@ public interface AircraftService {
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
 
+    /**
+     * Updates the given aircrafts' status.
+     * @param aircraftStatusDTO A dto with the aircraft being updates and the status it is being changed to.
+     * @return a response entity with and message if there was any problems.
+     */
     ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO);
 
+    /**
+     * Gets the parts and their status for the aircraft given.
+     * @param tailNumber The aircraft that the parts are being searched for.
+     * @return Returns a response entity with a body containing the list of parts with their statuses.
+     */
     ResponseEntity<?> getAircraftParts(String tailNumber);
 
+    /**
+     * Updates an aircraft with a new part.
+     * @param aircraftPartDTO a dto with the part being replaced and the new part number.
+     * @return a response entity with and message if there was any problems.
+     */
     ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO);
 
 
