@@ -13,6 +13,7 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.AircraftUserRepository;
+import com.uas.api.repositories.RepairRepository;
 import com.uas.api.repositories.auth.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,9 @@ public class AircraftServiceTests {
 
     @Mock
     private AircraftRepository aircraftRepository;
+
+    @Mock
+    private RepairRepository repairRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -95,11 +99,14 @@ public class AircraftServiceTests {
         aircraft.add(aircraftTwo);
 
         when(aircraftRepository.findAll()).thenReturn(aircraft);
+        when(repairRepository.findRepairsCountForAircraft(any())).thenReturn(5);
+        when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(100.0);
 
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
 
         assertEquals("Should return 2 platform status dtos", 2, platformStatusDTOList.size());
         assertEquals("Should return tail number G-001", "G-001", platformStatusDTOList.get(0).getTailNumber());
+        assertEquals("Should return repairs count 5", 5, platformStatusDTOList.get(0).getRepairsCount());
         assertEquals("Should return tail number G-002", "G-002", platformStatusDTOList.get(1).getTailNumber());
     }
 

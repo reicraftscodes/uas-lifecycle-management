@@ -36,6 +36,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -280,8 +281,26 @@ public class AircraftControllerTest {
     public void GetPlatformStatus() throws Exception {
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
 
-        platformStatusDTOList.add(new PlatformStatusDTO("G-001", 100, PlatformStatus.REPAIR,  12));
-        platformStatusDTOList.add(new PlatformStatusDTO("G-002", 60, PlatformStatus.OPERATION, 12));
+        platformStatusDTOList.add(new PlatformStatusDTO(
+                "G-001",
+                PlatformType.PLATFORM_A,
+                PlatformStatus.REPAIR,
+                500,
+                BigDecimal.valueOf(3000),
+                "Cardiff",
+                14,
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000)));
+        platformStatusDTOList.add(new PlatformStatusDTO(
+                "G-002",
+                PlatformType.PLATFORM_B,
+                PlatformStatus.OPERATION,
+                400,
+                BigDecimal.valueOf(2800),
+                "Cardiff",
+                10,
+                BigDecimal.valueOf(800),
+                BigDecimal.valueOf(2000)));
 
         when(aircraftService.getPlatformStatus()).thenReturn(platformStatusDTOList);
 
@@ -292,14 +311,10 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
-                .andExpect(jsonPath("$[0].platformStatus").value("REPAIR"))
-                .andExpect(jsonPath("$[1].tailNumber").value("G-002")).andReturn();
-
-       String jsonString = mvcResult.getResponse().getContentAsString();
-
-
-
-        assertEquals("[{\"tailNumber\":\"G-001\",\"platformStatus\":\"REPAIR\",\"flyTimeHours\":100,\"totalCost\":12},{\"tailNumber\":\"G-002\",\"platformStatus\":\"OPERATION\",\"flyTimeHours\":60,\"totalCost\":12}]", jsonString);
+                .andExpect(jsonPath("$[0].platformStatus").value("Repair"))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002"))
+                .andExpect(jsonPath("$[1].platformStatus").value("Operational"))
+                .andReturn();
     }
 
     @WithMockUser("user")
@@ -309,7 +324,7 @@ public class AircraftControllerTest {
         List<PlatformStatusAndroidDTO> mockBeingRepaired = new ArrayList<>();
         List<PlatformStatusAndroidDTO> mockAwaitingRepair = new ArrayList<>();
         List<PlatformStatusAndroidDTO> mockBeyondRepair = new ArrayList<>();
-        PlatformStatusAndroidDTO mockAircraft = new PlatformStatusAndroidDTO("M100", PlatformStatus.REPAIR, "Cardiff");
+        PlatformStatusAndroidDTO mockAircraft = new PlatformStatusAndroidDTO("M100", PlatformStatus.REPAIR, "Cardiff", PlatformType.PLATFORM_A);
         mockOperational.add(mockAircraft);
         mockBeingRepaired.add(mockAircraft);
         mockAwaitingRepair.add(mockAircraft);
@@ -321,8 +336,9 @@ public class AircraftControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.operational[0].tailNumber").value("M100"))
-                .andExpect(jsonPath("$.operational[0].platformStatus").value("REPAIR"))
-                .andExpect(jsonPath("$.operational[0].location").value("Cardiff"));;
+                .andExpect(jsonPath("$.operational[0].platformStatus").value("Repair"))
+                .andExpect(jsonPath("$.operational[0].location").value("Cardiff"))
+                .andExpect(jsonPath("$.operational[0].platformType").value("Platform A"));
     }
 
     //This test needs looking at for the return.
