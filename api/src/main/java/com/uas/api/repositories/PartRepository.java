@@ -4,8 +4,6 @@ import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.enums.PartName;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,14 +33,6 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
      * @return A list of all part entities.
      */
     List<Part> findAllPartsByAircraft(Aircraft aircraft);
-
-    /**
-     * Finds all the parts in the db that are not assigned to an aircraft for a specific part type.
-     * @param partID the part type being searched for.
-     * @return returns a list of part numbers that are available.
-     */
-    @Query(value = "SELECT PartNumber FROM parts WHERE AircraftTailNumber IS NULL AND partID=:partID", nativeQuery = true)
-    List<String> findAllAvailbleByType(@Param("partID") long partID);
 
 
 }
