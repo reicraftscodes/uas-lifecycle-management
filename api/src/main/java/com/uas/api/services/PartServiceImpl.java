@@ -1,9 +1,6 @@
 package com.uas.api.services;
 
-import com.uas.api.models.dtos.LocationStockLevelsDTO;
-import com.uas.api.models.dtos.PartRepairsDTO;
-import com.uas.api.models.dtos.PartStockLevelDTO;
-import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.Part;
@@ -297,6 +294,16 @@ public class PartServiceImpl implements PartService {
             partRepository.save(part);
         }
     }
+
+    /**
+     * Gets all the parts for a specific part type that aren't assigned to an aircraft.
+     * @param partType The part type being searched for.
+     * @return returns a list of part numbers.
+     */
+    public List<String> availablePartsForParttype(final long partType) {
+        return partRepository.findAllAvailbleByType(partType);
+    }
+
 
 
 

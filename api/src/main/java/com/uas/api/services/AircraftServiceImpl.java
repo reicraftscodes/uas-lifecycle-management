@@ -10,10 +10,13 @@ import com.uas.api.repositories.auth.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -463,6 +466,96 @@ public class AircraftServiceImpl implements AircraftService {
         aircraftUser.setUserFlyingHours(oldFlyTime + flyTime);
         aircraftUserRepository.save(aircraftUser);
     }
+
+    /**
+     * Used to update the status of a given aircraft.
+     * @param aircraftStatusDTO A dto containing tail number and status to be gathered from the user.
+     * @return returns a response entity for success or if there is a failure what the error is.
+     */
+    public ResponseEntity<?> updateAircraftStatus(final UpdateAircraftStatusDTO aircraftStatusDTO) {
+        Optional<Aircraft> aircraft = findAircraftById(aircraftStatusDTO.getTailNumber());
+
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
+        } else {
+
+            PlatformStatus platformStatusEnum;
+            try {
+                platformStatusEnum = PlatformStatus.valueOf(aircraftStatusDTO.getStatus());
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Invalid aircraft status!");
+            }
+
+            aircraft.get().setPlatformStatus(platformStatusEnum);
+            aircraftRepository.save(aircraft.get());
+            return ResponseEntity.ok("");
+        }
+    }
+
+    /**
+     * Gets the parts associated with a specific aircraft.
+     * @param tailNumber The tailnumber for the aircraft/
+     * @return returns a response entity with a body containing the tailnumber and a list of parts with statuses.
+     */
+    public ResponseEntity<?> getAircraftParts(final String tailNumber) {
+        AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
+        Optional<Aircraft> aircraft = findAircraftById(tailNumber);
+
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
+        } else {
+            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+
+            List<List<String>> partsReturn = new ArrayList<>();
+            for (Part part : parts) {
+                //creates a list of part number, type, and status to return.
+                List<String> partInformation = new ArrayList<>();
+
+                partInformation.add(part.getPartNumber().toString());
+                partInformation.add(part.getPartType().getPartName().getName());
+                partInformation.add(part.getPartStatus().getLabel());
+
+                partsReturn.add(partInformation);
+            }
+
+            aircraftPartsDTO.setTailNumber(aircraft.get().getTailNumber());
+            aircraftPartsDTO.setParts(partsReturn);
+
+            return ResponseEntity.ok(aircraftPartsDTO);
+        }
+    }
+
+    /**
+     * Updates a specific aircraft with a new selected part.
+     * @param aircraftPartDTO has a aircraft tailnumber and a new part field.
+     * @return returns a response entity with an ok status or an error status with an error body.
+     */
+    public ResponseEntity<?> updateAircraftPart(final UpdateAircraftPartDTO aircraftPartDTO) {
+        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftPartDTO.getTailNumber());
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft is not found!");
+        }
+
+        Optional<Part> newPart = partRepository.findPartBypartNumber(aircraftPartDTO.getNewPartNumber());
+        if (newPart.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("New part not found!");
+        }
+
+        List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+
+        for (Part part : parts) {
+            if (part.getPartType() == newPart.get().getPartType()) {
+                part.setAircraft(null);
+                partRepository.save(part);
+            }
+        }
+
+        newPart.get().setAircraft(aircraft.get());
+        partRepository.save(newPart.get());
+
+        return ResponseEntity.ok("");
+    }
+
 
     /**
      * Used to assign an user to an aircraft.
