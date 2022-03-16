@@ -31,6 +31,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +41,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -368,5 +370,56 @@ public class AircraftControllerTest {
         assertEquals("", response);
     }
 
+    @WithMockUser(value = "user")
+    @Test
+    public void getAircraftPartsSuccess() throws Exception {
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 
+        PartType partType = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+        Part part = new Part(partType,aircraft,location,PartStatus.OPERATIONAL);
+        List<Part> parts = new ArrayList<>();
+        parts.add(part);
+
+        AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
+        aircraftPartsDTO.setTailNumber(aircraft.getTailNumber());
+
+
+        String json = "G-001";
+
+        when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraft));
+        when(partRepository.findAllPartsByAircraft(any())).thenReturn(parts);
+
+        mockMvc.perform(get("/aircraft/aircraft-parts-status")
+                        .content(json).characterEncoding("utf-8")
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void updateAircraftPartSuccess() throws Exception {
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
+
+        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+        Part currentPart = new Part(partType1,aircraft,location,PartStatus.OPERATIONAL);
+        Part newPart = new Part(partType2,aircraft,location,PartStatus.OPERATIONAL);
+
+        UpdateAircraftPartDTO aircraftPartDTO = new UpdateAircraftPartDTO();
+        aircraftPartDTO.setTailNumber("G-001");
+        aircraftPartDTO.setNewPartNumber(2);
+
+        String json = "{\"tailNumber\":\"G-001\",\"newPartNumber\":1}";
+
+        when(partRepository.findPartBypartNumber(1)).thenReturn(Optional.of(currentPart));
+        when(partRepository.findPartBypartNumber(2)).thenReturn(Optional.of(newPart));
+
+        mockMvc.perform(post("/aircraft/update-aircraft-part")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
