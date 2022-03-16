@@ -196,7 +196,7 @@ public class AircraftServiceImpl implements AircraftService {
     public List<PlatformStatusDTO> getPlatformStatus() {
         List<Aircraft> aircraftList = aircraftRepository.findAll();
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
-        //todo - implement get parts cost method
+        //todo - implement get parts cost method (this involves changing the db and entity)
         for (Aircraft aircraft: aircraftList) {
             Integer repairsCount = repairRepository.findRepairsCountForAircraft(aircraft.getTailNumber());
             Double repairsCost = getTotalRepairCostForSpecificAircraft(aircraft);

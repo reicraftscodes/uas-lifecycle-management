@@ -336,7 +336,7 @@ public class AircraftControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.operational[0].tailNumber").value("M100"))
-                .andExpect(jsonPath("$.operational[0].platformStatus").value("REPAIR"))
+                .andExpect(jsonPath("$.operational[0].platformStatus").value("Repair"))
                 .andExpect(jsonPath("$.operational[0].location").value("Cardiff"));;
     }
 
