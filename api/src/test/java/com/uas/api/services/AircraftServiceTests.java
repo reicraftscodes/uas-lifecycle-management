@@ -2,6 +2,9 @@ package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
+import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
+import com.uas.api.models.dtos.PlatformStatusDTO;
+import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.AircraftUserKey;
@@ -25,7 +28,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -128,7 +130,7 @@ public class AircraftServiceTests {
         String tailNumber = "G-001";
 
         User user = new User("tim12", "logisticOne@snc.ac.uk", "ExamplePassword72-", "Tim", "Cormack", null, "logisticOne@snc.ac.uk");
-        Aircraft aircraft = new Aircraft(tailNumber,location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
+        Aircraft aircraft = new Aircraft(tailNumber, location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
         AircraftUserKey aircraftUserKey = new AircraftUserKey(1L, "G-001");
         AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user, aircraft, 0L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -140,5 +142,48 @@ public class AircraftServiceTests {
         assertEquals("Aircraft user should have 0 flight hours!", 0L, aircraftUserDTO.getUserFlyingHours());
         assertEquals("Aircraft user DTO should have the correct User entity", user, aircraftUserDTO.getUser());
         assertEquals("Aircraft user DTO should have the correct Aircraft entity", aircraft, aircraftUserDTO.getAircraft());
+    }
+
+    @Test
+    public void whenAircraftOfAllStatusExistThenAllShouldBeReturned() {
+        Aircraft aircraftOne = new Aircraft(
+                "M-004",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftTwo = new Aircraft(
+                "M-003",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.DESIGN,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftThree = new Aircraft(
+                "M-002",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.REPAIR,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftFour = new Aircraft(
+                "M-001",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.PRODUCTION,
+                PlatformType.PLATFORM_A,
+                250);
+        List<Aircraft> repairs = new ArrayList<>();
+        repairs.add(aircraftThree);
+        List<Aircraft> production = new ArrayList<>();
+        production.add(aircraftFour);
+        List<Aircraft> design = new ArrayList<>();
+        design.add(aircraftTwo);
+        List<Aircraft> operational = new ArrayList<>();
+        operational.add(aircraftOne);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.REPAIR)).thenReturn(repairs);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.DESIGN)).thenReturn(design);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.OPERATION)).thenReturn(operational);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.PRODUCTION)).thenReturn(production);
+
+        PlatformStatusAndroidFullDTO mockList = aircraftService.getPlatformStatusAndroid();
+        assertEquals("Should have length of 1", 1, mockList.getOperational().size());
     }
 }

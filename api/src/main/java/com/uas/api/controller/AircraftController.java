@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +49,7 @@ public class AircraftController {
      * @return A response to the request with either a confirmation or the error received.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    ResponseEntity<?> addAircraft(@RequestBody final HashMap<String, String> requestData) {
+    ResponseEntity<?> addAircraft(@RequestBody final AircraftAddNewDTO requestData) {
         //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
         // as enums weren't created from the json strings.
 
@@ -169,10 +168,18 @@ public class AircraftController {
      */
     @GetMapping("/platform-status")
     public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWeb() {
-
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
-
         return ResponseEntity.ok(platformStatusDTOList);
+    }
+
+    /**
+     * Gets the platform status for android.
+     * @return the platform status.
+     */
+    @GetMapping("/android/platform-status")
+    public ResponseEntity<PlatformStatusAndroidFullDTO> getPlatformStatusAndroid() {
+        PlatformStatusAndroidFullDTO platformStatusAndroidDTOS = aircraftService.getPlatformStatusAndroid();
+        return ResponseEntity.ok(platformStatusAndroidDTOS);
     }
 
     /**

@@ -1,28 +1,30 @@
 package com.uas.api.models.dtos;
 
+import com.uas.api.models.dtos.commondtointerfaces.PlatformStatusInterface;
 import com.uas.api.models.entities.enums.PlatformStatus;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
-public class PlatformStatusDTO {
-
-    /**
-     * The Aircraft tail number.
-     */
-    private final String tailNumber;
+public class PlatformStatusDTO extends PlatformStatusInterface {
     /**
      * The hours operational.
      */
     private final Integer flyTimeHours;
     /**
-     * The Aircraft status.
-     */
-    private final PlatformStatus platformStatus;
-    /**
      * The cost of the Aircraft.
      */
-    private Integer totalCost;
+    private final Integer totalCost;
 
+    /**
+     * Constructor.
+     * @param tailNumber
+     * @param flyTimeHours
+     * @param platformStatus
+     * @param totalCost
+     */
+    public PlatformStatusDTO(final String tailNumber, final Integer flyTimeHours, final PlatformStatus platformStatus,  final Integer totalCost) {
+        super(tailNumber, platformStatus);
+        this.flyTimeHours = flyTimeHours;
+        this.totalCost = totalCost;
+    }
 }

@@ -215,14 +215,32 @@ INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
 INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
 INSERT INTO ROLES (roleid, NAME) VALUES ("2", "ROLE_USER_CTO");
 INSERT INTO ROLES (roleid, NAME) VALUES ("3", "ROLE_USER");
+INSERT INTO ROLES (roleid, NAME) VALUES ("4", "ROLE_USER_CEO");
+INSERT INTO ROLES (roleid, NAME) VALUES ("5", "ROLE_USER_COO");
 
 #Users
 INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('1', 'logisticOne@snc.ac.uk', 'Logistic', 'One', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'logisticOne@snc.ac.uk');
 INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('2', 'userOne@snc.ac.uk', 'Thomas', 'Anderson', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'userOne@snc.ac.uk');
+# The password is password
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('3', 'ceo@test.com', 'Ceo', 'Test', '$2a$10$4OJsYCo6zbcLTTPSmzpXIuoBMtZoilpF9L/FEknvvbRZovGE6PEfG', '26c07eb1-67ae-410d-83bf-1c4184b082ff', 'ceo@test.com');
+# The password is password
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('4', 'coo@test.com', 'Coo', 'Test', '$2a$10$nvKlA2dK94Fe65bPaZsj9.2Fm0VWrKBSx4i87AvWG9/.nuoB7.vrS', 'e93a7072-d2c1-40ca-a2b0-fa4a5293c83a', 'coo@test.com');
+# The password is password
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('5', 'cto@test.com', 'Cto', 'Test', '$2a$10$QQwaVmjidMm1ZpGRRN/Y1Og.5pkn/qBHCO8JUijMqNTDDlIAhrYk6', 'dbb690e3-5d1b-43e1-8848-73083a5254fd', 'cto@test.com');
+# The password is password
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('6', 'user@test.com', 'User', 'Test', '$2a$10$NsqO3x5Zbueg3P1NFph52Oz.efibatA/GaMj.qr7XfblVEbflL96y', '4b289ec8-24a4-4a7f-a281-289d4d6fa124', 'user@test.com');
+# The password is password
+INSERT INTO `users` (`userid`, `email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('7', 'logistic@test.com', 'Logistic', 'Test', '$2a$10$.EhAuFGWPy5Q1B/rRt9/5e3f18D8zDwQiiGoKxTSNUh3Dfhc6xqbW', '6a036834-9015-40b3-9016-51b7c26de2c3', 'logistic@test.com');
 
 #User roles
 INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('1', '1');
 INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('2', '3');
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('3', '4');
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('4', '5');
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('5', '2');
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('6', '3');
+INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('7', '1');
+
 
 #User assignr Aircraft
 INSERT INTO aircraft_user (UserID, TailNumber, FlyingHours) VALUES (2, "G-001", 250);
