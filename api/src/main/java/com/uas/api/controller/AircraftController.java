@@ -50,7 +50,7 @@ public class AircraftController {
      * @return A response to the request with either a confirmation or the error received.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    ResponseEntity<?> addAircraft(@RequestBody final HashMap<String, String> requestData) {
+    ResponseEntity<?> addAircraft(@RequestBody final AircraftAddNewDTO requestData) {
         //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
         // as enums weren't created from the json strings.
 
@@ -80,13 +80,14 @@ public class AircraftController {
 
     /**
      * Post mapping used for updating the aircrafts and the parts associated with that aircrafts flight hours.
-     * @param request takes json request body for the aircraft tailnumber and flytime to be logged.
+     * @param request takes json request body for the aircraft tailnumber, user Id and flytime to be logged.
      * @return returns a response with ok for no errors or a bad request with a body with the error message.
      */
     @PostMapping(value = "/log-flight", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> updateFlightHours(@RequestBody final LogFlightDTO request) {
         // A request body example that a post would have
         //{
+        //    "userId: 2,
         //    "aircraft":"G-001",
         //    "flyTime":12
         //}
@@ -110,9 +111,11 @@ public class AircraftController {
                     partService.updatePartFlyTime(parts, hoursInput);
                     //updates the aircraft flight hours
                     aircraftService.updateAircraftFlyTime(aircraft.get(), hoursInput);
+
+                    aircraftService.updateUserAircraftFlyTime(request.getAircraft(), request.getUserId(), request.getFlyTime());
                 }
             } catch (Exception e) {
-                error = "Fly time value isn't integer!";
+                error = "Unable to update flight time.";
             }
         } else {
             error = "Aircraft not found!";
@@ -166,10 +169,18 @@ public class AircraftController {
      */
     @GetMapping("/platform-status")
     public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWeb() {
-
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
-
         return ResponseEntity.ok(platformStatusDTOList);
+    }
+
+    /**
+     * Gets the platform status for android.
+     * @return the platform status.
+     */
+    @GetMapping("/android/platform-status")
+    public ResponseEntity<PlatformStatusAndroidFullDTO> getPlatformStatusAndroid() {
+        PlatformStatusAndroidFullDTO platformStatusAndroidDTOS = aircraftService.getPlatformStatusAndroid();
+        return ResponseEntity.ok(platformStatusAndroidDTOS);
     }
 
     /**
@@ -197,6 +208,17 @@ public class AircraftController {
     @GetMapping("ceo-aircraft-cost")
     public ResponseEntity<?> getStreamlinedRunningCost() {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
+    }
+
+    /**
+     * Assigns a user to an aircraft by creating a new AircraftUser entity and saving it to db.
+     * @param aircraftUserKeyDTO request body.
+     * @return response entity with a dto object.
+     */
+    @PostMapping("/assign-user")
+    public ResponseEntity<?> assignUserToAircraft(@RequestBody final AircraftUserKeyDTO aircraftUserKeyDTO) {
+        AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(aircraftUserKeyDTO);
+        return ResponseEntity.ok(aircraftUserDTO);
     }
 
     /**

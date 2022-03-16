@@ -2,6 +2,8 @@ package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.AircraftPartsDTO;
+import com.uas.api.models.dtos.*;
+import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
 import com.uas.api.models.dtos.PlatformStatusDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.entities.*;
@@ -11,6 +13,8 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.AircraftUserRepository;
+import com.uas.api.repositories.RepairRepository;
+import com.uas.api.repositories.auth.UserRepository;
 import org.apache.coyote.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -40,6 +46,11 @@ public class AircraftServiceTests {
     @Mock
     private AircraftRepository aircraftRepository;
 
+    @Mock
+    private RepairRepository repairRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Autowired
     @InjectMocks
@@ -93,12 +104,98 @@ public class AircraftServiceTests {
         aircraft.add(aircraftTwo);
 
         when(aircraftRepository.findAll()).thenReturn(aircraft);
+        when(repairRepository.findRepairsCountForAircraft(any())).thenReturn(5);
+        when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(100.0);
 
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
 
         assertEquals("Should return 2 platform status dtos", 2, platformStatusDTOList.size());
         assertEquals("Should return tail number G-001", "G-001", platformStatusDTOList.get(0).getTailNumber());
+        assertEquals("Should return repairs count 5", 5, platformStatusDTOList.get(0).getRepairsCount());
         assertEquals("Should return tail number G-002", "G-002", platformStatusDTOList.get(1).getTailNumber());
     }
 
+    @Test
+    public void givenLogFlightHoursThenUpdateAircraftUser() throws IllegalArgumentException{
+        AircraftUser aircraftUser = new AircraftUser();
+        aircraftUser.setUserFlyingHours(20L);
+        when(aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(any(), anyLong())).thenReturn(Optional.of(aircraftUser));
+        when(aircraftUserRepository.save(any())).thenReturn(aircraftUser);
+
+        aircraftService.updateUserAircraftFlyTime("G-001", 2, 5);
+
+        assertEquals("Aircraft user should have 25 flight hours!", 25L, aircraftUser.getUserFlyingHours());
+    }
+
+    @Test
+    public void givenLogFlightHoursThenThrowIllegalArgumentException() {
+        AircraftUser aircraftUser = new AircraftUser();
+        when(aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(any(), anyLong())).thenThrow(IllegalArgumentException.class);
+
+        assertThrows(IllegalArgumentException.class, () -> aircraftService.updateUserAircraftFlyTime("G-001", 2, 5));
+    }
+
+    @Test
+    public void givenAircraftThenAssignAircraftUser() {
+        Location location = new Location();
+        location.setLocationName("London");
+        String tailNumber = "G-001";
+
+        User user = new User("tim12", "logisticOne@snc.ac.uk", "ExamplePassword72-", "Tim", "Cormack", null, "logisticOne@snc.ac.uk");
+        Aircraft aircraft = new Aircraft(tailNumber, location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
+        AircraftUserKey aircraftUserKey = new AircraftUserKey(1L, "G-001");
+        AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user, aircraft, 0L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(aircraftRepository.findById(tailNumber)).thenReturn(Optional.of(aircraft));
+        when(aircraftUserRepository.save(any())).thenReturn(aircraftUser);
+
+        AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(new AircraftUserKeyDTO(1L, "G-001"));
+
+        assertEquals("Aircraft user should have 0 flight hours!", 0L, aircraftUserDTO.getUserFlyingHours());
+        assertEquals("Aircraft user DTO should have the correct User entity", user, aircraftUserDTO.getUser());
+        assertEquals("Aircraft user DTO should have the correct Aircraft entity", aircraft, aircraftUserDTO.getAircraft());
+    }
+
+    @Test
+    public void whenAircraftOfAllStatusExistThenAllShouldBeReturned() {
+        Aircraft aircraftOne = new Aircraft(
+                "M-004",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftTwo = new Aircraft(
+                "M-003",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.DESIGN,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftThree = new Aircraft(
+                "M-002",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.REPAIR,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftFour = new Aircraft(
+                "M-001",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.PRODUCTION,
+                PlatformType.PLATFORM_A,
+                250);
+        List<Aircraft> repairs = new ArrayList<>();
+        repairs.add(aircraftThree);
+        List<Aircraft> production = new ArrayList<>();
+        production.add(aircraftFour);
+        List<Aircraft> design = new ArrayList<>();
+        design.add(aircraftTwo);
+        List<Aircraft> operational = new ArrayList<>();
+        operational.add(aircraftOne);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.REPAIR)).thenReturn(repairs);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.DESIGN)).thenReturn(design);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.OPERATION)).thenReturn(operational);
+        when(aircraftRepository.findAircraftsByPlatformStatus(PlatformStatus.PRODUCTION)).thenReturn(production);
+
+        PlatformStatusAndroidFullDTO mockList = aircraftService.getPlatformStatusAndroid();
+        assertEquals("Should have length of 1", 1, mockList.getOperational().size());
+    }
 }
