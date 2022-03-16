@@ -13,7 +13,7 @@ public class UpdateAircraftPartDTO {
     /**
      * The part number of the part being replaced.
      */
-    private long currentPartNumber;
+    private String tailNumber;
     /**
      * The part number of the new part.
      */

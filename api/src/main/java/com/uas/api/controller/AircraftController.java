@@ -204,7 +204,7 @@ public class AircraftController {
      * @param tailNumber The tailnumber of the aircraft the parts are being searched for.
      * @return A response entity with the aircraft parts if ok or an error message if something went wrong.
      */
-    @GetMapping("aircraft-parts-status")
+    @GetMapping(value = "aircraft-parts-status", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> getAircraftParts(@RequestBody final String tailNumber) {
         return aircraftService.getAircraftParts(tailNumber);
     }

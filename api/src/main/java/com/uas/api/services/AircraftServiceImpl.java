@@ -449,29 +449,32 @@ public class AircraftServiceImpl implements AircraftService {
     }
 
     /**
-     * Updates the part assigned to a specific aircraft with a new selected part.
-     * @param aircraftPartDTO has a current part and a new part field.
+     * Updates a specific aircraft with a new selected part.
+     * @param aircraftPartDTO has a aircraft tailnumber and a new part field.
      * @return returns a response entity with an ok status or an error status with an error body.
      */
     public ResponseEntity<?> updateAircraftPart(final UpdateAircraftPartDTO aircraftPartDTO) {
-        Optional<Part> currentPart = partRepository.findPartBypartNumber(aircraftPartDTO.getCurrentPartNumber());
-        if (currentPart.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Current part being replaced is not found!");
+        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftPartDTO.getTailNumber());
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft is not found!");
         }
 
         Optional<Part> newPart = partRepository.findPartBypartNumber(aircraftPartDTO.getNewPartNumber());
         if (newPart.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("New part not found!");
         }
-        if (currentPart.get().getPartType() != newPart.get().getPartType()) {
-            return ResponseEntity.badRequest().body("The part being replaced doesn't have the same part type as the new part!");
+
+        List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+
+        for (Part part : parts) {
+            if (part.getPartType() == newPart.get().getPartType()) {
+                part.setAircraft(null);
+                partRepository.save(part);
+            }
         }
 
-        newPart.get().setAircraft(currentPart.get().getAircraft());
+        newPart.get().setAircraft(aircraft.get());
         partRepository.save(newPart.get());
-
-        currentPart.get().setAircraft(null);
-        partRepository.save(currentPart.get());
 
         return ResponseEntity.ok("");
     }
