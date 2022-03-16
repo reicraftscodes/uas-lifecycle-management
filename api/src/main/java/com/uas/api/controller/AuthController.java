@@ -59,7 +59,7 @@ public class AuthController {
      * @return getJwtReponse in return.
      */
     @PostMapping("/getJwtInfo")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
     public ResponseEntity<JwtResponse> getJwtTokenInfo() {
         return authService.getJwtResponse();
     }
@@ -69,7 +69,7 @@ public class AuthController {
      * @return userMap to userDTO.
      */
     @GetMapping("/getUserInfo")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
     public UserDTO getUserInfo() {
         User user = authService.getUserInfo();
         return userMapper.toUserDto(user);
