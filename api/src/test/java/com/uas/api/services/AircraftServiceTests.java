@@ -1,7 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
-import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
 import com.uas.api.models.dtos.PlatformStatusDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
@@ -13,6 +13,7 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.AircraftUserRepository;
+import com.uas.api.repositories.auth.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +28,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -39,6 +39,9 @@ public class AircraftServiceTests {
 
     @Mock
     private AircraftRepository aircraftRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Autowired
     @InjectMocks
@@ -120,6 +123,26 @@ public class AircraftServiceTests {
         assertThrows(IllegalArgumentException.class, () -> aircraftService.updateUserAircraftFlyTime("G-001", 2, 5));
     }
 
+    @Test
+    public void givenAircraftThenAssignAircraftUser() {
+        Location location = new Location();
+        location.setLocationName("London");
+        String tailNumber = "G-001";
+
+        User user = new User("tim12", "logisticOne@snc.ac.uk", "ExamplePassword72-", "Tim", "Cormack", null, "logisticOne@snc.ac.uk");
+        Aircraft aircraft = new Aircraft(tailNumber, location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
+        AircraftUserKey aircraftUserKey = new AircraftUserKey(1L, "G-001");
+        AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user, aircraft, 0L);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(aircraftRepository.findById(tailNumber)).thenReturn(Optional.of(aircraft));
+        when(aircraftUserRepository.save(any())).thenReturn(aircraftUser);
+
+        AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(new AircraftUserKeyDTO(1L, "G-001"));
+
+        assertEquals("Aircraft user should have 0 flight hours!", 0L, aircraftUserDTO.getUserFlyingHours());
+        assertEquals("Aircraft user DTO should have the correct User entity", user, aircraftUserDTO.getUser());
+        assertEquals("Aircraft user DTO should have the correct Aircraft entity", aircraft, aircraftUserDTO.getAircraft());
+    }
 
     @Test
     public void whenAircraftOfAllStatusExistThenAllShouldBeReturned() {

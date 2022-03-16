@@ -116,7 +116,10 @@ public interface AircraftService {
      */
     void updateUserAircraftFlyTime(String tailNumber, long userId, int flyTime);
 
-
-
-
+    /**
+     * Used to assign the user to an aircraft by creating an AircraftUser from existing user and aircraft.
+     * @param aircraftUserKeyDTO The DTO containing the aircraftUserKey for creation of the AircraftUser.
+     * @return returns a AircraftUserDTO.
+     */
+    AircraftUserDTO assignUserToAircraft(AircraftUserKeyDTO aircraftUserKeyDTO);
 }
