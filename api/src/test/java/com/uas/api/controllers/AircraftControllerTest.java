@@ -324,7 +324,7 @@ public class AircraftControllerTest {
         List<PlatformStatusAndroidDTO> mockBeingRepaired = new ArrayList<>();
         List<PlatformStatusAndroidDTO> mockAwaitingRepair = new ArrayList<>();
         List<PlatformStatusAndroidDTO> mockBeyondRepair = new ArrayList<>();
-        PlatformStatusAndroidDTO mockAircraft = new PlatformStatusAndroidDTO("M100", PlatformStatus.REPAIR, "Cardiff");
+        PlatformStatusAndroidDTO mockAircraft = new PlatformStatusAndroidDTO("M100", PlatformStatus.REPAIR, "Cardiff", PlatformType.PLATFORM_A);
         mockOperational.add(mockAircraft);
         mockBeingRepaired.add(mockAircraft);
         mockAwaitingRepair.add(mockAircraft);
@@ -337,7 +337,8 @@ public class AircraftControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.operational[0].tailNumber").value("M100"))
                 .andExpect(jsonPath("$.operational[0].platformStatus").value("Repair"))
-                .andExpect(jsonPath("$.operational[0].location").value("Cardiff"));;
+                .andExpect(jsonPath("$.operational[0].location").value("Cardiff"))
+                .andExpect(jsonPath("$.operational[0].platformType").value("Platform A"));
     }
 
 

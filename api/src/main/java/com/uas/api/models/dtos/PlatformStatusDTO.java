@@ -18,14 +18,6 @@ public class PlatformStatusDTO extends PlatformStatusInterface {
      */
     private final BigDecimal totalCost;
     /**
-     * The platform type.
-     */
-    private final String platformType;
-    /**
-     * The location of the platform.
-     */
-    private final String location;
-    /**
      * The total repairs count for the aircraft.
      */
     private final int repairsCount;
@@ -60,11 +52,9 @@ public class PlatformStatusDTO extends PlatformStatusInterface {
             final int repairsCount,
             final BigDecimal repairsCost,
             final BigDecimal partsCost) {
-        super(tailNumber, platformStatus);
+        super(tailNumber, platformStatus, platformType, location);
         this.flyTimeHours = flyTimeHours;
-        this.platformType = platformType.getName();
         this.totalCost = totalCost;
-        this.location = location;
         this.repairsCount = repairsCount;
         this.repairsCost = repairsCost;
         this.partsCost = partsCost;

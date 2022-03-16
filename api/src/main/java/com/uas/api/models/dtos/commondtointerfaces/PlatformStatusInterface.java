@@ -1,7 +1,10 @@
 package com.uas.api.models.dtos.commondtointerfaces;
 
 import com.uas.api.models.entities.enums.PlatformStatus;
+import com.uas.api.models.entities.enums.PlatformType;
+import lombok.Getter;
 
+@Getter
 public class PlatformStatusInterface {
     /**
      * The tail number of the aircraft.
@@ -11,30 +14,26 @@ public class PlatformStatusInterface {
      * The status of the aircraft. Operational, Beyond Repair, Awaiting Repair, Being Repaired.
      */
     private final String platformStatus;
+    /**
+     * The platform type.
+     */
+    private final String platformType;
+    /**
+     * The location name.
+     */
+    private final String location;
 
     /**
      * Constructor.
      * @param tailNumber
      * @param platformStatus
+     * @param platformType
+     * @param location
      */
-    public PlatformStatusInterface(final String tailNumber, final PlatformStatus platformStatus) {
+    public PlatformStatusInterface(final String tailNumber, final PlatformStatus platformStatus, final PlatformType platformType, final String location) {
         this.tailNumber = tailNumber;
         this.platformStatus = platformStatus.getLabel();
-    }
-
-    /**
-     * Gets the tail number.
-     * @return the tail number.
-     */
-    public String getTailNumber() {
-        return tailNumber;
-    }
-
-    /**
-     * Gets the platform status.
-     * @return the platform status.
-     */
-    public String getPlatformStatus() {
-        return platformStatus;
+        this.platformType = platformType.getName();
+        this.location = location;
     }
 }

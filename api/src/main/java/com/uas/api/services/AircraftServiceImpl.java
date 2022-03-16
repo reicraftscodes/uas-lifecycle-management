@@ -242,7 +242,7 @@ public class AircraftServiceImpl implements AircraftService {
         List<PlatformStatusAndroidDTO> platforms = new ArrayList<>();
         List<Aircraft> currentAircraft = aircraftRepository.findAircraftsByPlatformStatus(platformStatus);
         for (Aircraft aircraft:currentAircraft) {
-            platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName()));
+            platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName(), aircraft.getPlatformType()));
         }
         return platforms;
     }
