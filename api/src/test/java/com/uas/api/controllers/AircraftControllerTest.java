@@ -341,5 +341,32 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$.operational[0].platformType").value("Platform A"));
     }
 
+    //This test needs looking at for the return.
+    @WithMockUser(value = "user")
+    @Test
+    public void AssignUserToAircraft() throws Exception {
+        Location location = new Location();
+        location.setLocationName("London");
+
+        User user = new User("tim12", "logisticOne@snc.ac.uk", "ExamplePassword72-", "Tim", "Cormack", null, "logisticOne@snc.ac.uk");
+        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
+
+        AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(user, aircraft, 0L);
+        AircraftUserKeyDTO aircraftUserKeyDTO = new AircraftUserKeyDTO(2L, "G-001");
+
+        when(aircraftService.assignUserToAircraft(aircraftUserKeyDTO)).thenReturn(aircraftUserDTO);
+
+        String json = "{\"userID\":\"2\",\"tailNumber\":\"G-004\"}";
+
+        MvcResult mvcResult = mockMvc.perform(post("/aircraft/assign-user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json).characterEncoding("utf-8"))
+                .andExpect(status().isOk()).andReturn();
+
+        String response = mvcResult.getResponse().getContentAsString();
+
+        assertEquals("", response);
+    }
+
 
 }
