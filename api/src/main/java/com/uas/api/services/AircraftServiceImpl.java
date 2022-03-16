@@ -555,7 +555,7 @@ public class AircraftServiceImpl implements AircraftService {
 
         return ResponseEntity.ok("");
     }
-}
+
 
     /**
      * Used to assign an user to an aircraft.
