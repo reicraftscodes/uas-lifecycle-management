@@ -53,6 +53,11 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
     @Query(value = "SELECT sum(cost) FROM Repairs WHERE PartNumber= ANY (SELECT PartNumber FROM parts)", nativeQuery = true)
     Double findTotalRepairCostForAllAircraft();
 
+    /**
+     * Get the total repair count for an aircraft.
+     * @param tailNumber the tail number of the aircraft.
+     * @return the aircraft repair count.
+     */
     @Query(value = "SELECT COUNT(RepairID) FROM Repairs WHERE PartNumber IN (SELECT PartNumber FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
     Integer findRepairsCountForAircraft(@Param("tailNumber") String tailNumber);
 

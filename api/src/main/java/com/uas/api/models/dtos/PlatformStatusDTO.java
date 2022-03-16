@@ -17,27 +17,38 @@ public class PlatformStatusDTO extends PlatformStatusInterface {
      * The cost of the Aircraft.
      */
     private final BigDecimal totalCost;
-
+    /**
+     * The platform type.
+     */
     private final String platformType;
-
+    /**
+     * The location of the platform.
+     */
     private final String location;
-
+    /**
+     * The total repairs count for the aircraft.
+     */
     private final int repairsCount;
-
+    /**
+     * The total repairs cost for the aircraft.
+     */
     private final BigDecimal repairsCost;
-
+    /**
+     * The total parts cost for the aircraft.
+     */
     private final BigDecimal partsCost;
 
     /**
      * Constructor.
      * @param tailNumber the aircraft tail number.
+     * @param platformType the platform type.
      * @param platformStatus the platform status.
      * @param flyTimeHours the flight time in hours.
-     * @param totalCost
-     * @param location
-     * @param repairsCount
-     * @param repairsCost
-     * @param partsCost
+     * @param totalCost the total cost of the aircraft.
+     * @param location the location of the platform.
+     * @param repairsCount the repairs count of the aircraft.
+     * @param repairsCost the repairs cost of the aircraft.
+     * @param partsCost the parts cost for the aircraft.
      */
     public PlatformStatusDTO(
             final String tailNumber,
