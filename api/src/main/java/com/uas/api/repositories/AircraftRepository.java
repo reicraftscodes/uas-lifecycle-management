@@ -31,5 +31,6 @@ public interface AircraftRepository extends JpaRepository<Aircraft, String> {
      */
     List<Aircraft> findAircraftsByPlatformStatus(PlatformStatus platformStatus);
 
-
+    @Query(value = "select * from aircraft where LocationName in (:locations) and PlatformStatus in (:platformStatuses)", nativeQuery = true)
+    List<Aircraft> findAllByLocationsAndPlatformStatus(@Param("locations") List<String> locations, @Param("platformStatuses") List<String> platformStatuses);
 }

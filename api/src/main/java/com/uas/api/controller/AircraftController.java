@@ -171,6 +171,12 @@ public class AircraftController {
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
         return ResponseEntity.ok(platformStatusDTOList);
     }
+    @PostMapping("/platform-status/filter")
+    public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWebFiltered(@RequestBody final PlatformStatusFilterDTO platformStatusFilterDTO) {
+        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getFilteredPlatformStatusList(platformStatusFilterDTO.getLocations(), platformStatusFilterDTO.getPlatformStatuses());
+        return ResponseEntity.ok(platformStatusDTOList);
+    }
+
 
     /**
      * Gets the platform status for android.

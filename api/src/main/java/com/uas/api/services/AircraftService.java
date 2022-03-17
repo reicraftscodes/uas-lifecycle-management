@@ -122,4 +122,6 @@ public interface AircraftService {
      * @return returns a AircraftUserDTO.
      */
     AircraftUserDTO assignUserToAircraft(AircraftUserKeyDTO aircraftUserKeyDTO);
+
+    List<PlatformStatusDTO> getFilteredPlatformStatusList(List<String> locations, List<String> platformStatuses);
 }
