@@ -392,7 +392,7 @@ public class AircraftControllerTest {
         when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraft));
         when(partRepository.findAllPartsByAircraft(any())).thenReturn(parts);
 
-        mockMvc.perform(get("/aircraft/aircraft-parts-status")
+        mockMvc.perform(post("/aircraft/aircraft-parts-status")
                         .content(json).characterEncoding("utf-8")
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
