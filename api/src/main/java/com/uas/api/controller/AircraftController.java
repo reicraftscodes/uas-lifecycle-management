@@ -72,7 +72,7 @@ public class AircraftController {
         if (!userService.userExistsById(userId)) {
             return ResponseEntity.badRequest().body("Failed to retrieve aircraft for user because user does not exist.");
         } else {
-            List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
+            List<AircraftUserDTO> userAircraftDTOs = aircraftService.getAircraftForUser(userId);
             return ResponseEntity.ok(userAircraftDTOs);
         }
     }
