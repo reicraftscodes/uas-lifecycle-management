@@ -249,12 +249,12 @@ public class AircraftServiceImpl implements AircraftService {
      * @param userID the id of the user.
      * @return a list of UserAircraftDTOs.
      */
-    public List<UserAircraftDTO> getAircraftForUser(final long userID) {
+    public List<AircraftUserDTO> getAircraftForUser(final long userID) {
         List<AircraftUser> aircraftUsers = aircraftUserRepository.findAllByUser_Id(userID);
-        List<UserAircraftDTO> userAircraftDTOs = new ArrayList<>();
+        List<AircraftUserDTO> userAircraftDTOs = new ArrayList<>();
         for (AircraftUser aircraftUser : aircraftUsers) {
             userAircraftDTOs.add(
-                    new UserAircraftDTO(
+                    new AircraftUserDTO(
                             aircraftUser.getAircraft().getTailNumber(),
                             aircraftUser.getAircraft().getLocation().getLocationName(),
                             aircraftUser.getAircraft().getPlatformStatus().getLabel(),
@@ -461,11 +461,11 @@ public class AircraftServiceImpl implements AircraftService {
     @Override
     public AircraftUserDTO assignUserToAircraft(final AircraftUserKeyDTO aircraftUserKeyDTO) {
         AircraftUserKey aircraftUserKey = new AircraftUserKey(aircraftUserKeyDTO.getUserID(), aircraftUserKeyDTO.getTailNumber());
-        Optional<User> user = userRepository.findById(aircraftUserKeyDTO.getUserID());
-        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftUserKeyDTO.getTailNumber());
-        AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user.get(), aircraft.get(), 0L);
+        User user = userRepository.findById(aircraftUserKeyDTO.getUserID()).get();
+        Aircraft aircraft = aircraftRepository.findById(aircraftUserKeyDTO.getTailNumber()).get();
+        AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user, aircraft, 0L);
         AircraftUser savedAircraftUser = aircraftUserRepository.save(aircraftUser);
-        AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(user.get(), aircraft.get(), savedAircraftUser.getUserFlyingHours());
+        AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(aircraft.getTailNumber(), aircraft.getLocation().getLocationName(), aircraft.getPlatformStatus().getLabel(), aircraft.getPlatformType().getName(), savedAircraftUser.getUserFlyingHours(), aircraft.getFlyTimeHours());
         return aircraftUserDTO;
     }
 }

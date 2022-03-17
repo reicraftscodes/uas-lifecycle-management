@@ -31,7 +31,7 @@ public interface AircraftService {
      * @param userID the id of the user.
      * @return a list of UserAircraftDTOs.
      */
-    List<UserAircraftDTO> getAircraftForUser(long userID);
+    List<AircraftUserDTO> getAircraftForUser(long userID);
 
     /**
      *  Updates the aircraft flight time hours.

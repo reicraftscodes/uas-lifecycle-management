@@ -4,7 +4,6 @@ import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
 import com.uas.api.models.dtos.PlatformStatusDTO;
-import com.uas.api.models.dtos.UserAircraftDTO;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.AircraftUserKey;
@@ -69,7 +68,7 @@ public class AircraftServiceTests {
 
         when(aircraftUserRepository.findAllByUser_Id(anyLong())).thenReturn(aircraftUsers);
 
-        List<UserAircraftDTO> userAircraftDTOs = aircraftService.getAircraftForUser(2);
+        List<AircraftUserDTO> userAircraftDTOs = aircraftService.getAircraftForUser(2);
 
         assertEquals("Should return 2 user aircraft dtos", 2, userAircraftDTOs.size());
         assertEquals("Should return tail number G-001", "G-001", userAircraftDTOs.get(0).getTailNumber());
@@ -139,9 +138,9 @@ public class AircraftServiceTests {
 
         AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(new AircraftUserKeyDTO(1L, "G-001"));
 
-        assertEquals("Aircraft user should have 0 flight hours!", 0L, aircraftUserDTO.getUserFlyingHours());
-        assertEquals("Aircraft user DTO should have the correct User entity", user, aircraftUserDTO.getUser());
-        assertEquals("Aircraft user DTO should have the correct Aircraft entity", aircraft, aircraftUserDTO.getAircraft());
+        assertEquals("Aircraft user should have 0 flight hours!", 0L, aircraftUserDTO.getUserAircraftFlyingHours());
+        assertEquals("Aircraft user DTO should have the correct User entity", aircraft.getPlatformStatus().getLabel(), aircraftUserDTO.getPlatformStatus());
+        assertEquals("Aircraft user DTO should have the correct Aircraft tail number", aircraft.getTailNumber(), aircraftUserDTO.getTailNumber());
     }
 
     @Test

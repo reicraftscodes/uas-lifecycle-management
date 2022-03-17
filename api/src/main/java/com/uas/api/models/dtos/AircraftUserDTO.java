@@ -1,7 +1,5 @@
 package com.uas.api.models.dtos;
 
-import com.uas.api.models.auth.User;
-import com.uas.api.models.entities.Aircraft;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,18 +10,32 @@ import lombok.Setter;
 public class AircraftUserDTO {
 
     /**
-     * The user assigned to the aircraft.
+     * The tail number of the aircraft.
      */
-    private User user;
+    private final String tailNumber;
 
     /**
-     * The Aircraft the user is assigned to.
+     * The location of the aircraft.
      */
-    private Aircraft aircraft;
+    private final String location;
 
     /**
-     * The users total flight time in hours for the aircraft.
+     * The platform status.
      */
-    private Long userFlyingHours;
+    private final String platformStatus;
 
+    /**
+     * The platform type.
+     */
+    private final String platformType;
+
+    /**
+     * The users total flight time for the aircraft in hours.
+     */
+    private final long userAircraftFlyingHours;
+
+    /**
+     * The aircraft total flight time in hours.
+     */
+    private final long totalAircraftFlyingHours;
 }

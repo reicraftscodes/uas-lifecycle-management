@@ -137,9 +137,9 @@ public class AircraftControllerTest {
     @WithMockUser(value = "user")
     @Test
     public void whenGetAllUserAircraft_Return2Aircraft() throws Exception {
-        List<UserAircraftDTO> userAircraftDTOs = new ArrayList<>();
-        userAircraftDTOs.add(new UserAircraftDTO("G-001", "St Athen", "Operational", "Platform A", 125, 300));
-        userAircraftDTOs.add(new UserAircraftDTO("G-002", "St Athen", "Operational", "Platform B", 65, 250));
+        List<AircraftUserDTO> userAircraftDTOs = new ArrayList<>();
+        userAircraftDTOs.add(new AircraftUserDTO("G-001", "St Athen", "Operational", "Platform A", 125, 300));
+        userAircraftDTOs.add(new AircraftUserDTO("G-002", "St Athen", "Operational", "Platform B", 65, 250));
         when(userService.userExistsById(anyLong())).thenReturn(true);
         when(aircraftService.getAircraftForUser(anyLong())).thenReturn(userAircraftDTOs);
 
@@ -335,7 +335,7 @@ public class AircraftControllerTest {
         User user = new User("tim12", "logisticOne@snc.ac.uk", "ExamplePassword72-", "Tim", "Cormack", null, "logisticOne@snc.ac.uk");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 
-        AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(user, aircraft, 0L);
+        AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(aircraft.getTailNumber(), aircraft.getLocation().getLocationName(), aircraft.getPlatformStatus().getLabel(), aircraft.getPlatformType().getName(), 0, aircraft.getFlyTimeHours());
         AircraftUserKeyDTO aircraftUserKeyDTO = new AircraftUserKeyDTO(2L, "G-001");
 
         when(aircraftService.assignUserToAircraft(aircraftUserKeyDTO)).thenReturn(aircraftUserDTO);
