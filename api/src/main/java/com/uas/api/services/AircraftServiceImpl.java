@@ -206,25 +206,48 @@ public class AircraftServiceImpl implements AircraftService {
     public List<PlatformStatusDTO> getPlatformStatus() {
         List<Aircraft> aircraftList = aircraftRepository.findAll();
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
-        //todo - implement get parts cost method (this involves changing the db and entity)
+        //todo - implement get parts cost method (this involves maybe changing the db and entity)
         for (Aircraft aircraft: aircraftList) {
-            Integer repairsCount = repairRepository.findRepairsCountForAircraft(aircraft.getTailNumber());
-            Double repairsCost = getTotalRepairCostForSpecificAircraft(aircraft);
-            BigDecimal partsCost = BigDecimal.valueOf(3000);
-            BigDecimal totalCost = partsCost.add(BigDecimal.valueOf(repairsCost));
-            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(
-                    aircraft.getTailNumber(),
-                    aircraft.getPlatformType(),
-                    aircraft.getPlatformStatus(),
-                    aircraft.getFlyTimeHours(),
-                    totalCost,
-                    aircraft.getLocation().getLocationName(),
-                    repairsCount,
-                    BigDecimal.valueOf(repairsCost),
-                    BigDecimal.valueOf(3000));
+            PlatformStatusDTO platformStatusDTO = getPlatformStatusForAircraft(aircraft);
             platformStatusDTOList.add(platformStatusDTO);
         }
         return platformStatusDTOList;
+    }
+
+    /**
+     * Gets a filtered platform details list.
+     * @param locations the locations to be included in the search.
+     * @param platformStatuses the platform statuses to be included in the search.
+     * @return a list of PlatformStatusDTOs that match the search criteria.
+     */
+    @Override
+    public List<PlatformStatusDTO> getFilteredPlatformStatusList(final List<String> locations, final List<String> platformStatuses) {
+        List<Aircraft> aircraftList = aircraftRepository.findAllByLocationsAndPlatformStatus(locations, platformStatuses);
+        List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
+        for (Aircraft aircraft: aircraftList) {
+            PlatformStatusDTO platformStatusDTO = getPlatformStatusForAircraft(aircraft);
+            platformStatusDTOList.add(platformStatusDTO);
+        }
+        return platformStatusDTOList;
+    }
+
+    private PlatformStatusDTO getPlatformStatusForAircraft(final Aircraft aircraft) {
+        //todo - implement get parts cost method (this involves changing the db and entity)
+        Integer repairsCount = repairRepository.findRepairsCountForAircraft(aircraft.getTailNumber());
+        double repairsCost = getTotalRepairCostForSpecificAircraft(aircraft);
+        BigDecimal partsCost = BigDecimal.valueOf(3000);
+        BigDecimal totalCost = partsCost.add(BigDecimal.valueOf(repairsCost));
+        PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(
+                aircraft.getTailNumber(),
+                aircraft.getPlatformType(),
+                aircraft.getPlatformStatus(),
+                aircraft.getFlyTimeHours(),
+                totalCost,
+                aircraft.getLocation().getLocationName(),
+                repairsCount,
+                BigDecimal.valueOf(repairsCost),
+                BigDecimal.valueOf(3000));
+        return platformStatusDTO;
     }
 
     /**

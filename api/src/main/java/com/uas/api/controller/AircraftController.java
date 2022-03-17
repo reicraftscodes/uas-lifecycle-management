@@ -173,6 +173,18 @@ public class AircraftController {
     }
 
     /**
+     * Gets a filtered platform details list for the web.
+     * @param platformStatusFilterDTO the dto containing the filter options selected.
+     * @return response entity of the filtered platformStatusDTO list containing platform status data.
+     */
+    @PostMapping("/platform-status/filter")
+    public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWebFiltered(@RequestBody final PlatformStatusFilterDTO platformStatusFilterDTO) {
+        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getFilteredPlatformStatusList(platformStatusFilterDTO.getLocations(), platformStatusFilterDTO.getPlatformStatuses());
+        return ResponseEntity.ok(platformStatusDTOList);
+    }
+
+
+    /**
      * Gets the platform status for android.
      * @return the platform status.
      */
