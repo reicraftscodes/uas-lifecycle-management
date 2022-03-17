@@ -133,7 +133,7 @@ public class PartsController {
      * @param partType The type of part being searched for.
      * @return returns a response entity with ok response and a body with a list of part numbers or an error response with an error message.
      */
-    @GetMapping("/get-by-type")
+    @PostMapping("/get-by-type")
     public ResponseEntity<?> getPartsAvailableByParttype(@RequestBody final long partType) {
         return ResponseEntity.ok(partService.availablePartsForParttype(partType));
     }
