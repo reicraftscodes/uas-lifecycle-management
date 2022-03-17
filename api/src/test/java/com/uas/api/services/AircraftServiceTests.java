@@ -1,27 +1,31 @@
 package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
+import com.uas.api.models.dtos.AircraftPartsDTO;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
 import com.uas.api.models.dtos.PlatformStatusDTO;
 import com.uas.api.models.dtos.UserAircraftDTO;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.AircraftUser;
-import com.uas.api.models.entities.AircraftUserKey;
-import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.*;
+import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.AircraftUserRepository;
 import com.uas.api.repositories.RepairRepository;
 import com.uas.api.repositories.auth.UserRepository;
+import org.apache.coyote.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
