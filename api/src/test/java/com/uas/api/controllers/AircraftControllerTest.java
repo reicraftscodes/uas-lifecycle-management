@@ -31,14 +31,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -280,8 +285,26 @@ public class AircraftControllerTest {
     public void GetPlatformStatus() throws Exception {
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
 
-        platformStatusDTOList.add(new PlatformStatusDTO("G-001", 100, PlatformStatus.REPAIR,  12));
-        platformStatusDTOList.add(new PlatformStatusDTO("G-002", 60, PlatformStatus.OPERATION, 12));
+        platformStatusDTOList.add(new PlatformStatusDTO(
+                "G-001",
+                PlatformType.PLATFORM_A,
+                PlatformStatus.REPAIR,
+                500,
+                BigDecimal.valueOf(3000),
+                "Cardiff",
+                14,
+                BigDecimal.valueOf(1000),
+                BigDecimal.valueOf(2000)));
+        platformStatusDTOList.add(new PlatformStatusDTO(
+                "G-002",
+                PlatformType.PLATFORM_B,
+                PlatformStatus.OPERATION,
+                400,
+                BigDecimal.valueOf(2800),
+                "Cardiff",
+                10,
+                BigDecimal.valueOf(800),
+                BigDecimal.valueOf(2000)));
 
         when(aircraftService.getPlatformStatus()).thenReturn(platformStatusDTOList);
 
@@ -292,14 +315,10 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
-                .andExpect(jsonPath("$[0].platformStatus").value("REPAIR"))
-                .andExpect(jsonPath("$[1].tailNumber").value("G-002")).andReturn();
-
-       String jsonString = mvcResult.getResponse().getContentAsString();
-
-
-
-        assertEquals("[{\"tailNumber\":\"G-001\",\"platformStatus\":\"REPAIR\",\"flyTimeHours\":100,\"totalCost\":12},{\"tailNumber\":\"G-002\",\"platformStatus\":\"OPERATION\",\"flyTimeHours\":60,\"totalCost\":12}]", jsonString);
+                .andExpect(jsonPath("$[0].platformStatus").value("Repair"))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002"))
+                .andExpect(jsonPath("$[1].platformStatus").value("Operational"))
+                .andReturn();
     }
 
     @WithMockUser("user")
@@ -309,7 +328,7 @@ public class AircraftControllerTest {
         List<PlatformStatusAndroidDTO> mockBeingRepaired = new ArrayList<>();
         List<PlatformStatusAndroidDTO> mockAwaitingRepair = new ArrayList<>();
         List<PlatformStatusAndroidDTO> mockBeyondRepair = new ArrayList<>();
-        PlatformStatusAndroidDTO mockAircraft = new PlatformStatusAndroidDTO("M100", PlatformStatus.REPAIR, "Cardiff");
+        PlatformStatusAndroidDTO mockAircraft = new PlatformStatusAndroidDTO("M100", PlatformStatus.REPAIR, "Cardiff", PlatformType.PLATFORM_A);
         mockOperational.add(mockAircraft);
         mockBeingRepaired.add(mockAircraft);
         mockAwaitingRepair.add(mockAircraft);
@@ -321,8 +340,9 @@ public class AircraftControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.operational[0].tailNumber").value("M100"))
-                .andExpect(jsonPath("$.operational[0].platformStatus").value("REPAIR"))
-                .andExpect(jsonPath("$.operational[0].location").value("Cardiff"));;
+                .andExpect(jsonPath("$.operational[0].platformStatus").value("Repair"))
+                .andExpect(jsonPath("$.operational[0].location").value("Cardiff"))
+                .andExpect(jsonPath("$.operational[0].platformType").value("Platform A"));
     }
 
     //This test needs looking at for the return.
@@ -352,5 +372,103 @@ public class AircraftControllerTest {
         assertEquals("", response);
     }
 
+    @WithMockUser(value = "user")
+    @Test
+    public void getAircraftPartsSuccess() throws Exception {
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 
+        PartType partType = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+        Part part = new Part(partType,aircraft,location,PartStatus.OPERATIONAL);
+        List<Part> parts = new ArrayList<>();
+        parts.add(part);
+
+        AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
+        aircraftPartsDTO.setTailNumber(aircraft.getTailNumber());
+
+
+        String json = "G-001";
+
+        when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraft));
+        when(partRepository.findAllPartsByAircraft(any())).thenReturn(parts);
+
+        mockMvc.perform(get("/aircraft/aircraft-parts-status")
+                        .content(json).characterEncoding("utf-8")
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
+
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void updateAircraftPartSuccess() throws Exception {
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
+
+        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+        Part currentPart = new Part(partType1,aircraft,location,PartStatus.OPERATIONAL);
+        Part newPart = new Part(partType2,aircraft,location,PartStatus.OPERATIONAL);
+
+        UpdateAircraftPartDTO aircraftPartDTO = new UpdateAircraftPartDTO();
+        aircraftPartDTO.setTailNumber("G-001");
+        aircraftPartDTO.setNewPartNumber(2);
+
+        String json = "{\"tailNumber\":\"G-001\",\"newPartNumber\":1}";
+
+        when(partRepository.findPartBypartNumber(1)).thenReturn(Optional.of(currentPart));
+        when(partRepository.findPartBypartNumber(2)).thenReturn(Optional.of(newPart));
+
+        mockMvc.perform(post("/aircraft/update-aircraft-part")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void whenFilterPlatforms_Return2PlatformDTOs() throws Exception {
+        List<PlatformStatusDTO> platformStatusDTOs = new ArrayList<>();
+        platformStatusDTOs.add(new PlatformStatusDTO(
+                "G-001",
+                PlatformType.PLATFORM_A,
+                PlatformStatus.OPERATION,
+                50, BigDecimal.valueOf(100),
+                "Cardiff",
+                5,
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(50)));
+        platformStatusDTOs.add(new PlatformStatusDTO(
+                "G-002",
+                PlatformType.PLATFORM_B,
+                PlatformStatus.DESIGN,
+                70, BigDecimal.valueOf(200),
+                "Cardiff",
+                5,
+                BigDecimal.valueOf(150),
+                BigDecimal.valueOf(50)));
+        PlatformStatusFilterDTO platformStatusFilterDTO = new PlatformStatusFilterDTO(Arrays.asList("Cardiff"), Arrays.asList("Operational", "Design"));
+
+        when(aircraftService.getFilteredPlatformStatusList(platformStatusFilterDTO.getLocations(), platformStatusFilterDTO.getPlatformStatuses())).thenReturn(platformStatusDTOs);
+
+        mockMvc.perform(post("/aircraft/platform-status/filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsBytes(platformStatusFilterDTO)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].location").value("Cardiff"))
+                .andExpect(jsonPath("$[0].platformStatus").value("Operational"))
+                .andExpect(jsonPath("$[0].platformType").value("Platform A"))
+                .andExpect(jsonPath("$[0].flyTimeHours").value(50))
+                .andExpect(jsonPath("$[0].totalCost").value(100))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002"))
+                .andExpect(jsonPath("$[1].platformStatus").value("Design"));
+
+        verify(this.aircraftService, times(1)).getFilteredPlatformStatusList(anyList(), anyList());
+        verifyNoMoreInteractions(this.aircraftService);
+    }
 }

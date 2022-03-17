@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
+import com.uas.api.models.dtos.AircraftPartsDTO;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
 import com.uas.api.models.dtos.PlatformStatusDTO;
@@ -12,21 +13,26 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.AircraftUserRepository;
+import com.uas.api.repositories.RepairRepository;
 import com.uas.api.repositories.auth.UserRepository;
+import org.apache.coyote.Response;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -38,6 +44,9 @@ public class AircraftServiceTests {
 
     @Mock
     private AircraftRepository aircraftRepository;
+
+    @Mock
+    private RepairRepository repairRepository;
 
     @Mock
     private UserRepository userRepository;
@@ -94,11 +103,14 @@ public class AircraftServiceTests {
         aircraft.add(aircraftTwo);
 
         when(aircraftRepository.findAll()).thenReturn(aircraft);
+        when(repairRepository.findRepairsCountForAircraft(any())).thenReturn(5);
+        when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(100.0);
 
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
 
         assertEquals("Should return 2 platform status dtos", 2, platformStatusDTOList.size());
         assertEquals("Should return tail number G-001", "G-001", platformStatusDTOList.get(0).getTailNumber());
+        assertEquals("Should return repairs count 5", 5, platformStatusDTOList.get(0).getRepairsCount());
         assertEquals("Should return tail number G-002", "G-002", platformStatusDTOList.get(1).getTailNumber());
     }
 
@@ -184,5 +196,35 @@ public class AircraftServiceTests {
 
         PlatformStatusAndroidFullDTO mockList = aircraftService.getPlatformStatusAndroid();
         assertEquals("Should have length of 1", 1, mockList.getOperational().size());
+    }
+
+    @Test
+    public void givenGetFilteredPlatformStatus_ThenReturn2PlatformStatusDTOs() {
+        Aircraft aircraftOne = new Aircraft(
+                "G-001",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftTwo = new Aircraft(
+                "G-003",
+                new Location("Cardiff", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_B,
+                300);
+        List<Aircraft> aircraft = new ArrayList<>();
+        aircraft.add(aircraftOne);
+        aircraft.add(aircraftTwo);
+
+        when(aircraftRepository.findAllByLocationsAndPlatformStatus(anyList(), anyList())).thenReturn(aircraft);
+        when(repairRepository.findRepairsCountForAircraft(any())).thenReturn(5);
+        when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(100.0);
+
+        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getFilteredPlatformStatusList(Arrays.asList("Cardiff", "St Athen"), Arrays.asList("Operational"));
+
+        assertEquals("Should return 2 platform status dtos", 2, platformStatusDTOList.size());
+        assertEquals("Should return tail number G-001", "G-001", platformStatusDTOList.get(0).getTailNumber());
+        assertEquals("Should return platform status operational", "Operational", platformStatusDTOList.get(0).getPlatformStatus());
+        assertEquals("Should return tail number G-002", "G-003", platformStatusDTOList.get(1).getTailNumber());
     }
 }

@@ -2,6 +2,7 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
@@ -115,6 +116,28 @@ public interface AircraftService {
      * @param flyTime The fly time to be added to the hours field.
      */
     void updateUserAircraftFlyTime(String tailNumber, long userId, int flyTime);
+    /**
+     * Updates the given aircrafts' status.
+     * @param aircraftStatusDTO A dto with the aircraft being updates and the status it is being changed to.
+     * @return a response entity with and message if there was any problems.
+     */
+    ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO);
+
+    /**
+     * Gets the parts and their status for the aircraft given.
+     * @param tailNumber The aircraft that the parts are being searched for.
+     * @return Returns a response entity with a body containing the list of parts with their statuses.
+     */
+    ResponseEntity<?> getAircraftParts(String tailNumber);
+
+    /**
+     * Updates an aircraft with a new part.
+     * @param aircraftPartDTO a dto with the part being replaced and the new part number.
+     * @return a response entity with and message if there was any problems.
+     */
+    ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO);
+
+
 
     /**
      * Used to assign the user to an aircraft by creating an AircraftUser from existing user and aircraft.
@@ -122,4 +145,12 @@ public interface AircraftService {
      * @return returns a AircraftUserDTO.
      */
     AircraftUserDTO assignUserToAircraft(AircraftUserKeyDTO aircraftUserKeyDTO);
+
+    /**
+     * Gets a filtered platform details list.
+     * @param locations the locations to be included in the search.
+     * @param platformStatuses the platform statuses to be included in the search.
+     * @return a list of PlatformStatusDTOs that match the search criteria.
+     */
+    List<PlatformStatusDTO> getFilteredPlatformStatusList(List<String> locations, List<String> platformStatuses);
 }

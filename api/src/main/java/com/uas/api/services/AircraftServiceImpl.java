@@ -10,8 +10,11 @@ import com.uas.api.repositories.auth.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -203,15 +206,48 @@ public class AircraftServiceImpl implements AircraftService {
     public List<PlatformStatusDTO> getPlatformStatus() {
         List<Aircraft> aircraftList = aircraftRepository.findAll();
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
-        //Until total repairs method is implemented use dummy data of 12.
-        Integer totalCost = 12;
-
+        //todo - implement get parts cost method (this involves maybe changing the db and entity)
         for (Aircraft aircraft: aircraftList) {
-            PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(aircraft.getTailNumber(), aircraft.getFlyTimeHours(), aircraft.getPlatformStatus(), totalCost);
+            PlatformStatusDTO platformStatusDTO = getPlatformStatusForAircraft(aircraft);
             platformStatusDTOList.add(platformStatusDTO);
         }
-
         return platformStatusDTOList;
+    }
+
+    /**
+     * Gets a filtered platform details list.
+     * @param locations the locations to be included in the search.
+     * @param platformStatuses the platform statuses to be included in the search.
+     * @return a list of PlatformStatusDTOs that match the search criteria.
+     */
+    @Override
+    public List<PlatformStatusDTO> getFilteredPlatformStatusList(final List<String> locations, final List<String> platformStatuses) {
+        List<Aircraft> aircraftList = aircraftRepository.findAllByLocationsAndPlatformStatus(locations, platformStatuses);
+        List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
+        for (Aircraft aircraft: aircraftList) {
+            PlatformStatusDTO platformStatusDTO = getPlatformStatusForAircraft(aircraft);
+            platformStatusDTOList.add(platformStatusDTO);
+        }
+        return platformStatusDTOList;
+    }
+
+    private PlatformStatusDTO getPlatformStatusForAircraft(final Aircraft aircraft) {
+        //todo - implement get parts cost method (this involves changing the db and entity)
+        Integer repairsCount = repairRepository.findRepairsCountForAircraft(aircraft.getTailNumber());
+        double repairsCost = getTotalRepairCostForSpecificAircraft(aircraft);
+        BigDecimal partsCost = BigDecimal.valueOf(3000);
+        BigDecimal totalCost = partsCost.add(BigDecimal.valueOf(repairsCost));
+        PlatformStatusDTO platformStatusDTO = new PlatformStatusDTO(
+                aircraft.getTailNumber(),
+                aircraft.getPlatformType(),
+                aircraft.getPlatformStatus(),
+                aircraft.getFlyTimeHours(),
+                totalCost,
+                aircraft.getLocation().getLocationName(),
+                repairsCount,
+                BigDecimal.valueOf(repairsCost),
+                BigDecimal.valueOf(3000));
+        return platformStatusDTO;
     }
 
     /**
@@ -239,7 +275,7 @@ public class AircraftServiceImpl implements AircraftService {
         List<PlatformStatusAndroidDTO> platforms = new ArrayList<>();
         List<Aircraft> currentAircraft = aircraftRepository.findAircraftsByPlatformStatus(platformStatus);
         for (Aircraft aircraft:currentAircraft) {
-            platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName()));
+            platforms.add(new PlatformStatusAndroidDTO(aircraft.getTailNumber(), aircraft.getPlatformStatus(), aircraft.getLocation().getLocationName(), aircraft.getPlatformType()));
         }
         return platforms;
     }
@@ -452,6 +488,96 @@ public class AircraftServiceImpl implements AircraftService {
         aircraftUser.setUserFlyingHours(oldFlyTime + flyTime);
         aircraftUserRepository.save(aircraftUser);
     }
+
+    /**
+     * Used to update the status of a given aircraft.
+     * @param aircraftStatusDTO A dto containing tail number and status to be gathered from the user.
+     * @return returns a response entity for success or if there is a failure what the error is.
+     */
+    public ResponseEntity<?> updateAircraftStatus(final UpdateAircraftStatusDTO aircraftStatusDTO) {
+        Optional<Aircraft> aircraft = findAircraftById(aircraftStatusDTO.getTailNumber());
+
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
+        } else {
+
+            PlatformStatus platformStatusEnum;
+            try {
+                platformStatusEnum = PlatformStatus.valueOf(aircraftStatusDTO.getStatus());
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Invalid aircraft status!");
+            }
+
+            aircraft.get().setPlatformStatus(platformStatusEnum);
+            aircraftRepository.save(aircraft.get());
+            return ResponseEntity.ok("");
+        }
+    }
+
+    /**
+     * Gets the parts associated with a specific aircraft.
+     * @param tailNumber The tailnumber for the aircraft/
+     * @return returns a response entity with a body containing the tailnumber and a list of parts with statuses.
+     */
+    public ResponseEntity<?> getAircraftParts(final String tailNumber) {
+        AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
+        Optional<Aircraft> aircraft = findAircraftById(tailNumber);
+
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
+        } else {
+            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+
+            List<List<String>> partsReturn = new ArrayList<>();
+            for (Part part : parts) {
+                //creates a list of part number, type, and status to return.
+                List<String> partInformation = new ArrayList<>();
+
+                partInformation.add(part.getPartNumber().toString());
+                partInformation.add(part.getPartType().getPartName().getName());
+                partInformation.add(part.getPartStatus().getLabel());
+
+                partsReturn.add(partInformation);
+            }
+
+            aircraftPartsDTO.setTailNumber(aircraft.get().getTailNumber());
+            aircraftPartsDTO.setParts(partsReturn);
+
+            return ResponseEntity.ok(aircraftPartsDTO);
+        }
+    }
+
+    /**
+     * Updates a specific aircraft with a new selected part.
+     * @param aircraftPartDTO has a aircraft tailnumber and a new part field.
+     * @return returns a response entity with an ok status or an error status with an error body.
+     */
+    public ResponseEntity<?> updateAircraftPart(final UpdateAircraftPartDTO aircraftPartDTO) {
+        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftPartDTO.getTailNumber());
+        if (aircraft.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft is not found!");
+        }
+
+        Optional<Part> newPart = partRepository.findPartBypartNumber(aircraftPartDTO.getNewPartNumber());
+        if (newPart.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("New part not found!");
+        }
+
+        List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+
+        for (Part part : parts) {
+            if (part.getPartType() == newPart.get().getPartType()) {
+                part.setAircraft(null);
+                partRepository.save(part);
+            }
+        }
+
+        newPart.get().setAircraft(aircraft.get());
+        partRepository.save(newPart.get());
+
+        return ResponseEntity.ok("");
+    }
+
 
     /**
      * Used to assign an user to an aircraft.
