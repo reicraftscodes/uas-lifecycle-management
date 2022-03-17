@@ -123,5 +123,11 @@ public interface AircraftService {
      */
     AircraftUserDTO assignUserToAircraft(AircraftUserKeyDTO aircraftUserKeyDTO);
 
+    /**
+     * Gets a filtered platform details list.
+     * @param locations the locations to be included in the search.
+     * @param platformStatuses the platform statuses to be included in the search.
+     * @return a list of PlatformStatusDTOs that match the search criteria.
+     */
     List<PlatformStatusDTO> getFilteredPlatformStatusList(List<String> locations, List<String> platformStatuses);
 }

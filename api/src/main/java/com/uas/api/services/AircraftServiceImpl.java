@@ -212,6 +212,12 @@ public class AircraftServiceImpl implements AircraftService {
         return platformStatusDTOList;
     }
 
+    /**
+     * Gets a filtered platform details list.
+     * @param locations the locations to be included in the search.
+     * @param platformStatuses the platform statuses to be included in the search.
+     * @return a list of PlatformStatusDTOs that match the search criteria.
+     */
     @Override
     public List<PlatformStatusDTO> getFilteredPlatformStatusList(final List<String> locations, final List<String> platformStatuses) {
         List<Aircraft> aircraftList = aircraftRepository.findAllByLocationsAndPlatformStatus(locations, platformStatuses);
