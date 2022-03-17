@@ -64,5 +64,12 @@ public interface PartService {
      */
     void updatePartFlyTime(List<Part> parts, int flyTime);
 
+    /**
+     * Gets all availble parts for a specific part type.
+     * @param partType The part type being searched for.
+     * @return a list of part numbers that are available.
+     */
+    List<String> availablePartsForParttype(long partType);
+
 
 }

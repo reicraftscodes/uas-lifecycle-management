@@ -206,7 +206,6 @@ public class AircraftController {
      */
     @GetMapping("ceo-aircraft-cost")
     public ResponseEntity<?> getStreamlinedRunningCost() {
-
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
     }
 
@@ -220,5 +219,39 @@ public class AircraftController {
         AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(aircraftUserKeyDTO);
         return ResponseEntity.ok(aircraftUserDTO);
     }
+
+    /**
+     * Get method that returns the parts and their statuses for a specific given aircraft.
+     * @param tailNumber The tailnumber of the aircraft the parts are being searched for.
+     * @return A response entity with the aircraft parts if ok or an error message if something went wrong.
+     */
+    @GetMapping(value = "aircraft-parts-status", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> getAircraftParts(@RequestBody final String tailNumber) {
+        return aircraftService.getAircraftParts(tailNumber);
+    }
+
+    /**
+     * A post mapping that updates the status of a given aircraft.
+     * @param aircraftStatusDTO A DTO with the aircraft tailnumber and status that it is being set to.
+     * @return returns a response entity with an ok response or an error response with what the error was.
+     */
+    @PostMapping("update-aircraft-status")
+    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) {
+        return aircraftService.updateAircraftStatus(aircraftStatusDTO);
+    }
+
+    /**
+     * A post mapping for updating the part on a specific aircraft.
+     * @param aircraftPartDTO A dto with the part being changed and the new part.
+     * @return returns a response entity with either ok response or an error response with what the error was.
+     */
+    @PostMapping("update-aircraft-part")
+    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) {
+        return aircraftService.updateAircraftPart(aircraftPartDTO);
+    }
+
+
+
+
 
 }
