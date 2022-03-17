@@ -36,9 +36,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -368,5 +370,51 @@ public class AircraftControllerTest {
         assertEquals("", response);
     }
 
+    @WithMockUser(value = "user")
+    @Test
+    public void whenFilterPlatforms_Return2PlatformDTOs() throws Exception {
+        List<PlatformStatusDTO> platformStatusDTOs = new ArrayList<>();
+        platformStatusDTOs.add(new PlatformStatusDTO(
+                "G-001",
+                PlatformType.PLATFORM_A,
+                PlatformStatus.OPERATION,
+                50, BigDecimal.valueOf(100),
+                "Cardiff",
+                5,
+                BigDecimal.valueOf(50),
+                BigDecimal.valueOf(50)));
+        platformStatusDTOs.add(new PlatformStatusDTO(
+                "G-002",
+                PlatformType.PLATFORM_B,
+                PlatformStatus.DESIGN,
+                70, BigDecimal.valueOf(200),
+                "Cardiff",
+                5,
+                BigDecimal.valueOf(150),
+                BigDecimal.valueOf(50)));
+        PlatformStatusFilterDTO platformStatusFilterDTO = new PlatformStatusFilterDTO(Arrays.asList("Cardiff"), Arrays.asList("Operational", "Design"));
+
+        when(aircraftService.getFilteredPlatformStatusList(platformStatusFilterDTO.getLocations(), platformStatusFilterDTO.getPlatformStatuses())).thenReturn(platformStatusDTOs);
+
+        mockMvc.perform(post("/aircraft/platform-status/filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsBytes(platformStatusFilterDTO)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].location").value("Cardiff"))
+                .andExpect(jsonPath("$[0].platformStatus").value("Operational"))
+                .andExpect(jsonPath("$[0].platformType").value("Platform A"))
+                .andExpect(jsonPath("$[0].flyTimeHours").value(50))
+                .andExpect(jsonPath("$[0].totalCost").value(100))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002"))
+                .andExpect(jsonPath("$[1].platformStatus").value("Design"));
+
+        verify(this.aircraftService, times(1)).getFilteredPlatformStatusList(anyList(), anyList());
+        verifyNoMoreInteractions(this.aircraftService);
+    }
 
 }
