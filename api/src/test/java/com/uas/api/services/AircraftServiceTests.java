@@ -25,10 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -192,5 +192,35 @@ public class AircraftServiceTests {
 
         PlatformStatusAndroidFullDTO mockList = aircraftService.getPlatformStatusAndroid();
         assertEquals("Should have length of 1", 1, mockList.getOperational().size());
+    }
+
+    @Test
+    public void givenGetFilteredPlatformStatus_ThenReturn2PlatformStatusDTOs() {
+        Aircraft aircraftOne = new Aircraft(
+                "G-001",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftTwo = new Aircraft(
+                "G-003",
+                new Location("Cardiff", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_B,
+                300);
+        List<Aircraft> aircraft = new ArrayList<>();
+        aircraft.add(aircraftOne);
+        aircraft.add(aircraftTwo);
+
+        when(aircraftRepository.findAllByLocationsAndPlatformStatus(anyList(), anyList())).thenReturn(aircraft);
+        when(repairRepository.findRepairsCountForAircraft(any())).thenReturn(5);
+        when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(100.0);
+
+        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getFilteredPlatformStatusList(Arrays.asList("Cardiff", "St Athen"), Arrays.asList("Operational"));
+
+        assertEquals("Should return 2 platform status dtos", 2, platformStatusDTOList.size());
+        assertEquals("Should return tail number G-001", "G-001", platformStatusDTOList.get(0).getTailNumber());
+        assertEquals("Should return platform status operational", "Operational", platformStatusDTOList.get(0).getPlatformStatus());
+        assertEquals("Should return tail number G-002", "G-003", platformStatusDTOList.get(1).getTailNumber());
     }
 }
