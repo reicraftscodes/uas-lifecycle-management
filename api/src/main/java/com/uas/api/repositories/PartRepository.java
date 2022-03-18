@@ -3,6 +3,7 @@ package com.uas.api.repositories;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,5 +45,11 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
     @Query(value = "SELECT PartNumber FROM parts WHERE AircraftTailNumber IS NULL AND partID=:partID", nativeQuery = true)
     List<String> findAllAvailbleByType(@Param("partID") long partID);
 
+    /**
+     * Finds all the parts in the db that have a specific.
+     * @param partStatus the part status being searched for.
+     * @return returns a list of part numbers that are available.
+     */
+    List<Part> findAllByPartStatus(PartStatus partStatus);
 
 }

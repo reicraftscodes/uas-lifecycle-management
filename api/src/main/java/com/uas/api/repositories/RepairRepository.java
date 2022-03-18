@@ -2,7 +2,6 @@ package com.uas.api.repositories;
 
 import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.Repair;
-import com.uas.api.models.entities.enums.PlatformType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,10 +25,10 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
 
     /**
      * Find all parts by aircraft and platform type?
-     * @param platform
+     * @param tailNumber of aircraft.
      * @return the list of repairs?
      */
-    List<Repair> findAllByPart_Aircraft_PlatformType(PlatformType platform);
+    List<Repair> findAllByPart_Aircraft_TailNumber(String tailNumber);
 
     /**
      * Find all repairs of a specific part.
