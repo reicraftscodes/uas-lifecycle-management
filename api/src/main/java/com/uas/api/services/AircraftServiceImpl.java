@@ -3,6 +3,7 @@ package com.uas.api.services;
 import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.*;
+import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
@@ -319,18 +320,33 @@ public class AircraftServiceImpl implements AircraftService {
 
     /**
      * Calculates the total number of repairs.
+     * @param tailNumber of the aircraft.
      * @return total repairs.
      */
-    public List<Integer> calculateTotalRepairs() {
+    public Integer calculateTotalRepairs(final String tailNumber) {
 
-        Integer totalPlatA = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_A).size();
-        Integer totalPlatB = repairRepository.findAllByPart_Aircraft_PlatformType(PlatformType.PLATFORM_B).size();
-
-        List<Integer> totalRepairs = new ArrayList<>();
-        totalRepairs.add(totalPlatA);
-        totalRepairs.add(totalPlatB);
+        Integer totalRepairs = repairRepository.findAllByPart_Aircraft_TailNumber(tailNumber).size();
 
         return totalRepairs;
+    }
+    /**
+     * Gets the parts that are awaiting repair and returns the quantity of these parts.
+     * @return number of parts awaiting repair.
+     */
+    @Override
+    public Integer getNumberOfAircraftWithPartsNeedingRepair() {
+        //Get all parts which are awaiting repair.
+        List<Part> parts = partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR);
+        List<Aircraft> aircraftList = new ArrayList<>();
+        for (Part part : parts
+        ) {
+            if (aircraftList.contains(part.getAircraft())) {
+                continue;
+            } else {
+                aircraftList.add(part.getAircraft());
+            }
+        }
+        return aircraftList.size();
     }
 
     /**
