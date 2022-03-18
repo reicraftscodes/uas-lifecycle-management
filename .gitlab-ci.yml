@@ -17,7 +17,7 @@ before_script:
 build:gradle:
   stage: build
   variables:
-    JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/build/reports/test/jacocoTestReport.csv'
+    JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/api/build/reports/test/jacocoTestReport.csv'
   tags:
     - general-docker
   only:
