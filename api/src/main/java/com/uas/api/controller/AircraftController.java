@@ -174,12 +174,12 @@ public class AircraftController {
 
     /**
      * Gets a filtered platform details list for the web.
-     * @param platformStatusFilterDTO the dto containing the filter options selected.
+     * @param aircraftFilterDTO the dto containing the filter options selected.
      * @return response entity of the filtered platformStatusDTO list containing platform status data.
      */
     @PostMapping("/platform-status/filter")
-    public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWebFiltered(@RequestBody final PlatformStatusFilterDTO platformStatusFilterDTO) {
-        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getFilteredPlatformStatusList(platformStatusFilterDTO.getLocations(), platformStatusFilterDTO.getPlatformStatuses());
+    public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWebFiltered(@RequestBody final AircraftFilterDTO aircraftFilterDTO) {
+        List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getFilteredPlatformStatusList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses());
         return ResponseEntity.ok(platformStatusDTOList);
     }
 
@@ -262,8 +262,25 @@ public class AircraftController {
         return aircraftService.updateAircraftPart(aircraftPartDTO);
     }
 
+    /**
+     * Gets all aircraft.
+     * @return list of all aircraft.
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<AircraftDTO>> getAllAircraft() {
+        List<AircraftDTO> aircraftDTOList = aircraftService.getAllAircraft();
+        return ResponseEntity.ok(aircraftDTOList);
+    }
 
-
-
+    /**
+     * Gets a filtered platform details list for the web.
+     * @param aircraftFilterDTO the dto containing the filter options selected.
+     * @return response entity of the filtered platformStatusDTO list containing platform status data.
+     */
+    @PostMapping("/all/filter")
+    public ResponseEntity<List<AircraftDTO>> getAircraftFiltered(@RequestBody final AircraftFilterDTO aircraftFilterDTO) {
+        List<AircraftDTO> aircraftDTOList = aircraftService.getFilteredAircraftList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses());
+        return ResponseEntity.ok(aircraftDTOList);
+    }
 
 }

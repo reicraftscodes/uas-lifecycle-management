@@ -7,7 +7,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class PlatformStatusFilterDTO {
+public class AircraftFilterDTO {
     /**
      * The locations to be included in the search.
      */

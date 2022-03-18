@@ -231,6 +231,28 @@ public class AircraftServiceImpl implements AircraftService {
         return platformStatusDTOList;
     }
 
+    /**
+     * Gets a filtered aircraft list.
+     * @param locations the locations to be included in the search.
+     * @param platformStatuses the platform statuses to be included in the search.
+     * @return a list of AircraftDTOs that match the search criteria.
+     */
+    @Override
+    public List<AircraftDTO> getFilteredAircraftList(final List<String> locations, final List<String> platformStatuses) {
+        List<Aircraft> aircraftList = aircraftRepository.findAllByLocationsAndPlatformStatus(locations, platformStatuses);
+        List<AircraftDTO> aircraftDTOList = new ArrayList<>();
+        for (Aircraft aircraft: aircraftList) {
+            AircraftDTO aircraftDTO = new AircraftDTO(
+                    aircraft.getTailNumber(),
+                    aircraft.getLocation().getLocationName(),
+                    aircraft.getPlatformStatus().getLabel(),
+                    aircraft.getPlatformType().getName(),
+                    aircraft.getFlyTimeHours());
+            aircraftDTOList.add(aircraftDTO);
+        }
+        return aircraftDTOList;
+    }
+
     private PlatformStatusDTO getPlatformStatusForAircraft(final Aircraft aircraft) {
         //todo - implement get parts cost method (this involves changing the db and entity)
         Integer repairsCount = repairRepository.findRepairsCountForAircraft(aircraft.getTailNumber());
@@ -337,8 +359,19 @@ public class AircraftServiceImpl implements AircraftService {
      * Gets a list of all aircrafts in the db.
      * @return A list of aircraft objects.
      */
-    public List<Aircraft> getAllAircraft() {
-        return aircraftRepository.findAll();
+    public List<AircraftDTO> getAllAircraft() {
+        List<Aircraft> allAircraft = aircraftRepository.findAll();
+        List<AircraftDTO> aircraftDTOS = new ArrayList<>();
+        for (Aircraft aircraft : allAircraft) {
+            AircraftDTO aircraftDTO = new AircraftDTO(
+                    aircraft.getTailNumber(),
+                    aircraft.getLocation().getLocationName(),
+                    aircraft.getPlatformStatus().getLabel(),
+                    aircraft.getPlatformType().getName(),
+                    aircraft.getFlyTimeHours());
+            aircraftDTOS.add(aircraftDTO);
+        }
+        return aircraftDTOS;
     }
 
     /**
@@ -405,7 +438,7 @@ public class AircraftServiceImpl implements AircraftService {
      */
     public List<AircraftCostsDetailDTO> getAircraftForCEOReturn() {
         List<AircraftCostsDetailDTO> ceoAircraftDTOList = new ArrayList<>();
-        List<Aircraft> aircrafts = getAllAircraft();
+        List<Aircraft> aircrafts = aircraftRepository.findAll();
 
         for (Aircraft aircraft : aircrafts) {
             double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft);
@@ -452,7 +485,7 @@ public class AircraftServiceImpl implements AircraftService {
      */
     public List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised() {
         List<AircraftCostsOverviewDTO> ceoAircraftCostsOverviewDTOS = new ArrayList<>();
-        List<Aircraft> aircrafts = getAllAircraft();
+        List<Aircraft> aircrafts = aircraftRepository.findAll();
 
         for (Aircraft aircraft : aircrafts) {
             double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft);
