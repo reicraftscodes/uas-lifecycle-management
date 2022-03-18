@@ -1,4 +1,7 @@
 # UAS Lifecycle Management: API Documentation
+UAS Lifecycle Management API is the Spring Boot and MySQL backend project providing JSON responses to both the Android and Web products.<br>
+[![API Pipeline](https://git.cardiff.ac.uk/c1989132/uas-lifecycle-management/badges/dev/pipeline.svg)](https://git.cardiff.ac.uk/c1989132/uas-lifecycle-management/-/commits/dev)
+[![coverage report](https://git.cardiff.ac.uk/c1989132/uas-lifecycle-management/badges/dev/coverage.svg)](https://git.cardiff.ac.uk/c1989132/uas-lifecycle-management/-/commits/dev)
 ## Set Up
 ### SQL script
 Please locate and download the sql script (when Oliver has completed his issues) and run this in the MySQL workspace. <b> PLEASE NOTE: If you are using a personal laptop and have MySQL downloaded, there might be mild syntax differences and you may have to adjust the script - if you need to do this, please create a separate script and DO NOT push the changes to git. The API is set up to handle both the MariaDB and MySQL database providers so should work with whatever provider you are using</b><br>
