@@ -73,9 +73,9 @@ public interface AircraftService {
 
     /**
      * Gets a list of all aircraft in the database.
-     * @return returns a list of aircraft objects.
+     * @return returns a list of aircraft DTO objects.
      */
-    List<Aircraft> getAllAircraft();
+    List<AircraftDTO> getAllAircraft();
 
     /**
      * Gets the value of all aircrafts total repair cost.
@@ -159,4 +159,12 @@ public interface AircraftService {
      * @return a list of PlatformStatusDTOs that match the search criteria.
      */
     List<PlatformStatusDTO> getFilteredPlatformStatusList(List<String> locations, List<String> platformStatuses);
+
+    /**
+     * Gets a filtered aircraft list.
+     * @param locations the locations to be included in the search.
+     * @param platformStatuses the platform statuses to be included in the search.
+     * @return a list of AircraftDTOs that match the search criteria.
+     */
+    List<AircraftDTO> getFilteredAircraftList(List<String> locations, List<String> platformStatuses);
 }

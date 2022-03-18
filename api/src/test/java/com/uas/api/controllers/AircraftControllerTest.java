@@ -3,10 +3,7 @@ package com.uas.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.AircraftController;
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.auth.ERole;
-import com.uas.api.models.auth.Role;
 import com.uas.api.models.auth.User;
-import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.*;
@@ -31,13 +28,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -286,7 +281,6 @@ public class AircraftControllerTest {
 
         when(aircraftService.getTotalPartCostForSpecificAircraft(any())).thenReturn(1002.0);
         when(aircraftService.getTotalRepairCostForSpecificAircraft(any())).thenReturn(1001.0);
-        when(aircraftService.getAllAircraft()).thenReturn(aircrafts);
         when(aircraftService.getAircraftForCEOReturnMinimised()).thenReturn(ceoAircraftCostsOverviewDTOList);
 
         mockMvc.perform(get("http://localhost:8080/aircraft/ceo-aircraft-cost")
@@ -468,14 +462,14 @@ public class AircraftControllerTest {
                 5,
                 BigDecimal.valueOf(150),
                 BigDecimal.valueOf(50)));
-        PlatformStatusFilterDTO platformStatusFilterDTO = new PlatformStatusFilterDTO(Arrays.asList("Cardiff"), Arrays.asList("Operational", "Design"));
+        AircraftFilterDTO aircraftFilterDTO = new AircraftFilterDTO(Arrays.asList("Cardiff"), Arrays.asList("Operational", "Design"));
 
-        when(aircraftService.getFilteredPlatformStatusList(platformStatusFilterDTO.getLocations(), platformStatusFilterDTO.getPlatformStatuses())).thenReturn(platformStatusDTOs);
+        when(aircraftService.getFilteredPlatformStatusList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses())).thenReturn(platformStatusDTOs);
 
         mockMvc.perform(post("/aircraft/platform-status/filter")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(this.objectMapper.writeValueAsBytes(platformStatusFilterDTO)))
+                        .content(this.objectMapper.writeValueAsBytes(aircraftFilterDTO)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isArray())
@@ -490,6 +484,47 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$[1].platformStatus").value("Design"));
 
         verify(this.aircraftService, times(1)).getFilteredPlatformStatusList(anyList(), anyList());
+        verifyNoMoreInteractions(this.aircraftService);
+    }
+
+
+    @WithMockUser(value = "user")
+    @Test
+    public void whenFilterAircraft_Return2AircraftDTOs() throws Exception {
+        List<AircraftDTO> aircraftDTOs = new ArrayList<>();
+        aircraftDTOs.add(new AircraftDTO(
+                "G-001",
+                "Cardiff",
+                PlatformStatus.OPERATION.getLabel(),
+                PlatformType.PLATFORM_A.getName(),
+                50));
+        aircraftDTOs.add(new AircraftDTO(
+                "G-002",
+                "Cardiff",
+                PlatformStatus.DESIGN.getLabel(),
+                PlatformType.PLATFORM_B.getName(),
+                70));
+        AircraftFilterDTO aircraftFilterDTO = new AircraftFilterDTO(Arrays.asList("Cardiff"), Arrays.asList("Operational", "Design"));
+
+        when(aircraftService.getFilteredAircraftList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses())).thenReturn(aircraftDTOs);
+
+        mockMvc.perform(post("/aircraft/all/filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsBytes(aircraftFilterDTO)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].location").value("Cardiff"))
+                .andExpect(jsonPath("$[0].platformStatus").value("Operational"))
+                .andExpect(jsonPath("$[0].platformType").value("Platform A"))
+                .andExpect(jsonPath("$[0].flyTimeHours").value(50))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002"))
+                .andExpect(jsonPath("$[1].platformStatus").value("Design"));
+
+        verify(this.aircraftService, times(1)).getFilteredAircraftList(anyList(), anyList());
         verifyNoMoreInteractions(this.aircraftService);
     }
 }

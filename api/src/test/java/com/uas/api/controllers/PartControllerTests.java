@@ -1,11 +1,17 @@
 package com.uas.api.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
+import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartRepairsDTO;
+import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +25,26 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
+
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = PartsController.class)
 public class PartControllerTests {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     PartService partService;
@@ -67,7 +84,7 @@ public class PartControllerTests {
         data.put("manufacture", "2022-02-20 11:00:00");
         data.put("partStatus", "OPERATIONAL");
 
-        Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
+        when(partService.addPartFromJSON(data)).thenReturn("");
 
         MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
 
@@ -88,7 +105,7 @@ public class PartControllerTests {
         data.put("manufacture", "");
         data.put("partStatus", "OPERATIONAL");
 
-        Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
+        when(partService.addPartFromJSON(data)).thenReturn("");
 
         MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add")
                 .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
@@ -113,7 +130,7 @@ public class PartControllerTests {
         data.put("manufacture", "2022-02-20 11:00:00");
         data.put("partStatus", "OPERATIONAL");
 
-        Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
+        when(partService.addPartFromJSON(data)).thenReturn("");
 
         MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
 
@@ -134,7 +151,7 @@ public class PartControllerTests {
         data.put("manufacture", "");
         data.put("partStatus", "OPERATIONAL");
 
-        Mockito.when(partService.addPartFromJSON(data)).thenReturn("");
+        when(partService.addPartFromJSON(data)).thenReturn("");
 
         MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
 
@@ -142,6 +159,17 @@ public class PartControllerTests {
 
         assertEquals("", mvcRes.getResponse().getContentAsString());
     }
+
+
+
+    @Test
+    public void whenRequestMoreStockThenShouldBeTrue(){
+        MoreStockRequest mockStockRequest = new MoreStockRequest("Cardiff", 100.00, new ArrayList<>(), new ArrayList<>());
+        when(stockControlService.addMoreStock(mockStockRequest)).thenReturn(true);
+        Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
+    }
+
+
 
 }
 
