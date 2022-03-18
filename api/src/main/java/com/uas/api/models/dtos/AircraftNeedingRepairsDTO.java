@@ -6,11 +6,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AircraftTotalRepairsDTO {
+public class AircraftNeedingRepairsDTO {
 
     /**
-     * Cumulative repair total for an aircraft.
+     * The number of Aircraft that have parts requiring repairs.
      */
-    private final Integer repairTotalForAircraft;
+    private final Integer aircraftNeedingRepair;
 
 }

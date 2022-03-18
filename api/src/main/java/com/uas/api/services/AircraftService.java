@@ -22,11 +22,11 @@ public interface AircraftService {
      */
     Optional<Aircraft> findAircraftById(String id);
 
-    /**
-     * Calculates the total number of repairs.
-     * @return the list of repairs?
+    /** Calculates the total number of repairs for an aircraft.
+     * @param tailNumber of the aircraft.
+     * @return the number of repairs for a specific aircraft.
      */
-    List<Integer> calculateTotalRepairs();
+    Integer calculateTotalRepairs(String tailNumber);
     /**
      * Get all aircraft assigned to a user.
      * @param userID the id of the user.
@@ -57,6 +57,12 @@ public interface AircraftService {
      * @return the dto list.
      */
     List<PlatformStatusDTO> getPlatformStatus();
+
+    /**
+     * Gets the number of Aircraft with parts needing repair.
+     * @return the integer.
+     */
+    Integer getNumberOfAircraftWithPartsNeedingRepair();
 
     /**
      * Gets a list of the platform status containing the name,
