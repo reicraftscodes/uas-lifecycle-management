@@ -61,7 +61,7 @@ jacocoTestReport {
 
     reports {
         xml.enabled false
-        csv.enabled false
+        csv.enabled true
     }
 }
 task buildAndReport {

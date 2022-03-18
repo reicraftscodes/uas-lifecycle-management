@@ -1,6 +1,13 @@
 .gradle
 #build/
 #!build/reports
+build/classes
+build/generated
+build/jacoco
+build/resources
+build/test-results
+build/tmp
+build/bootJarMainClassName
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
