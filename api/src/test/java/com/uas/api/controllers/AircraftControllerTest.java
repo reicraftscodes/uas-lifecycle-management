@@ -465,4 +465,45 @@ public class AircraftControllerTest {
         verify(this.aircraftService, times(1)).getFilteredPlatformStatusList(anyList(), anyList());
         verifyNoMoreInteractions(this.aircraftService);
     }
+
+
+    @WithMockUser(value = "user")
+    @Test
+    public void whenFilterAircraft_Return2AircraftDTOs() throws Exception {
+        List<AircraftDTO> aircraftDTOs = new ArrayList<>();
+        aircraftDTOs.add(new AircraftDTO(
+                "G-001",
+                "Cardiff",
+                PlatformStatus.OPERATION.getLabel(),
+                PlatformType.PLATFORM_A.getName(),
+                50));
+        aircraftDTOs.add(new AircraftDTO(
+                "G-002",
+                "Cardiff",
+                PlatformStatus.DESIGN.getLabel(),
+                PlatformType.PLATFORM_B.getName(),
+                70));
+        AircraftFilterDTO aircraftFilterDTO = new AircraftFilterDTO(Arrays.asList("Cardiff"), Arrays.asList("Operational", "Design"));
+
+        when(aircraftService.getFilteredAircraftList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses())).thenReturn(aircraftDTOs);
+
+        mockMvc.perform(post("/aircraft/all/filter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsBytes(aircraftFilterDTO)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$[0].location").value("Cardiff"))
+                .andExpect(jsonPath("$[0].platformStatus").value("Operational"))
+                .andExpect(jsonPath("$[0].platformType").value("Platform A"))
+                .andExpect(jsonPath("$[0].flyTimeHours").value(50))
+                .andExpect(jsonPath("$[1].tailNumber").value("G-002"))
+                .andExpect(jsonPath("$[1].platformStatus").value("Design"));
+
+        verify(this.aircraftService, times(1)).getFilteredAircraftList(anyList(), anyList());
+        verifyNoMoreInteractions(this.aircraftService);
+    }
 }
