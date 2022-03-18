@@ -227,4 +227,32 @@ public class AircraftServiceTests {
         assertEquals("Should return platform status operational", "Operational", platformStatusDTOList.get(0).getPlatformStatus());
         assertEquals("Should return tail number G-002", "G-003", platformStatusDTOList.get(1).getTailNumber());
     }
+
+    @Test
+    public void givenGetFilteredAircraft_ThenReturn2AircraftDTOs() {
+        Aircraft aircraftOne = new Aircraft(
+                "G-001",
+                new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_A,
+                250);
+        Aircraft aircraftTwo = new Aircraft(
+                "G-003",
+                new Location("Cardiff", "address line 1", "address line 2", "CF000AA","Wales"),
+                PlatformStatus.OPERATION,
+                PlatformType.PLATFORM_B,
+                300);
+        List<Aircraft> aircraft = new ArrayList<>();
+        aircraft.add(aircraftOne);
+        aircraft.add(aircraftTwo);
+
+        when(aircraftRepository.findAllByLocationsAndPlatformStatus(anyList(), anyList())).thenReturn(aircraft);
+
+        List<AircraftDTO> aircraftDTOList = aircraftService.getFilteredAircraftList(Arrays.asList("Cardiff", "St Athen"), Arrays.asList("Operational"));
+
+        assertEquals("Should return 2 platform status dtos", 2, aircraftDTOList.size());
+        assertEquals("Should return tail number G-001", "G-001", aircraftDTOList.get(0).getTailNumber());
+        assertEquals("Should return platform status operational", "Operational", aircraftDTOList.get(0).getPlatformStatus());
+        assertEquals("Should return tail number G-002", "G-003", aircraftDTOList.get(1).getTailNumber());
+    }
 }
