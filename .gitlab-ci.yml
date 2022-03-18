@@ -24,7 +24,8 @@ build:gradle:
     - dev
   script:
     - ./gradlew buildAndReport
-    - - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' $JACOCO_CSV_LOCATION
+    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' $JACOCO_CSV_LOCATION
+  coverage: '/([0-9]{1,3}.[0-9]*).%.covered/'
   artifacts:
     name: "$CI_JOB_NAME"
     paths:
@@ -32,6 +33,7 @@ build:gradle:
       - ./api/build/reports/test/html/index.html
       - ./api/build/reports/tests/test/index.html
     expire_in: 1 week
+
 
 
 pages:
