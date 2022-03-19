@@ -379,49 +379,49 @@ If the request is unsuccessful the response will show an error for bad request a
 `{
     "response": "Invalid part status."
 }`
-##GET - /low-stock
+## GET - /low-stock
     ### Mapping Information:
     ### What it does:
     ### Responses:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-##POST - /stockrequest
+## POST - /stockrequest
     ### Mapping Information:
     ### What it does:
     ### Responses:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-##GET - /stock
+## GET - /stock
     ### Mapping Information:
     ### What it does:
     ### Responses:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-##GET - /location/stock
+## GET - /location/stock
     ### Mapping Information:
     ### What it does:
     ### Responses:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-##GET - /failuretime
+## GET - /failuretime
     ### Mapping Information:
     ### What it does:
     ### Responses:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-##GET - /most-failing/{topN}
+## GET - /most-failing/{topN}
     ### Mapping Information:
     ### What it does:
     ### Responses:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-##POST - /get-by-type
+## POST - /get-by-type
     ### Mapping Information:
     ### What it does:
     ### Responses:
