@@ -106,7 +106,13 @@ General User | HEHE | HEHE
 - Project Lombok
 - GSON
 - JWT Token
-# Framework Diagrams
+# Framework Diagrams - C4 Model
+## Context
+![](C:\Users\c1919991\Documents\SoftwareEngineeringCODE\Semester2Project\Code\uas-lifecycle-management\api\structure_diagrams\structurizr-72910-context.png)
+## Container
+![](C:\Users\c1919991\Documents\SoftwareEngineeringCODE\Semester2Project\Code\uas-lifecycle-management\api\structure_diagrams\structurizr-72910-containers.png)
+## Components
+![](C:\Users\c1919991\Documents\SoftwareEngineeringCODE\Semester2Project\Code\uas-lifecycle-management\api\structure_diagrams\structurizr-72910-components.png)
 
 # Features
 - [Aircraft Controller (/aircraft/)](#aircraft-controller)

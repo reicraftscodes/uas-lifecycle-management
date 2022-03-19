@@ -1,4 +1,5 @@
 .gradle
+*.json
 build/
 !build/reports
 !gradle/wrapper/gradle-wrapper.jar
