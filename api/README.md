@@ -108,11 +108,11 @@ General User | HEHE | HEHE
 - JWT Token
 # Framework Diagrams - C4 Model
 ## Context
-![](api\structure_diagrams\structurizr-72910-context.png)
+![](api/structure_diagrams/structurizr-72910-context.png)
 ## Container
-![](api\structure_diagrams\structurizr-72910-containers.png)
+![](api/structure_diagrams/structurizr-72910-containers.png)
 ## Components
-![](api\structure_diagrams\structurizr-72910-components.png)
+![](api/structure_diagrams/structurizr-72910-components.png)
 
 # Features
 - [Aircraft Controller (/aircraft/)](#aircraft-controller)
