@@ -527,4 +527,33 @@ public class AircraftControllerTest {
         verify(this.aircraftService, times(1)).getFilteredAircraftList(anyList(), anyList());
         verifyNoMoreInteractions(this.aircraftService);
     }
+
+    @Test
+    public void getAllAircraft() throws Exception {
+        mockMvc.perform(get("/aircraft/all"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getTimeOperational() throws Exception {
+        mockMvc.perform(get("/aircraft/time-operational"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getCeoAircraftCostFull() throws Exception {
+        mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateAircraftStatus() throws Exception {
+        UpdateAircraftStatusDTO mockAircraftStatus = new UpdateAircraftStatusDTO("M-009", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(mockAircraftStatus);
+        mockMvc.perform(post("/aircraft/update-aircraft-status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+    }
 }

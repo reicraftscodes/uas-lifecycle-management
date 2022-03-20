@@ -59,7 +59,7 @@ public class AuthController {
      * A post mapping that allows a user to view jwt info.
      * @return getJwtReponse in return.
      */
-    @PostMapping("/getJwtInfo")
+    @GetMapping("/getJwtInfo")
     @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
     public ResponseEntity<JwtResponse> getJwtTokenInfo() {
         return authService.getJwtResponse();

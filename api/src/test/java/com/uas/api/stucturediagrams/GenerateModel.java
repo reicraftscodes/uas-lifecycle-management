@@ -13,8 +13,7 @@ public class GenerateModel {
     private final static int WORKSPACE_ID=72910;
     private final static String API_KEY = "032a051b-ffd1-4d65-8eda-18a071d63b96";
     private final static String API_SECRET = "0d8991f5-7486-45e5-92b8-75ad0ff5d984";
-    //    @Ignore
-    @Test
+//    @Test
     public void generateModel() throws Exception {
 
 
