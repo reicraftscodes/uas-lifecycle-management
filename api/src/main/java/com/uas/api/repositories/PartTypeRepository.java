@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+
 public interface PartTypeRepository extends JpaRepository<PartType, Integer> {
     /**
      * Find the part type by the id.
