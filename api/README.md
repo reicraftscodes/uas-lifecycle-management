@@ -299,7 +299,6 @@ Example of JSON body:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-# Auth Controller:
 ## GET - /all
     ### Mapping Information:
     ### What it does:
@@ -314,22 +313,88 @@ Example of JSON body:
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-##POST - /signin
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+# Auth Controller:
+Mappings and features to do with the addition and authentication of users in the system.
+## Logging in - POST /signin
+### Mapping Information:
+localhost:8080/api/auth/signin (DEV)
+uastest.herokuapp.com/api/auth/signin (UAT)
+uasprod.herokuapp.com/api/auth/signin (PROD)
+### What it does:
+This mapping allows registered users of the system to log in, and it returns a JWT token for use in the system.
+### Responses:
+#### Successful:
+A 200 OK Response for a user of type "Logistic Officer" will return JSON in the following format:<br>
+`{"token": "<jwt token here>",`<br>
+`"id": "<user id here>",`<br>
+`"username": "logistic@test.com",`<br>
+`"email": "logistic@test.com",`<br>
+`"roles": ["ROLE_USER_LOGISTIC"]}`
+#### Error Responses and Meaning:
+Planned 400 Bad Request responses will have JSON returned in the following format:<br>
+`{"message":"<>", "status":"BAD_REQUEST"}`
+
+The message will change based on the following scenarios:
+- Incorrect credentials or blank/null email and/or password<br>
+  `{
+  "message": "Invalid email or password!",
+  "status": "BAD_REQUEST"
+  }`<br>
+
+A 401 Not Authorised or 403 Forbidden appearing with a user who is authenticated and has the right privileges to access the system, have likely been caused by an incorrect url request to the system.
+### Request Body:
+The request body needed for this mapping is as follows:<br>
+`{"email":"<email>",
+"password":"<password>"}`
+
+The Java POJO to match this can be seen [here](api/src/main/java/com/uas/api/requests/LoginRequest.java)<br>
+JSON names are case-sensitive.
 ##POST - /signup
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/api/auth/signup (DEV)
+uastest.herokuapp.com/api/auth/signup (UAT)
+uasprod.herokuapp.com/api/auth/signup (PROD)
+### What it does:
+This mapping allows **Admin** users to register new users to the system. No other user can access this endpoint.<br>
+#### Usage:
+Android: **No**<br>
+Web: **Yes** - But is not a visible option on the service, in order to restrict access to it.
+
+### Responses
+#### Successful:
+A 200 OK response will return JSON in the following format:<br>
+`{"message":"User registered successfully!"}`
+#### Error Responses and Meaning:
+Planned 400 Bad Request responses will have the JSON returned in the following format:<br>
+`{"message":"<>", "status":"BAD_REQUEST"}`
+
+The message will change based on the following scenarios:
+- Email Already Exists<br>
+  `{"message": "Email already exist! Please use another email.",`<br>
+  `"status": "BAD_REQUEST"}`<br>
+- Emails Do Not Match<br>
+  `{
+  "message": "Please retype your email!",
+  "status": "BAD_REQUEST"
+  }`<br>
+- Passwords Do Not Match<br>
+  `{
+  "message": "Please retype your password!",
+  "status": "BAD_REQUEST"
+  }`<br>
+### Request Body:
+The request body needed for this mapping is as follows:<br>
+`{"email":"gen@snc.co.uk",`<br>
+`"confirmEmail":"gen@snc.co.uk",`<br>
+`"password":"password",`<br>
+`"confirmPassword":"password",`<br>
+`"firstName" : "Jen",`<br>
+`"lastName":"User"
+}`
+The Java POJO to match this can be seen [here]()<br>
+JSON names are case-sensitive.
 ##POST - /getJwtInfo
-    ### Mapping Information:
+### Mapping Information:
     ### What it does:
     ### Responses:
     #### Successful:
