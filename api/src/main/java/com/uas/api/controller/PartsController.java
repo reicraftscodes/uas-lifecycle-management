@@ -80,12 +80,8 @@ public class PartsController {
     public ResponseEntity<?> requestMoreStock(@RequestBody final MoreStockRequest moreStockRequest) {
         LocalDateTime localDateTime = LocalDateTime.now();
         LOGGER.info("Request for more stock made at: " + localDateTime + " by user: user");
-        boolean confirmed = stockControlService.addMoreStock(moreStockRequest);
-        if (confirmed) {
-            return new ResponseEntity<>(null, HttpStatus.OK);
-        } else {
-            return ResponseEntity.badRequest().body("Failed to save stock request!");
-        }
+        stockControlService.addMoreStock(moreStockRequest);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     /**

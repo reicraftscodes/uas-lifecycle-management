@@ -55,9 +55,8 @@ public class StockControlServiceImpl implements StockControlService {
     /**
      * Add more stock when requested.
      * @param moreStockRequest request body from controller.
-     * @return true or false for success.
      */
-    public boolean addMoreStock(final MoreStockRequest moreStockRequest) {
+    public void addMoreStock(final MoreStockRequest moreStockRequest) {
         Location orderLocation = null;
         ArrayList<Long> partTypes = moreStockRequest.getPartTypes();
         ArrayList<Integer> quantities = moreStockRequest.getQuantities();
@@ -82,6 +81,5 @@ public class StockControlServiceImpl implements StockControlService {
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType, quantity);
             stockToOrdersRepository.save(newStockToOrder);
         }
-        return true;
     }
 }

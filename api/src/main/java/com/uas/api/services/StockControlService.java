@@ -6,7 +6,6 @@ public interface StockControlService {
     /**
      * Add more stock.
      * @param moreStockRequest request body from controller.
-     * @return true or false for saving stock.
      */
-    boolean addMoreStock(MoreStockRequest moreStockRequest);
+    void addMoreStock(MoreStockRequest moreStockRequest);
 }

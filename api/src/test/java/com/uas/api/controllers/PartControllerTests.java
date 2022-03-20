@@ -1,5 +1,6 @@
 package com.uas.api.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.*;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -64,18 +66,18 @@ public class PartControllerTests {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
-    private PartsController partsController;
+//    @MockBean
+//    private PartsController partsController;
 
-    @Test
-    void contentLoads() {
-        assertThat(partsController).isNotNull();
-    }
+//    @Test
+//    void contentLoads() {
+//        assertThat(partsController).isNotNull();
+//    }
 
     @WithMockUser(value = "user")
     @Test
     public void createPartWithAllParams() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
+//        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType", "1");
@@ -83,20 +85,27 @@ public class PartControllerTests {
         data.put("location", "London");
         data.put("manufacture", "2022-02-20 11:00:00");
         data.put("partStatus", "OPERATIONAL");
-
+        String json = objectMapper.writeValueAsString(data);
         when(partService.addPartFromJSON(data)).thenReturn("");
 
-        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
+        MvcResult mvcRes = mockMvc.perform(post("/parts/add")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
+//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
 
-        assertEquals("", mvcRes.getResponse().getContentAsString());
+//        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
+
+        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
     @WithMockUser(value = "user")
     @Test
     public void createPartWithAircraft() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
+//        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType", "1");
@@ -104,24 +113,31 @@ public class PartControllerTests {
         data.put("location", "London");
         data.put("manufacture", "");
         data.put("partStatus", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(data);
 
         when(partService.addPartFromJSON(data)).thenReturn("");
+        MvcResult mvcRes = mockMvc.perform(post("/parts/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add")
-                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-                .content(json);
+//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add")
+//                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+//                .content(json);
 
-        MvcResult mvcRes = mockMvc.perform(mockResponse)
-                .andExpect(status()
-                        .isOk()).andReturn();
+//        MvcResult mvcRes = mockMvc.perform(mockResponse)
+//                .andExpect(status()
+//                        .isOk()).andReturn();
 
-        assertEquals("", mvcRes.getResponse().getContentAsString());
+        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
     @WithMockUser(value = "user")
     @Test
     public void createPartWithManufacture() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
+//        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType", "1");
@@ -129,20 +145,28 @@ public class PartControllerTests {
         data.put("location", "London");
         data.put("manufacture", "2022-02-20 11:00:00");
         data.put("partStatus", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(data);
 
         when(partService.addPartFromJSON(data)).thenReturn("");
+        when(partService.addPartFromJSON(data)).thenReturn("");
+        MvcResult mvcRes = mockMvc.perform(post("/parts/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
+//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
+//
+//        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
-        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
-
-        assertEquals("", mvcRes.getResponse().getContentAsString());
+        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
     @WithMockUser(value = "user")
     @Test
     public void createPartWithNeither() throws Exception {
-        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
+//        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
 
         HashMap<String, String> data = new HashMap<String, String>();
         data.put("partType", "1");
@@ -150,24 +174,93 @@ public class PartControllerTests {
         data.put("location", "London");
         data.put("manufacture", "");
         data.put("partStatus", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(data);
 
         when(partService.addPartFromJSON(data)).thenReturn("");
+        when(partService.addPartFromJSON(data)).thenReturn("");
+        MvcResult mvcRes = mockMvc.perform(post("/parts/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
+//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
+//
+//        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
-        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
-
-        assertEquals("", mvcRes.getResponse().getContentAsString());
+        assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
-
-
 
     @Test
-    public void whenRequestMoreStockThenShouldBeTrue(){
-        MoreStockRequest mockStockRequest = new MoreStockRequest("Cardiff", 100.00, new ArrayList<>(), new ArrayList<>());
-        when(stockControlService.addMoreStock(mockStockRequest)).thenReturn(true);
-        Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
+    public void whenLowStockIsCheckedThenAListOfLowStockShouldBeReturned() throws Exception {
+        mockMvc.perform(get("/parts/low-stock")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
+
+    @Test
+    public void whenAStockRequestIsMadeThenResponseShouldBeOK() throws Exception {
+        ArrayList<Long> partTypes = new ArrayList<>();
+        partTypes.add(1L);
+        ArrayList<Integer> quantities = new ArrayList<>();
+        quantities.add(1);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
+        String json = objectMapper.writeValueAsString(newStock);
+        mockMvc.perform(post("/parts/stockrequest")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void whenStockIsCheckedAtAllLocationsThenAListOfLowStockShouldBeReturned() throws Exception {
+        mockMvc.perform(get("/parts/stock")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void whenALocationsStockIsCheckedThenAListOfLowStockShouldBeReturned() throws Exception {
+        mockMvc.perform(get("/parts/location/stock")
+                        .param("location", "Cardiff")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void whenFailureTimeIsCheckedThenReturnListOfPartsWithFailureTime() throws Exception {
+        mockMvc.perform(get("/parts/failuretime")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void whenTopFailingPartsIsCheckedThenTopFailingPartsShouldBeReturned() throws Exception {
+        mockMvc.perform(get("/parts/most-failing/{topN}", "3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @Test
+    public void whenAPartTypeIsCheckedForBeingUnassignedThenAListOfAvailablePartsShouldBeReturned() throws Exception {
+        long id = 1;
+        String json = objectMapper.writeValueAsString(id);
+
+        mockMvc.perform(post("/parts/get-by-type")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk())
+                .andReturn();
+
+    }
+
+
+
+//    @Test
+//    public void whenRequestMoreStockThenShouldBeTrue(){
+//        MoreStockRequest mockStockRequest = new MoreStockRequest("Cardiff", 100.00, new ArrayList<>(), new ArrayList<>());
+//        when(stockControlService.addMoreStock(mockStockRequest)).thenReturn(true);
+//        Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
+//    }
 
 
 
