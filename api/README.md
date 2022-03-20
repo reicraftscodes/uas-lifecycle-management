@@ -88,11 +88,12 @@ There are 5 users in the database which will allow you to log on on both web and
 
 Account Type | Email | Password |
 --- | --- | --- |
-CEO | ceo@test.com | dev
-COO | coo@test.com | uat | 
-CTO | cto@test.com | prod | 
-LO | logistic@test.com | HEHE |
-General User | HEHE | HEHE
+CEO | ceo@test.com | password
+COO | coo@test.com | password | 
+CTO | cto@test.com | password | 
+LO | logistic@test.com | password |
+General User | HEHE | password
+Admin | HEHE | HEHE
 
 # Libraries and Tools Used
 - Spring Boot
@@ -135,8 +136,8 @@ General User | HEHE | HEHE
     - [GET - /all]()
     - [POST - /all/filter]()
 - [Auth Controller (/api/auth/)](#auth-controller)
-  - [POST - /signin]()
-  - [POST - /signup]()
+  - [Logging in - POST /signin](#logging-in---post-signin)
+  - [Signing Users Up To The System - POST /signup](#signing-users-up-to-the-system---post-signup)
   - [POST - /getJwtInfo]()
   - [GET - /getUserInfo]()
 - [Parts Controller (/parts/)](#parts-controller)
@@ -349,7 +350,7 @@ The request body needed for this mapping is as follows:<br>
 
 The Java POJO to match this can be seen [here](api/src/main/java/com/uas/api/requests/LoginRequest.java)<br>
 JSON names are case-sensitive.
-##POST - /signup
+## Signing Users Up To The System - POST /signup
 ### Mapping Information:
 localhost:8080/api/auth/signup (DEV)
 uastest.herokuapp.com/api/auth/signup (UAT)
