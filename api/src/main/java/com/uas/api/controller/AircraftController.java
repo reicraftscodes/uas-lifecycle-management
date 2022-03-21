@@ -152,25 +152,25 @@ public class AircraftController {
         return ResponseEntity.ok(aircraftNeedingRepairsDTO);
     }
     /**
-     * Gets the cumulative total repairs for each platform.
-     * @return list of integers which represent the number of repairs done to each platform.
+     * Gets the fly time hours of each platform.
+     * @return list of integers which represent the fly time hours of each platform.
      */
     @GetMapping("/time-operational")
-    public ResponseEntity<AircraftHoursOperationalDTO> getHoursOperational() {
-        List<Integer> hoursOperational = aircraftService.getHoursOperational();
-        AircraftHoursOperationalDTO aircraftTotalRepairsDTO = new AircraftHoursOperationalDTO(hoursOperational);
+    public ResponseEntity<AircraftFlyTimeHoursDTO> getAircraftFlyTimeHours() {
+        List<Integer> flyTimeHours = aircraftService.getFlyTimeHours();
+        AircraftFlyTimeHoursDTO aircraftFlyTimeHoursDTO = new AircraftFlyTimeHoursDTO(flyTimeHours);
 
-        return ResponseEntity.ok(aircraftTotalRepairsDTO);
+        return ResponseEntity.ok(aircraftFlyTimeHoursDTO);
     }
 
     /**
      * Updates the hours operational of an aircraft.
-     * @param aircraftAddHoursOperationalDTO request body.
+     * @param aircraftAddFlyTimeHoursDTOO request body.
      * @return response entity indicating success/failure.
      */
     @PostMapping("/time-operational")
-    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
-        AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
+    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTOO) {
+        AircraftFlyTimeHoursDTO aircraft = aircraftService.updateFlyTimeHours(aircraftAddFlyTimeHoursDTOO);
         return ResponseEntity.ok(aircraft);
     }
     /**

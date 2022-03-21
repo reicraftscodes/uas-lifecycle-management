@@ -44,25 +44,4 @@ public class Aircraft {
     @Column(name = "FlyingHours")
     private Integer flyTimeHours;
 
-    /**
-     * Number of hours operational.
-     */
-    @Column(name = "HoursOperational")
-    private Integer hoursOperational;
-
-    /**
-     * Not quite all args constructor for aircraft.
-     * @param tailNumber
-     * @param location
-     * @param platformStatus
-     * @param platformType
-     * @param flyTimeHours
-     */
-    public Aircraft(final String tailNumber, final Location location, final PlatformStatus platformStatus, final PlatformType platformType, final Integer flyTimeHours) {
-        this.tailNumber = tailNumber;
-        this.location = location;
-        this.platformStatus = platformStatus;
-        this.platformType = platformType;
-        this.flyTimeHours = flyTimeHours;
-    }
 }

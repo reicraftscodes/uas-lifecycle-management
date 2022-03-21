@@ -169,34 +169,34 @@ public class AircraftServiceImpl implements AircraftService {
      * @return returns a list of hours operational for each platform.
      */
     @Override
-    public List<Integer> getHoursOperational() {
-        List<Integer> hoursOperationalList = new ArrayList<>();
+    public List<Integer> getFlyTimeHours() {
+        List<Integer> flyTimeHoursList = new ArrayList<>();
         List<Aircraft> aircraftList = aircraftRepository.findAll();
         for (Aircraft aircraft: aircraftList
              ) {
-            hoursOperationalList.add(aircraft.getHoursOperational());
+            flyTimeHoursList.add(aircraft.getFlyTimeHours());
         }
-        return hoursOperationalList;
+        return flyTimeHoursList;
     }
 
     /**
      * Updates the number of hours an aircraft has been operational.
-     * @param aircraftAddHoursOperationalDTO aircraft and the hours.
+     * @param aircraftAddFlyTimeHoursDTO aircraft and the hours.
      * @return the updated hours.
      */
     @Override
-    public AircraftHoursOperationalDTO updateHoursOperational(final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
-        Aircraft aircraft = aircraftRepository.findById(aircraftAddHoursOperationalDTO.getTailNumber()).get();
-        Integer hoursToAdd = aircraftAddHoursOperationalDTO.getHoursToAdd();
-        List<Integer> hoursOperational = new ArrayList<>();
-        if (aircraft.getHoursOperational() != null) {
-            hoursToAdd += aircraft.getHoursOperational();
+    public AircraftFlyTimeHoursDTO updateFlyTimeHours(final AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTO) {
+        Aircraft aircraft = aircraftRepository.findById(aircraftAddFlyTimeHoursDTO.getTailNumber()).get();
+        Integer hoursToAdd = aircraftAddFlyTimeHoursDTO.getHoursToAdd();
+        List<Integer> flyTimeHoursList = new ArrayList<>();
+        if (aircraft.getFlyTimeHours() != null) {
+            hoursToAdd += aircraft.getFlyTimeHours();
 
         }
-        hoursOperational.add(hoursToAdd);
-        aircraft.setHoursOperational(hoursToAdd);
+        flyTimeHoursList.add(hoursToAdd);
+        aircraft.setFlyTimeHours(hoursToAdd);
         aircraftRepository.save(aircraft);
-        return new AircraftHoursOperationalDTO(hoursOperational);
+        return new AircraftFlyTimeHoursDTO(flyTimeHoursList);
 
     }
     /**
