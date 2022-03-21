@@ -78,13 +78,6 @@ public class AircraftServiceImpl implements AircraftService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Used to save an aircraft to the database.
-     * @param aircraft The aircraft entity to be saved.
-     */
-    public void addAircraft(final Aircraft aircraft) {
-        aircraftRepository.save(aircraft);
-    }
 
     /**
      * Takes the post request body and adds an aircraft from this.
@@ -92,6 +85,7 @@ public class AircraftServiceImpl implements AircraftService {
      * @return Returns a string which is null if the aircraft is successfully added but if there is an error this string is used so
      * it can be returned in the response body.
      */
+    //TODO1: Refactor this and create exceptions.
     @Override
     public String addAircraftFromJson(final AircraftAddNewDTO requestData) {
         //Stores error messages and tracks if any errors have occured.

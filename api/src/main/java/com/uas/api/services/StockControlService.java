@@ -6,6 +6,7 @@ public interface StockControlService {
     /**
      * Add more stock.
      * @param moreStockRequest request body from controller.
+     * @return the stock order.
      */
-    void addMoreStock(MoreStockRequest moreStockRequest);
+    StockControlServiceImpl.StockReceipt addMoreStock(MoreStockRequest moreStockRequest);
 }
