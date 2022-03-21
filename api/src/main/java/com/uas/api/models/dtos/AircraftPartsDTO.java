@@ -13,9 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 public class AircraftPartsDTO {
     /**
-     * The tailNumber of the aircraft the parts are being retrieved for.
+     * The aircraft status.
      */
-    private String tailNumber;
+    private String status;
     /**
      * The parts with their part number, part type, and part status.
      */

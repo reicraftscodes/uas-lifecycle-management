@@ -399,7 +399,7 @@ public class AircraftControllerTest {
         parts.add(part);
 
         AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
-        aircraftPartsDTO.setTailNumber(aircraft.getTailNumber());
+        aircraftPartsDTO.setStatus(aircraft.getPlatformStatus().getLabel());
 
 
         String json = "G-001";
