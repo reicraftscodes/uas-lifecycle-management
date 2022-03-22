@@ -548,10 +548,44 @@ public class AircraftControllerTest {
         when(aircraftService.getAllTotalAircraftPartCost()).thenReturn(10000.0);
         when(aircraftService.getAllAircraftTotalRepairCost()).thenReturn(5000.0);
         when(aircraftService.getAircraftForCEOReturn()).thenReturn(aircrafts);
-
-        MvcResult mockMvcResult = mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
-
-        assertEquals("{\"totalSpentOnRepairs\":5000.0,\"totalSpentOnParts\":10000.0,\"totalSpent\":15000.0,\"aircraft\":[{\"tailNumber\":\"G-001\",\"repairCost\":2500.0,\"partCost\":5000.0,\"totalCost\":7500.0,\"parts\":[{\"partName\":\"Wing A\",\"partCost\":500.0,\"partStatus\":\"Operational\",\"repairs\":[{\"repairID\":1,\"partType\":\"Wing A\",\"cost\":200.0}]}]},{\"tailNumber\":\"G-002\",\"repairCost\":2500.0,\"partCost\":5000.0,\"totalCost\":7500.0,\"parts\":[{\"partName\":\"Wing A\",\"partCost\":500.0,\"partStatus\":\"Operational\",\"repairs\":[{\"repairID\":1,\"partType\":\"Wing A\",\"cost\":200.0}]}]}]}",mockMvcResult.getResponse().getContentAsString());
+        
+        mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalSpentOnRepairs").value(5000.0))
+                .andExpect(jsonPath("$.totalSpentOnParts").value(10000.0))
+                .andExpect(jsonPath("$.totalSpent").value(15000.0))
+                .andExpect(jsonPath("$.aircraft").isArray())
+                .andExpect(jsonPath("$.aircraft",hasSize(2)))
+                .andExpect(jsonPath("$.aircraft[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$.aircraft[0].repairCost").value(2500.0))
+                .andExpect(jsonPath("$.aircraft[0].partCost").value(5000.0))
+                .andExpect(jsonPath("$.aircraft[0].totalCost").value(7500.0))
+                .andExpect(jsonPath("$.aircraft[0].parts").isArray())
+                .andExpect(jsonPath("$.aircraft[0].parts",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].partName").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].partCost").value(500.0))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].partStatus").value("Operational"))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs").isArray())
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs[0].repairID").value(1))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs[0].partType").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs[0].cost").value(200))
+                .andExpect(jsonPath("$.aircraft[1].tailNumber").value("G-002")) //
+                .andExpect(jsonPath("$.aircraft[1].repairCost").value(2500.0))
+                .andExpect(jsonPath("$.aircraft[1].partCost").value(5000.0))
+                .andExpect(jsonPath("$.aircraft[1].totalCost").value(7500.0))
+                .andExpect(jsonPath("$.aircraft[1].parts").isArray())
+                .andExpect(jsonPath("$.aircraft[1].parts",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].partName").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].partCost").value(500.0))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].partStatus").value("Operational"))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs").isArray())
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].repairID").value(1))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].partType").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].cost").value(200));
         
     }
 }
