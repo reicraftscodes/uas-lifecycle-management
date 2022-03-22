@@ -1,11 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
-import com.uas.api.models.dtos.AircraftPartsDTO;
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
-import com.uas.api.models.dtos.PlatformStatusDTO;
-import com.uas.api.models.entities.*;
 import com.uas.api.models.entities.*;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
@@ -16,8 +12,7 @@ import com.uas.api.repositories.AircraftUserRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.RepairRepository;
 import com.uas.api.repositories.auth.UserRepository;
-import org.apache.coyote.Response;
-import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,17 +20,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -80,7 +72,40 @@ public class AircraftServiceTests {
 
 
 
+    @Test
+    public void whenPartsNeedingRepairThenListShouldNotBeEmpty() {
+        Location location = new Location("London","123 London road",null,"LL12 2LL","England");
 
+        List<Aircraft> aircrafts = new ArrayList<>();
+        Aircraft aircraft1 = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
+        Aircraft aircraft2 = new Aircraft("G-002",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_B,0);
+        aircrafts.add(aircraft1);
+        aircrafts.add(aircraft2);
+
+        PartType partType = new PartType(1L, PartName.WING_A,BigDecimal.valueOf(100),1000L,500L);
+        LocalDateTime ldc = LocalDateTime.now();
+
+        List<Part> parts = new ArrayList<>();
+        parts.add(new Part(1L,partType,aircraft1,location, ldc, PartStatus.AWAITING_REPAIR,0));
+        parts.add(new Part(2L,partType,aircraft1,location, ldc, PartStatus.AWAITING_REPAIR,0));
+
+        when(partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(parts);
+
+        Assertions.assertDoesNotThrow(() -> {
+            aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
+        });
+        int total = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
+        Assertions.assertTrue( total > 0, "Total is bigger than zero") ;
+    }
+    @Test
+    public void whenNoPartsNeedRepairThenListShouldBeEmpty() {
+        when(partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(new ArrayList<>());
+        Assertions.assertDoesNotThrow(() -> {
+           aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
+        });
+        int total = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
+        Assertions.assertEquals(0, total);
+    }
     @Test
     public void givenGetAllAircraftForUser_ThenReturn2AircraftDTOs() {
         User user = new User();
@@ -367,7 +392,13 @@ public class AircraftServiceTests {
             aircraft.add(aircraftOne);
             aircraft.add(aircraftTwo);
         }
-
+        @Test
+        public void androidCEOTest() {
+            when(aircraftRepository.findAll()).thenReturn(aircraft);
+            Assertions.assertDoesNotThrow(() -> {
+                aircraftService.getAircraftForCEOReturnMinimised();
+            });
+        }
         @Test
         public void whenHoursOperationalForAnAircraftAreUpdatedThenNumberShouldIncrease() {
             int originalOne = aircraftOne.getHoursOperational();
@@ -471,16 +502,38 @@ public class AircraftServiceTests {
             assertEquals("List should have size of 2", 2, mockAircraft.size());
         }
 
-        @Test
-        public void getAllAircraftRepairCost() {
-
-        }
-
-        @Test
-        public void getAllAircraftPartCost() {
-
-        }
 
 
     }
+    @Nested
+    public class AircraftServiceCostTests {
+        @Test
+        public void getAllAircraftRepairCostShouldReturn0() {
+            when(repairRepository.findTotalRepairCostForAllAircraft()).thenReturn(null);
+            Double totalRepairCost = aircraftService.getAllAircraftTotalRepairCost();
+            Assertions.assertEquals(0.0, totalRepairCost);
+        }
+        @Test
+        public void getAllAircraftRepairCostShouldReturn70() {
+            when(repairRepository.findTotalRepairCostForAllAircraft()).thenReturn(70.0);
+            Double totalRepairCost = aircraftService.getAllAircraftTotalRepairCost();
+            Assertions.assertEquals(70.0, totalRepairCost);
+        }
+
+        @Test
+        public void getAllAircraftPartCostShouldReturn0() {
+            when(aircraftRepository.getTotalPartCostofAllAircraft()).thenReturn(null);
+            Double totalRepairCost = aircraftService.getAllTotalAircraftPartCost();
+            Assertions.assertEquals(0.0, totalRepairCost);
+        }
+        @Test
+        public void getAllAircraftPartCostShouldReturn400() {
+            when(aircraftRepository.getTotalPartCostofAllAircraft()).thenReturn(400.0);
+            Double totalRepairCost = aircraftService.getAllTotalAircraftPartCost();
+            Assertions.assertEquals(400.0, totalRepairCost);
+        }
+    }
+
+
+
 }

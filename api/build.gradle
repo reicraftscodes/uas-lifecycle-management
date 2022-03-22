@@ -70,7 +70,27 @@ jacocoTestReport {
         xml.enabled false
         csv.enabled true
     }
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "com/uas/api/mapper/*",
+                    "com/uas/api/services/auth/*",
+                    "com/uas/api/models/auth/*",
+                    "com/uas/api/models/entities/*",
+                    "com/uas/api/ApiApplication.java"
+            ])
+        }))
+    }
+}
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.6
+            }
+        }
+    }
 }
 task buildAndReport {
-    dependsOn build, jacocoTestReport
+    dependsOn build, jacocoTestReport, jacocoTestCoverageVerification
 }
