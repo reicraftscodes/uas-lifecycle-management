@@ -22,6 +22,8 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
     @Query(value = "select r.part.partNumber as partNumber, count(r.part.partNumber) as repairCount, sum(r.cost) as totalCost from Repair r group by r.part.partNumber")
     Page<Map<Object, Object>> findPartsWithMostRepairsAndTheirCost(PageRequest pageRequest);
 
+    @Query(value = "SELECT PartNumber as partNumber, COUNT(PartNumber) as repairCount, SUM(cost) as totalCost FROM Repairs group by partNumber order by repairCount DESC LIMIT :limit", nativeQuery = true)
+    List<Map<Object, Object>> findPartsWithMostRepairsAndTheirCostWithLimit(@Param("limit") int limit);
     /**
      * Find all parts by aircraft and platform type?
      * @param tailNumber of aircraft.

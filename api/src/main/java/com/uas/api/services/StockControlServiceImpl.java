@@ -70,9 +70,9 @@ public class StockControlServiceImpl implements StockControlService {
         ordersRepository.save(newOrder);
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);
-            PartType partType = partTypeRepository.findPartTypeById(part);
+            Optional<PartType> partType = partTypeRepository.findPartTypeById(part);
             int quantity = quantities.get(i);
-            StockToOrders newStockToOrder = new StockToOrders(newOrder, partType, quantity);
+            StockToOrders newStockToOrder = new StockToOrders(newOrder, partType.get(), quantity);
             stockToOrdersRepository.save(newStockToOrder);
         }
         reciept = new StockReceipt(String.valueOf(newOrder.getTotalCost()));

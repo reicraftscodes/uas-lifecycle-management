@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface PartTypeRepository extends JpaRepository<PartType, Integer> {
@@ -14,7 +15,7 @@ public interface PartTypeRepository extends JpaRepository<PartType, Integer> {
      * @param id part id.
      * @return the part type.
      */
-    PartType findPartTypeById(long id);
+    Optional<PartType> findPartTypeById(long id);
 
     /**
      * Gets a list of the parts and their failure times.

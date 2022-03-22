@@ -3,6 +3,7 @@ package com.uas.api.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
+import com.uas.api.models.dtos.AddPartDTO;
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartRepairsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
@@ -66,27 +67,13 @@ public class PartControllerTests {
     @Autowired
     MockMvc mockMvc;
 
-//    @MockBean
-//    private PartsController partsController;
-
-//    @Test
-//    void contentLoads() {
-//        assertThat(partsController).isNotNull();
-//    }
 
     @WithMockUser(value = "user")
     @Test
     public void createPartWithAllParams() throws Exception {
-//        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
-
-        HashMap<String, String> data = new HashMap<String, String>();
-        data.put("partType", "1");
-        data.put("aircraft", "G-001");
-        data.put("location", "London");
-        data.put("manufacture", "2022-02-20 11:00:00");
-        data.put("partStatus", "OPERATIONAL");
-        String json = objectMapper.writeValueAsString(data);
-        when(partService.addPartFromJSON(data)).thenReturn("");
+        AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "London", "2022-02-20 11:00:00", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(addPartDTO);
+        doNothing().when(partService).addPartFromJSON(addPartDTO);
 
         MvcResult mvcRes = mockMvc.perform(post("/parts/add")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -95,9 +82,6 @@ public class PartControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
-
-//        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
@@ -105,31 +89,16 @@ public class PartControllerTests {
     @WithMockUser(value = "user")
     @Test
     public void createPartWithAircraft() throws Exception {
-//        String json = "{\"partType\":\"1\",\"aircraft\":\"G-001\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
+        AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "London", "", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(addPartDTO);
 
-        HashMap<String, String> data = new HashMap<String, String>();
-        data.put("partType", "1");
-        data.put("aircraft", "G-001");
-        data.put("location", "London");
-        data.put("manufacture", "");
-        data.put("partStatus", "OPERATIONAL");
-        String json = objectMapper.writeValueAsString(data);
-
-        when(partService.addPartFromJSON(data)).thenReturn("");
+        doNothing().when(partService).addPartFromJSON(addPartDTO);
         MvcResult mvcRes = mockMvc.perform(post("/parts/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
                 .andReturn();
-
-//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add")
-//                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-//                .content(json);
-
-//        MvcResult mvcRes = mockMvc.perform(mockResponse)
-//                .andExpect(status()
-//                        .isOk()).andReturn();
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
@@ -137,18 +106,11 @@ public class PartControllerTests {
     @WithMockUser(value = "user")
     @Test
     public void createPartWithManufacture() throws Exception {
-//        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"2022-02-20 11:00:00\",\"partStatus\":\"OPERATIONAL\"}";
+        AddPartDTO addPartDTO = new AddPartDTO(1L, "", "London", "2022-02-20 11:00:00", "OPERATIONAL");
 
-        HashMap<String, String> data = new HashMap<String, String>();
-        data.put("partType", "1");
-        data.put("aircraft", "");
-        data.put("location", "London");
-        data.put("manufacture", "2022-02-20 11:00:00");
-        data.put("partStatus", "OPERATIONAL");
-        String json = objectMapper.writeValueAsString(data);
+        String json = objectMapper.writeValueAsString(addPartDTO);
 
-        when(partService.addPartFromJSON(data)).thenReturn("");
-        when(partService.addPartFromJSON(data)).thenReturn("");
+        doNothing().when(partService).addPartFromJSON(addPartDTO);
         MvcResult mvcRes = mockMvc.perform(post("/parts/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -156,9 +118,6 @@ public class PartControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
-//
-//        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
@@ -166,18 +125,10 @@ public class PartControllerTests {
     @WithMockUser(value = "user")
     @Test
     public void createPartWithNeither() throws Exception {
-//        String json = "{\"partType\":\"1\",\"aircraft\":\"\",\"location\":\"London\",\"manufacture\":\"\",\"partStatus\":\"OPERATIONAL\"}";
+        AddPartDTO addPartDTO = new AddPartDTO(1L, "", "London", "", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(addPartDTO);
 
-        HashMap<String, String> data = new HashMap<String, String>();
-        data.put("partType", "1");
-        data.put("aircraft", "");
-        data.put("location", "London");
-        data.put("manufacture", "");
-        data.put("partStatus", "OPERATIONAL");
-        String json = objectMapper.writeValueAsString(data);
-
-        when(partService.addPartFromJSON(data)).thenReturn("");
-        when(partService.addPartFromJSON(data)).thenReturn("");
+        doNothing().when(partService).addPartFromJSON(addPartDTO);
         MvcResult mvcRes = mockMvc.perform(post("/parts/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -185,9 +136,6 @@ public class PartControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-//        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
-//
-//        MvcResult mvcRes = mockMvc.perform(mockResponse).andExpect(status().isOk()).andReturn();
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }

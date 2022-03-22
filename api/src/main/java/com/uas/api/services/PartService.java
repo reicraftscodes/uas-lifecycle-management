@@ -1,13 +1,9 @@
 package com.uas.api.services;
 
-import com.uas.api.models.dtos.LocationStockLevelsDTO;
-import com.uas.api.models.dtos.PartRepairsDTO;
-import com.uas.api.models.dtos.PartStockLevelDTO;
-import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
-import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Part;
+import javassist.NotFoundException;
 
-import java.util.HashMap;
 import java.util.List;
 
 public interface PartService {
@@ -15,27 +11,26 @@ public interface PartService {
      * Gets a list of all parts with low stock.
      * @return the list.
      */
-    List<PartStockLevelDTO> getPartsAtLowStock();
+    List<PartStockLevelDTO> getPartsAtLowStock() throws NotFoundException;
 
     /**
      * Gets a list of all parts with low stock at given location.
      * @param locationName the name of the location.
      * @return the list of part stock level dtos.
      */
-    List<PartStockLevelDTO> getPartStockLevelsAtLocation(String locationName);
+    List<PartStockLevelDTO> getPartStockLevelsAtLocation(String locationName) throws NotFoundException;
 
     /**
      * Gets a list of all location part stock levels.
      * @return the list.
      */
-    List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations();
+    List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations() throws NotFoundException;
 
     /**
      * Adds a part to the db from a json request.
      * @param requestData a hashmap of the json request data.
-     * @return returns an error message if it occurs or if not a blank string.
      */
-    String addPartFromJSON(HashMap<String, String> requestData);
+    void addPartFromJSON(AddPartDTO requestData);
 
     /**
      * Gets the part name and it's failure time from the part type table using a projection.
@@ -48,14 +43,7 @@ public interface PartService {
      * @param topN the number of results to return.
      * @return the PartRepairsDTO list.
      */
-    List<PartRepairsDTO> getMostCommonFailingParts(int topN);
-
-    /**
-     *  Finds all the parts associated with an aircraft.
-     * @param aircraft The aircraft with the parts we are searching for.
-     * @return returns a list of parts associated with that aircraft.
-     */
-    List<Part> findPartsAssociatedWithAircraft(Aircraft aircraft);
+    List<PartRepairsDTO> getMostCommonFailingParts(int topN) throws NotFoundException;
 
     /**
      * Updates a list of parts with the flight time specified.
