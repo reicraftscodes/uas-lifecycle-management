@@ -4,7 +4,6 @@ import com.uas.api.models.entities.enums.PartName;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -26,22 +25,6 @@ public class PartType {
      */
     @Column(name = "PartType")
     private PartName partName;
-    /**
-     * Cost.
-     */
-    @Column(name = "Price")
-    private BigDecimal price;
-    /**
-     * Weight.
-     */
-    @Column(name = "Weight")
-    private Long weight;
 
-    // Typical failure time in hours
-    /**
-     * Failure time.
-     */
-    @Column(name = "TypicalFailureTime")
-    private Long typicalFailureTime;
 
 }

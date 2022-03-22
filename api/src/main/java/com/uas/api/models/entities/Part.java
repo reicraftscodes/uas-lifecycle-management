@@ -3,6 +3,7 @@ package com.uas.api.models.entities;
 import com.uas.api.models.entities.enums.PartStatus;
 import lombok.*;
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -54,6 +55,21 @@ public class Part {
      */
     @Column(name = "FlyTimeHours")
     private Integer flyTimeHours;
+    /**
+     * Cost.
+     */
+    @Column(name = "Price")
+    private BigDecimal price;
+    /**
+     * Weight.
+     */
+    @Column(name = "Weight")
+    private Long weight;
+    /**
+     * Failure time.
+     */
+    @Column(name = "TypicalFailureTime")
+    private Long typicalFailureTime;
 
     /**
      *  Constructor for a part.
@@ -113,5 +129,25 @@ public class Part {
         this.location = location;
         this.manufacture = LocalDateTime.now();
         this.partStatus = partStatus;
+    }
+
+    /**
+     * Constructor for a part.
+     * @param partType Type of part.
+     * @param aircraft Aircraft of part.
+     * @param location Location of the part.
+     * @param partStatus Status of the part.
+     * @param price Price of the part.
+     * @param weight Weight of the part.
+     * @param typicalFailureTime Typical failure time of the part.
+     */
+    public Part(final PartType partType, final Aircraft aircraft, final Location location, final PartStatus partStatus, final BigDecimal price, final long weight, final long typicalFailureTime) {
+        this.partType = partType;
+        this.aircraft = aircraft;
+        this.location = location;
+        this.partStatus = partStatus;
+        this.price = price;
+        this.weight = weight;
+        this.typicalFailureTime = typicalFailureTime;
     }
 }

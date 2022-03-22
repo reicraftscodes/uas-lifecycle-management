@@ -393,8 +393,8 @@ public class AircraftControllerTest {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 
-        PartType partType = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-        Part part = new Part(partType,aircraft,location,PartStatus.OPERATIONAL);
+        PartType partType = new PartType(Long.parseLong("1"),PartName.WING_A);
+        Part part = new Part(partType,aircraft,location,PartStatus.OPERATIONAL, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
         List<Part> parts = new ArrayList<>();
         parts.add(part);
 
@@ -420,10 +420,10 @@ public class AircraftControllerTest {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 
-        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-        Part currentPart = new Part(partType1,aircraft,location,PartStatus.OPERATIONAL);
-        Part newPart = new Part(partType2,aircraft,location,PartStatus.OPERATIONAL);
+        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A);
+        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B);
+        Part currentPart = new Part(partType1,aircraft,location,PartStatus.OPERATIONAL, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+        Part newPart = new Part(partType2,aircraft,location,PartStatus.OPERATIONAL, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
 
         UpdateAircraftPartDTO aircraftPartDTO = new UpdateAircraftPartDTO();
         aircraftPartDTO.setTailNumber("G-001");

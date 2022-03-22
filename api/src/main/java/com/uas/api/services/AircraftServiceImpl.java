@@ -474,7 +474,7 @@ public class AircraftServiceImpl implements AircraftService {
                 PartCostsDTO aircraftPartDTO = new PartCostsDTO();
 
                 aircraftPartDTO.setPartName(part.getPartType().getPartName().getName());
-                aircraftPartDTO.setPartCost(part.getPartType().getPrice().doubleValue());
+                aircraftPartDTO.setPartCost(part.getPrice().doubleValue());
                 aircraftPartDTO.setPartStatus(part.getPartStatus().getLabel());
 
                 List<Repair> repairs = repairRepository.findAllByPart(part);
