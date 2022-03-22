@@ -527,4 +527,31 @@ public class AircraftControllerTest {
         verify(this.aircraftService, times(1)).getFilteredAircraftList(anyList(), anyList());
         verifyNoMoreInteractions(this.aircraftService);
     }
+
+    @WithMockUser(value="user")
+    @Test
+    public void getOverallRunningCostSuccess() throws Exception {
+        PartRepairDTO partRepairDTO = new PartRepairDTO(1,"Wing A",200);
+        List<PartRepairDTO> repairs = new ArrayList<>();
+        repairs.add(partRepairDTO);
+
+        PartCostsDTO partCostsDTO = new PartCostsDTO("Wing A",500,"Operational",repairs);
+        List<PartCostsDTO> parts = new ArrayList<>();
+        parts.add(partCostsDTO);
+
+        AircraftCostsDetailDTO aircraftCostsDetailDTO1 = new AircraftCostsDetailDTO("G-001",2500,5000,7500,parts);
+        AircraftCostsDetailDTO aircraftCostsDetailDTO2 = new AircraftCostsDetailDTO("G-002",2500,5000,7500,parts);
+        List<AircraftCostsDetailDTO> aircrafts = new ArrayList<>();
+        aircrafts.add(aircraftCostsDetailDTO1);
+        aircrafts.add(aircraftCostsDetailDTO2);
+
+        when(aircraftService.getAllTotalAircraftPartCost()).thenReturn(10000.0);
+        when(aircraftService.getAllAircraftTotalRepairCost()).thenReturn(5000.0);
+        when(aircraftService.getAircraftForCEOReturn()).thenReturn(aircrafts);
+
+        MvcResult mockMvcResult = mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full").accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn();
+
+        assertEquals("{\"totalSpentOnRepairs\":5000.0,\"totalSpentOnParts\":10000.0,\"totalSpent\":15000.0,\"aircraft\":[{\"tailNumber\":\"G-001\",\"repairCost\":2500.0,\"partCost\":5000.0,\"totalCost\":7500.0,\"parts\":[{\"partName\":\"Wing A\",\"partCost\":500.0,\"partStatus\":\"Operational\",\"repairs\":[{\"repairID\":1,\"partType\":\"Wing A\",\"cost\":200.0}]}]},{\"tailNumber\":\"G-002\",\"repairCost\":2500.0,\"partCost\":5000.0,\"totalCost\":7500.0,\"parts\":[{\"partName\":\"Wing A\",\"partCost\":500.0,\"partStatus\":\"Operational\",\"repairs\":[{\"repairID\":1,\"partType\":\"Wing A\",\"cost\":200.0}]}]}]}",mockMvcResult.getResponse().getContentAsString());
+        
+    }
 }
