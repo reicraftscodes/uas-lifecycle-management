@@ -399,7 +399,7 @@ public class AircraftControllerTest {
         parts.add(part);
 
         AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
-        aircraftPartsDTO.setTailNumber(aircraft.getTailNumber());
+        aircraftPartsDTO.setStatus(aircraft.getPlatformStatus().getLabel());
 
 
         String json = "G-001";
@@ -526,6 +526,67 @@ public class AircraftControllerTest {
 
         verify(this.aircraftService, times(1)).getFilteredAircraftList(anyList(), anyList());
         verifyNoMoreInteractions(this.aircraftService);
+    }
+
+    @WithMockUser(value="user")
+    @Test
+    public void getOverallRunningCostSuccess() throws Exception {
+        PartRepairDTO partRepairDTO = new PartRepairDTO(1,"Wing A",200);
+        List<PartRepairDTO> repairs = new ArrayList<>();
+        repairs.add(partRepairDTO);
+
+        PartCostsDTO partCostsDTO = new PartCostsDTO("Wing A",500,"Operational",repairs);
+        List<PartCostsDTO> parts = new ArrayList<>();
+        parts.add(partCostsDTO);
+
+        AircraftCostsDetailDTO aircraftCostsDetailDTO1 = new AircraftCostsDetailDTO("G-001",2500,5000,7500,parts);
+        AircraftCostsDetailDTO aircraftCostsDetailDTO2 = new AircraftCostsDetailDTO("G-002",2500,5000,7500,parts);
+        List<AircraftCostsDetailDTO> aircrafts = new ArrayList<>();
+        aircrafts.add(aircraftCostsDetailDTO1);
+        aircrafts.add(aircraftCostsDetailDTO2);
+
+        when(aircraftService.getAllTotalAircraftPartCost()).thenReturn(10000.0);
+        when(aircraftService.getAllAircraftTotalRepairCost()).thenReturn(5000.0);
+        when(aircraftService.getAircraftForCEOReturn()).thenReturn(aircrafts);
+
+        mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalSpentOnRepairs").value(5000.0))
+                .andExpect(jsonPath("$.totalSpentOnParts").value(10000.0))
+                .andExpect(jsonPath("$.totalSpent").value(15000.0))
+                .andExpect(jsonPath("$.aircraft").isArray())
+                .andExpect(jsonPath("$.aircraft",hasSize(2)))
+                .andExpect(jsonPath("$.aircraft[0].tailNumber").value("G-001"))
+                .andExpect(jsonPath("$.aircraft[0].repairCost").value(2500.0))
+                .andExpect(jsonPath("$.aircraft[0].partCost").value(5000.0))
+                .andExpect(jsonPath("$.aircraft[0].totalCost").value(7500.0))
+                .andExpect(jsonPath("$.aircraft[0].parts").isArray())
+                .andExpect(jsonPath("$.aircraft[0].parts",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].partName").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].partCost").value(500.0))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].partStatus").value("Operational"))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs").isArray())
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs[0].repairID").value(1))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs[0].partType").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[0].parts[0].repairs[0].cost").value(200))
+                .andExpect(jsonPath("$.aircraft[1].tailNumber").value("G-002")) //
+                .andExpect(jsonPath("$.aircraft[1].repairCost").value(2500.0))
+                .andExpect(jsonPath("$.aircraft[1].partCost").value(5000.0))
+                .andExpect(jsonPath("$.aircraft[1].totalCost").value(7500.0))
+                .andExpect(jsonPath("$.aircraft[1].parts").isArray())
+                .andExpect(jsonPath("$.aircraft[1].parts",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].partName").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].partCost").value(500.0))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].partStatus").value("Operational"))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs").isArray())
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs",hasSize(1)))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].repairID").value(1))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].partType").value("Wing A"))
+                .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].cost").value(200));
+
     }
 
     @Test

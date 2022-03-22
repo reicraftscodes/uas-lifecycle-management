@@ -583,7 +583,7 @@ public class AircraftServiceImpl implements AircraftService {
                 partsReturn.add(partInformation);
             }
 
-            aircraftPartsDTO.setTailNumber(aircraft.get().getTailNumber());
+            aircraftPartsDTO.setStatus(aircraft.get().getPlatformStatus().getLabel());
             aircraftPartsDTO.setParts(partsReturn);
 
             return ResponseEntity.ok(aircraftPartsDTO);
