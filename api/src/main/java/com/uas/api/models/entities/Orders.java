@@ -29,6 +29,11 @@ public class Orders {
     @Column(name = "TotalCost")
     private double totalCost;
     /**
+     *  The email address of the supplier the order is going to.
+     */
+    @Column(name = "SupplierEmail")
+    private String supplierEmail;
+    /**
      * Date and time of order.
      */
     @Column(name = "OrderDateTime")
@@ -40,9 +45,10 @@ public class Orders {
      * @param totalCost required.
      * @param orderDateTime required.
      */
-    public Orders(final Location locationName, final double totalCost, final Timestamp orderDateTime) {
+    public Orders(final Location locationName, final double totalCost, final String supplierEmail, final Timestamp orderDateTime) {
         this.locationName = locationName;
         this.totalCost = totalCost;
+        this.supplierEmail = supplierEmail;
         this.orderDateTime = orderDateTime;
     }
 }

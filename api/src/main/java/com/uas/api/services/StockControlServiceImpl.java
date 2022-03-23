@@ -73,7 +73,7 @@ public class StockControlServiceImpl implements StockControlService {
         LocalDateTime orderTime = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Timestamp ts = Timestamp.valueOf(orderTime.format(dtf));
-        Orders newOrder = new Orders(orderLocation, moreStockRequest.getCost(), ts);
+        Orders newOrder = new Orders(orderLocation, moreStockRequest.getCost(),moreStockRequest.getSupplierEmail(), ts);
         ordersRepository.save(newOrder);
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);

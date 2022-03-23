@@ -548,7 +548,7 @@ public class AircraftControllerTest {
         when(aircraftService.getAllTotalAircraftPartCost()).thenReturn(10000.0);
         when(aircraftService.getAllAircraftTotalRepairCost()).thenReturn(5000.0);
         when(aircraftService.getAircraftForCEOReturn()).thenReturn(aircrafts);
-        
+
         mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
