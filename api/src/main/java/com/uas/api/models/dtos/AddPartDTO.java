@@ -6,23 +6,23 @@ import lombok.Getter;
 @AllArgsConstructor
 public class AddPartDTO {
     /**
-     * EHEH.
+     * The partType id.
      */
     private final Long partType;
     /**
-     * EHEH.
+     * The aircraft tail number.
      */
     private final String tailNumber;
     /**
-     * EHEH.
+     * The location name.
      */
     private final String locationName;
     /**
-     * EHEH.
+     * The manufacture date as a string.
      */
     private final String manufacture;
     /**
-     * EHEH.
+     * The status of the part as a string.
      */
     private final String partStatus;
 }
