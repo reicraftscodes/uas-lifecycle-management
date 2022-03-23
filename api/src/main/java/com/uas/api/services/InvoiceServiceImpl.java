@@ -30,9 +30,9 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         try {
             PdfWriter.getInstance(document, new FileOutputStream(fileName));
-            document.open();
-
             Font boldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+
+            document.open();
 
             Image img = Image.getInstance("src/main/resources/img/logo.png");
             img.scaleAbsolute(160,50);
@@ -40,10 +40,15 @@ public class InvoiceServiceImpl implements InvoiceService {
             document.add(img);
 
             Paragraph orderNum = new Paragraph("\n\nOrder #"+givenOrder.getOrderID(), boldFont);
-            orderNum.setAlignment(Element.ALIGN_RIGHT);
             document.add(orderNum);
 
-            Paragraph addressLabel = new Paragraph("\nShip to:",boldFont);
+            Paragraph email = new Paragraph("Recipient: "+givenOrder.getSupplierEmail());
+            document.add(email);
+
+            Paragraph date = new Paragraph("Generated on: "+givenOrder.getOrderDateTime().toString());
+            document.add(date);
+
+            Paragraph addressLabel = new Paragraph("\n\n\nShip to:",boldFont);
             addressLabel.setAlignment(Element.ALIGN_RIGHT);
             document.add(addressLabel);
 
@@ -57,12 +62,17 @@ public class InvoiceServiceImpl implements InvoiceService {
                     +givenOrder.getLocationName().getAddressLine1()
                     +givenOrder.getLocationName().getAddressLine2()+"\n"
                     +givenOrder.getLocationName().getPostcode()+"\n"
-                    +givenOrder.getLocationName().getCountry()+"\n\n");
+                    +givenOrder.getLocationName().getCountry()+"\n");
             address.setAlignment(Element.ALIGN_RIGHT);
             document.add(address);
 
-            float[] columnWidths = {5f,5f,5f};
+            Paragraph partHeading = new Paragraph("Part Order: \n",boldFont);
+            document.add(partHeading);
 
+            Paragraph partCost = new Paragraph("Total Cost: £"+givenOrder.getTotalCost()+"\n\n");
+            document.add(partCost);
+
+            float[] columnWidths = {2f,5f,2f};
             PdfPTable table = new PdfPTable(columnWidths);
             table.setWidthPercentage(100);
             table.addCell("Part Number");
@@ -78,18 +88,9 @@ public class InvoiceServiceImpl implements InvoiceService {
                 table.completeRow();
             }
 
-
-
             document.add(table);
 
-
-
-
             document.close();
-
-
-
-
 
             return true;
         } catch (Exception e) {
