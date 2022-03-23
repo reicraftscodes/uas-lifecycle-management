@@ -37,19 +37,23 @@ public class StockControlServiceImpl implements StockControlService {
      */
     private final StockToOrdersRepository stockToOrdersRepository;
 
+    private final InvoiceService invoiceService;
+
     /**
      * Constructor.
      * @param locationRepository required.
      * @param ordersRepository required.
      * @param partTypeRepository required.
      * @param stockToOrdersRepository required.
+     * @param invoiceService
      */
     @Autowired
-    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository) {
+    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository, InvoiceService invoiceService) {
         this.locationRepository = locationRepository;
         this.ordersRepository = ordersRepository;
         this.partTypeRepository = partTypeRepository;
         this.stockToOrdersRepository = stockToOrdersRepository;
+        this.invoiceService = invoiceService;
     }
 
     /**
@@ -58,6 +62,8 @@ public class StockControlServiceImpl implements StockControlService {
      * @return true or false for success.
      */
     public boolean addMoreStock(final MoreStockRequest moreStockRequest) {
+
+
         Location orderLocation = null;
         ArrayList<Long> partTypes = moreStockRequest.getPartTypes();
         ArrayList<Integer> quantities = moreStockRequest.getQuantities();
@@ -82,6 +88,11 @@ public class StockControlServiceImpl implements StockControlService {
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType, quantity);
             stockToOrdersRepository.save(newStockToOrder);
         }
+
+        //passes order to invoice service to generate invoice.
+        Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getCost(), moreStockRequest.getSupplierEmail());
+        invoiceService.generatePDF(invoiceOrder);
+
         return true;
     }
 }

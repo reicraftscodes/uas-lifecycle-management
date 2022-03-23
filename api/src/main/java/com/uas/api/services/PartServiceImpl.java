@@ -49,6 +49,7 @@ public class PartServiceImpl implements PartService {
      */
     private final RepairRepository repairRepository;
 
+
     // This will probably change.
     /**
      * Max stock allowance.
@@ -66,6 +67,7 @@ public class PartServiceImpl implements PartService {
      * @param partTypeRepository required repository.
      * @param aircraftService required service.
      * @param repairRepository required repair repository.
+     * @param invoiceService
      */
     @Autowired
     public PartServiceImpl(final PartRepository partRepository,
