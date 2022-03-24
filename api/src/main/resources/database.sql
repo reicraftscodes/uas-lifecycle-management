@@ -40,38 +40,49 @@ CREATE TABLE PartTypes (
 CREATE TABLE Parts (
 	PartNumber int NOT NULL AUTO_INCREMENT,
 	PartID int NOT NULL,
-    AircraftTailNumber varchar(255),
-    LocationName varchar(255) NOT NULL,
     Manufacture DATETIME NOT NULL,
-    FailureTime int,
-    PartStatus SET("Operational","Awaiting Repair","Being Repaired","Beyond Repair") NOT NULL,
-    flyTimeHours int,
 	Price decimal(10,2) NOT NULL,
     Weight int NOT NULL,
     TypicalFailureTime int NOT NULL,
     PRIMARY KEY (PartNumber),
     UNIQUE (PartNumber),
-    FOREIGN KEY (AircraftTailNumber) REFERENCES Aircraft(TailNumber),
-    FOREIGN KEY (LocationName) REFERENCES Locations(LocationName),
     FOREIGN KEY (PartID) REFERENCES PartTypes(PartID)
 );
 
-CREATE TABLE PlatformParts (
-	PlatformPartId int NOT NULL AUTO_INCREMENT,
+CREATE TABLE Platforms (
+	PlatformID int NOT NULL AUTO_INCREMENT,
     PlatformType varchar(255) NOT NULL,
+    PRIMARY KEY(PlatformID)
+);
+
+CREATE TABLE PlatformParts (
+	PlatformPartID int NOT NULL AUTO_INCREMENT,
+    PlatformID int NOT NULL,
     PartID int NOT NULL,
     PRIMARY KEY(PlatformPartId),
+    FOREIGN KEY (PlatformID) REFERENCES Platforms(PlatformID),
     FOREIGN KEY (PartID) REFERENCES PartTypes(PartID)
+);
+
+CREATE TABLE AircraftPart (
+	AircraftPartID int NOT NULL AUTO_INCREMENT,
+    AircraftTailNumber varchar(255) NOT NULL,
+    PartNumber INT (11),
+	PartStatus SET("Operational","Awaiting Repair","Being Repaired","Beyond Repair") NOT NULL,
+    FlightHours INT (11),
+    PRIMARY KEY(AircraftPartId),
+    FOREIGN KEY (AircraftTailNumber) REFERENCES Aircraft(TailNumber),
+    FOREIGN KEY (PartNumber) REFERENCES Parts(PartNumber)
 );
 
 #unsure on exact design for repairs table as client never mentioned it but it stores the part number as a foreign key so the number of repairs and their costs can be looked up
 #for a specific part
 CREATE TABLE Repairs (
 	RepairID int NOT NULL AUTO_INCREMENT,
-    PartNumber int NOT NULL,
+    AircraftPartID int NOT NULL,
     cost decimal(10,2) NOT NULL,
     PRIMARY KEY(RepairID),
-    FOREIGN KEY (PartNumber) REFERENCES Parts(PartNumber)
+    FOREIGN KEY (AircraftPartID) REFERENCES AircraftPart(AircraftPartID)
 );
 
 # Needed to store the orders for new parts.
@@ -173,58 +184,65 @@ INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType, Fly
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType, FlyingHours) VALUES ("G-020","Dublin","Operational","Platform B", 150);
 
 #parts that have been assigned to aircrafts
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("1","G-001","St Athen","2022-02-09 00:00:00","Operational","200","50000","600");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("2","G-001","St Athen","2022-02-09 00:00:00","Operational","250","55000","600");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("3","G-001","St Athen","2022-02-09 00:00:00","Operational","4000","100000","1000");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("4","G-001","St Athen","2022-02-09 00:00:00","Operational","2000","30000","1250");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("5","G-001","St Athen","2022-02-09 00:00:00","Operational","899.99","1000","250");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("6","G-001","St Athen","2022-02-09 00:00:00","Operational","400","5500","1200");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","G-001","St Athen","2022-02-09 00:00:00","Operational","1000","600","5000");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("8","G-001","St Athen","2022-02-09 00:00:00","Operational","1000","600","5000");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("9","G-001","St Athen","2022-02-09 00:00:00","Operational","1000","600","4000");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("11","G-001","St Athen","2022-02-09 00:00:00","Operational","700","600","4000");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("10","G-002","St Athen","2022-02-09 00:00:00","Operational","250.00","3000","600");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("3","G-002","St Athen","2022-02-09 00:00:00","Operational","250.00","3000","1500");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("4","G-002","St Athen","2022-02-09 00:00:00","Operational","150.00","2500","1200");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("5","G-002","St Athen","2022-02-09 00:00:00","Operational","150.00","2200","4000");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("6","G-002","St Athen","2022-02-09 00:00:00","Operational","300.00","3000","600");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","G-002","St Athen","2022-02-09 00:00:00","Operational","900.00","3000","5000");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("8","G-002","St Athen","2022-02-09 00:00:00","Operational","475.00","4000","800");
-INSERT INTO Parts (PartID, AircraftTailNumber,LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("9","G-002","St Athen","2022-02-09 00:00:00","Operational","250.00","1000","600");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("1","2022-02-09 00:00:00","200","50000","600");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("2","2022-02-09 00:00:00","250","55000","600");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("3","2022-02-09 00:00:00","4000","100000","1000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("4","2022-02-09 00:00:00","2000","30000","1250");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","899.99","1000","250");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","400","5500","1200");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","1000","600","5000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("8","2022-02-09 00:00:00","1000","600","5000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("9","2022-02-09 00:00:00","1000","600","4000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("11","2022-02-09 00:00:00","700","600","4000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("10","2022-02-09 00:00:00","250.00","3000","600");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("3","2022-02-09 00:00:00","250.00","3000","1500");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("4","2022-02-09 00:00:00","150.00","2500","1200");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","150.00","2200","4000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","300.00","3000","600");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","3000","5000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("8","2022-02-09 00:00:00","475.00","4000","800");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("9","2022-02-09 00:00:00","250.00","1000","600");
 
 
 
 #examples data for parts that haven't been assigned to aircraft yet
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("5","St Athen","2022-02-09 00:00:00","Operational","900.00","3000","5000");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("5","St Athen","2022-02-09 00:00:00","Awaiting Repair","900.00","2750","3000");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("5","St Athen","2022-02-09 00:00:00","Being Repaired","900.00","1222","4000");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("5","St Athen","2022-02-09 00:00:00","Beyond Repair","900.00","900","600");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("6","St Athen","2022-02-09 00:00:00","Operational","900.00","3000","700");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("6","St Athen","2022-02-09 00:00:00","Awaiting Repair","900.00","800","800");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("6","St Athen","2022-02-09 00:00:00","Being Repaired","900.00","700","450");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("6","St Athen","2022-02-09 00:00:00","Beyond Repair","900.00","600","700");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","St Athen","2022-02-09 00:00:00","Operational","900.00","2200","1200");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","St Athen","2022-02-09 00:00:00","Awaiting Repair","900.00","2500","1300");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","St Athen","2022-02-09 00:00:00","Being Repaired","900.00","4000","2574");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","St Athen","2022-02-09 00:00:00","Beyond Repair","900.00","3000","2668");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","Cardiff","2022-02-09 00:00:00","Beyond Repair","900.00","2000","767");
-INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","Cardiff","2022-02-09 00:00:00","Beyond Repair","900.00","1000","566");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","3000","5000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","2750","3000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","1222","4000");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","900","600");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","3000","700");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","800","800");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","700","450");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","600","700");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","2200","1200");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","2500","1300");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","4000","2574");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","3000","2668");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","2000","767");
+INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","1000","566");
 
-INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform A", "1");
-INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform B", "1");
-INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform A", "2");
-INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform B", "2");
-INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform B", "3");
-INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform A", "4");
+INSERT INTO Platforms (PlatformType) VALUES ("Platform A");
+INSERT INTO Platforms (PlatformType) VALUES ("Platform B");
+
+INSERT INTO PlatformParts (PlatformID, PartID) VALUES ("1", "1");
+INSERT INTO PlatformParts (PlatformID, PartID) VALUES ("2", "1");
+INSERT INTO PlatformParts (PlatformID, PartID) VALUES ("1", "2");
+INSERT INTO PlatformParts (PlatformID, PartID) VALUES ("2", "2");
+INSERT INTO PlatformParts (PlatformID, PartID) VALUES ("2", "3");
+INSERT INTO PlatformParts (PlatformID, PartID) VALUES ("1", "4");
+
+INSERT INTO AircraftPart (AircraftTailNumber, PartNumber, PartStatus, FlightHours) VALUES ("G-001", "1", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartNumber, PartStatus, FlightHours) VALUES ("G-001", "2", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartNumber, PartStatus, FlightHours) VALUES ("G-001", "3", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartNumber, PartStatus, FlightHours) VALUES ("G-001", "4", "Operational", 0);
 
 #Only a small number of repair examples as I am unsure if the table will change
-INSERT INTO Repairs (PartNumber, cost) VALUES ("1","200");
-INSERT INTO Repairs (PartNumber, cost) VALUES ("1","16.99");
-INSERT INTO Repairs (PartNumber, cost) VALUES ("1","12");
-INSERT INTO Repairs (PartNumber, cost) VALUES ("2","100");
-INSERT INTO Repairs (PartNumber, cost) VALUES ("3","50");
-INSERT INTO Repairs (PartNumber, cost) VALUES ("4","12");
-
+INSERT INTO Repairs (AircraftPartID, cost) VALUES ("1","200");
+INSERT INTO Repairs (AircraftPartID, cost) VALUES ("1","16.99");
+INSERT INTO Repairs (AircraftPartID, cost) VALUES ("1","12");
+INSERT INTO Repairs (AircraftPartID, cost) VALUES ("2","100");
+INSERT INTO Repairs (AircraftPartID, cost) VALUES ("3","50");
+INSERT INTO Repairs (AircraftPartID, cost) VALUES ("4","12");
 
 #USER roles
 INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
