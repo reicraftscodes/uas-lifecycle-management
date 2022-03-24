@@ -17,7 +17,7 @@ build:gradle:
   stage: build
   image: openjdk:11-jdk
   tags:
-    - gitlab-org-docker
+    - general-docker
   variables:
     JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/api/build/reports/test/jacocoTestReport.csv'
   only:
@@ -42,7 +42,7 @@ pages:
   stage: publish
   image: openjdk:11-jdk
   tags:
-    - gitlab-org-docker
+    - general-docker
 
   script:
     - pwd
@@ -65,6 +65,7 @@ pages:
 connect-uat:
   stage: connect
   image: ubuntu:latest
+  tags: general-docker
   environment: uat
   variables:
     MYSQL_DATABASE: $HEROKU_UAT_DB
@@ -102,6 +103,7 @@ connect-uat:
 
 deploy-to-uat:
   stage: deploy
+  tags: general-docker
   image: ruby:latest
   environment: uat
   dependencies:
