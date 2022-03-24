@@ -56,6 +56,14 @@ CREATE TABLE Parts (
     FOREIGN KEY (PartID) REFERENCES PartTypes(PartID)
 );
 
+CREATE TABLE PlatformParts (
+	PlatformPartId int NOT NULL AUTO_INCREMENT,
+    PlatformType varchar(255) NOT NULL,
+    PartID int NOT NULL,
+    PRIMARY KEY(PlatformPartId),
+    FOREIGN KEY (PartID) REFERENCES PartTypes(PartID)
+);
+
 #unsure on exact design for repairs table as client never mentioned it but it stores the part number as a foreign key so the number of repairs and their costs can be looked up
 #for a specific part
 CREATE TABLE Repairs (
@@ -201,6 +209,13 @@ INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,Typi
 INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","St Athen","2022-02-09 00:00:00","Beyond Repair","900.00","3000","2668");
 INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","Cardiff","2022-02-09 00:00:00","Beyond Repair","900.00","2000","767");
 INSERT INTO Parts (PartID, LocationName,Manufacture,PartStatus,Price,Weight,TypicalFailureTime) VALUES ("7","Cardiff","2022-02-09 00:00:00","Beyond Repair","900.00","1000","566");
+
+INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform A", "1");
+INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform B", "1");
+INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform A", "2");
+INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform B", "2");
+INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform B", "3");
+INSERT INTO PlatformParts (PlatformType, PartID) VALUES ("Platform A", "4");
 
 #Only a small number of repair examples as I am unsure if the table will change
 INSERT INTO Repairs (PartNumber, cost) VALUES ("1","200");
