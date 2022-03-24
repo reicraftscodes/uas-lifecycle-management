@@ -28,8 +28,8 @@ public class Repair {
      * Part number.
      */
     @ManyToOne
-    @JoinColumn(name = "PartNumber")
-    private Part part;
+    @Column(name = "AircraftPartID")
+    private AircraftPart aircraftPart;
 
     /**
      * Cost of the repair.

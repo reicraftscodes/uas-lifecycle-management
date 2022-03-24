@@ -29,32 +29,10 @@ public class Part {
     @JoinColumn(name = "PartID")
     private PartType partType;
     /**
-     * Aircraft.
-     */
-    @ManyToOne
-    @JoinColumn(name = "AircraftTailNumber")
-    private Aircraft aircraft;
-    /**
-     * Location Name.
-     */
-    @ManyToOne
-    @JoinColumn(name = "LocationName")
-    private Location location;
-    /**
      * Manufacture date.
      */
     @Column(name = "Manufacture")
     private LocalDateTime manufacture;
-    /**
-     * Part status.
-     */
-    @Column(name = "PartStatus")
-    private PartStatus partStatus;
-    /**
-     * Time the part has spent flying.
-     */
-    @Column(name = "FlyTimeHours")
-    private Integer flyTimeHours;
     /**
      * Cost.
      */
@@ -74,78 +52,23 @@ public class Part {
     /**
      *  Constructor for a part.
      * @param partType Type of part.
-     * @param aircraft Aircraft the part is associated with.
-     * @param location Location of the part.
-     * @param partStatus Status of the part.
      */
-    public Part(final PartType partType, final Aircraft aircraft, final Location location, final PartStatus partStatus) {
+    public Part(final PartType partType) {
         this.partType = partType;
-        this.aircraft = aircraft;
-        this.location = location;
         this.manufacture = LocalDateTime.now();
-        this.partStatus = partStatus;
     }
+
+
 
     /**
      * Constructor for a part.
      * @param partType Type of part.
-     * @param aircraft Aircraft the part is associated with.
-     * @param location Location of the part.
-     * @param manufacture Date the part was manufactured.
-     * @param partStatus Status of the part.
-     */
-    public Part(final PartType partType, final Aircraft aircraft, final Location location, final String manufacture, final PartStatus partStatus) {
-        this.partType = partType;
-        this.aircraft = aircraft;
-        this.location = location;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.manufacture = LocalDateTime.parse(manufacture, formatter);
-        this.partStatus = partStatus;
-    }
-
-    /**
-     * Constructor for a part.
-     * @param partType Type of part.
-     * @param location Location of the part.
-     * @param manufacture Date the part was manufactured.
-     * @param partStatus Status of the part.
-     */
-    public Part(final PartType partType, final Location location, final String manufacture, final PartStatus partStatus) {
-        this.partType = partType;
-        this.location = location;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        this.manufacture = LocalDateTime.parse(manufacture, formatter);
-        this.partStatus = partStatus;
-    }
-
-    /**
-     * Constructor for a part.
-     * @param partType Type of part.
-     * @param location Location of the part.
-     * @param partStatus Status of the part.
-     */
-    public Part(final PartType partType, final Location location, final PartStatus partStatus) {
-        this.partType = partType;
-        this.location = location;
-        this.manufacture = LocalDateTime.now();
-        this.partStatus = partStatus;
-    }
-
-    /**
-     * Constructor for a part.
-     * @param partType Type of part.
-     * @param aircraft Aircraft of part.
-     * @param location Location of the part.
-     * @param partStatus Status of the part.
      * @param price Price of the part.
      * @param weight Weight of the part.
      * @param typicalFailureTime Typical failure time of the part.
      */
-    public Part(final PartType partType, final Aircraft aircraft, final Location location, final PartStatus partStatus, final BigDecimal price, final long weight, final long typicalFailureTime) {
+    public Part(final PartType partType, final BigDecimal price, final long weight, final long typicalFailureTime) {
         this.partType = partType;
-        this.aircraft = aircraft;
-        this.location = location;
-        this.partStatus = partStatus;
         this.price = price;
         this.weight = weight;
         this.typicalFailureTime = typicalFailureTime;
