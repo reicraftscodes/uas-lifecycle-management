@@ -548,7 +548,7 @@ public class AircraftControllerTest {
         when(aircraftService.getAllTotalAircraftPartCost()).thenReturn(10000.0);
         when(aircraftService.getAllAircraftTotalRepairCost()).thenReturn(5000.0);
         when(aircraftService.getAircraftForCEOReturn()).thenReturn(aircrafts);
-        
+
         mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -586,6 +586,35 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].repairID").value(1))
                 .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].partType").value("Wing A"))
                 .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].cost").value(200));
-        
+
+    }
+
+    @Test
+    public void getAllAircraft() throws Exception {
+        mockMvc.perform(get("/aircraft/all"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getTimeOperational() throws Exception {
+        mockMvc.perform(get("/aircraft/time-operational"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getCeoAircraftCostFull() throws Exception {
+        mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateAircraftStatus() throws Exception {
+        UpdateAircraftStatusDTO mockAircraftStatus = new UpdateAircraftStatusDTO("M-009", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(mockAircraftStatus);
+        mockMvc.perform(post("/aircraft/update-aircraft-status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
     }
 }
