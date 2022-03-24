@@ -21,10 +21,6 @@ public class MoreStockRequest {
     /**
      * Cost of order.
      */
-    private double cost;
-    /**
-     * All the part types.
-     */
     private ArrayList<Long> partTypes;
     /**
      * Quantities for part types.

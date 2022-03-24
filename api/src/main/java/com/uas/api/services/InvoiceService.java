@@ -5,5 +5,5 @@ import com.uas.api.requests.MoreStockRequest;
 
 public interface InvoiceService {
 
-    boolean generatePDF(Orders givenOrder);
+    String generatePDF(Orders givenOrder);
 }

@@ -26,7 +26,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public boolean generatePDF(Orders givenOrder){
+    public String generatePDF(Orders givenOrder){
         String fileName = "src/main/resources/invoices/order_"+givenOrder.getOrderID()+".pdf";
         Document document = new Document();
 
@@ -129,10 +129,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             document.close();
 
-            return true;
+            return "order_" + givenOrder.getOrderID() + ".pdf";
         } catch (Exception e) {
             System.out.println(e);
-            return false;
+            return "error";
         }
 
 

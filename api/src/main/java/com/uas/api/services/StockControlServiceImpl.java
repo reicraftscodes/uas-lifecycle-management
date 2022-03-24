@@ -62,8 +62,6 @@ public class StockControlServiceImpl implements StockControlService {
      * @return true or false for success.
      */
     public boolean addMoreStock(final MoreStockRequest moreStockRequest) {
-
-
         Location orderLocation = null;
         ArrayList<Long> partTypes = moreStockRequest.getPartTypes();
         ArrayList<Integer> quantities = moreStockRequest.getQuantities();
@@ -79,19 +77,26 @@ public class StockControlServiceImpl implements StockControlService {
         LocalDateTime orderTime = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Timestamp ts = Timestamp.valueOf(orderTime.format(dtf));
-        Orders newOrder = new Orders(orderLocation, moreStockRequest.getCost(),moreStockRequest.getSupplierEmail(), ts);
+
+        Orders newOrder = new Orders(orderLocation, 0 ,moreStockRequest.getSupplierEmail(), ts);
         ordersRepository.save(newOrder);
+        double totalCost = 0;
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);
             PartType partType = partTypeRepository.findPartTypeById(part);
             int quantity = quantities.get(i);
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType, quantity);
             stockToOrdersRepository.save(newStockToOrder);
+
+            totalCost += partType.getPrice().doubleValue()*quantity;
         }
 
+        newOrder.setTotalCost(totalCost);
+        ordersRepository.save(newOrder);
+
         //passes order to invoice service to generate invoice.
-        Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getCost(), moreStockRequest.getSupplierEmail());
-        invoiceService.generatePDF(invoiceOrder);
+        Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getSupplierEmail());
+        String fileName = invoiceService.generatePDF(invoiceOrder);
 
         return true;
     }
