@@ -150,4 +150,6 @@ public class Part {
         this.weight = weight;
         this.typicalFailureTime = typicalFailureTime;
     }
+
+
 }

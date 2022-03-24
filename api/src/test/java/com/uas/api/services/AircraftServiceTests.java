@@ -270,16 +270,16 @@ public class AircraftServiceTests {
         aircrafts.add(aircraft1);
         aircrafts.add(aircraft2);
 
-        PartType partType = new PartType(1L, PartName.WING_A,BigDecimal.valueOf(100),1000L,500L);
+        PartType partType = new PartType(1L, PartName.WING_A);
         LocalDateTime ldc = LocalDateTime.now();
 
         List<Part> parts = new ArrayList<>();
-        parts.add(new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0));
-        parts.add(new Part(2L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0));
+        parts.add(new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0,BigDecimal.valueOf(100),1000L,500L));
+        parts.add(new Part(2L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0,BigDecimal.valueOf(100),1000L,500L));
 
         List<Repair> repairs = new ArrayList<>();
-        repairs.add(new Repair(1L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0),BigDecimal.valueOf(1000)));
-        repairs.add(new Repair(2L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0),BigDecimal.valueOf(1000)));
+        repairs.add(new Repair(1L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL, 0, BigDecimal.valueOf(100), 1000L, 500L), BigDecimal.valueOf(100)));
+        repairs.add(new Repair(2L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL, 0, BigDecimal.valueOf(100), 1000L, 500L), BigDecimal.valueOf(100)));
 
         when(aircraftRepository.findAll()).thenReturn(aircrafts);
         when(aircraftRepository.getTotalPartCostofAircraft(anyString())).thenReturn(1000.0);
