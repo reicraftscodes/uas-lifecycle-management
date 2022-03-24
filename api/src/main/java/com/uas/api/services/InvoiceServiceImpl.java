@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.uas.api.models.entities.Orders;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -66,29 +68,64 @@ public class InvoiceServiceImpl implements InvoiceService {
             address.setAlignment(Element.ALIGN_RIGHT);
             document.add(address);
 
-            Paragraph partHeading = new Paragraph("Part Order: \n",boldFont);
+            Paragraph partHeading = new Paragraph("Part Order: \n\n",boldFont);
             document.add(partHeading);
 
-            Paragraph partCost = new Paragraph("Total Cost: £"+givenOrder.getTotalCost()+"\n\n");
-            document.add(partCost);
-
-            float[] columnWidths = {2f,5f,2f};
+            float[] columnWidths = {2f,5f,2f,2f};
             PdfPTable table = new PdfPTable(columnWidths);
             table.setWidthPercentage(100);
-            table.addCell("Part Number");
-            table.addCell("Part Name");
-            table.addCell("Quantity");
+
+            PdfPCell partNumCell = new PdfPCell(new Phrase("Part Number"));
+            partNumCell.setPadding(3);
+            table.addCell(partNumCell);
+
+            PdfPCell partNameCell = new PdfPCell(new Phrase("Part Name (Varient)"));
+            partNameCell.setPadding(3);
+            table.addCell(partNameCell);
+
+            PdfPCell partQuantityCell = new PdfPCell(new Phrase("Quantity"));
+            partQuantityCell.setPadding(3);
+            table.addCell(partQuantityCell);
+
+            PdfPCell partCostCell = new PdfPCell(new Phrase("Cost"));
+            partCostCell.setPadding(3);
+            table.addCell(partCostCell);
+
             table.completeRow();
 
             List<StockToOrders> totalOrder = stockToOrdersRepository.findAllByOrderID(givenOrder.getOrderID());
+            double totalCost = 0;
             for(StockToOrders order : totalOrder){
-                table.addCell("\n"+order.getPartID().getId().toString());
-                table.addCell("\n"+order.getPartID().getPartName().getName());
-                table.addCell("\n"+order.getQuantity());
+                double currentPartCost = order.getPartID().getPrice().doubleValue()*order.getQuantity();
+
+                PdfPCell[] cells = new PdfPCell[4];
+
+                cells[0] = new PdfPCell(new Phrase(order.getPartID().getId().toString()));
+                cells[0].setPadding(5);
+                table.addCell(cells[0]);
+
+                cells[1] = new PdfPCell(new Phrase(order.getPartID().getPartName().getName()));
+                cells[1].setPadding(5);
+                table.addCell(cells[1]);
+
+                cells[2] = new PdfPCell(new Phrase(""+order.getQuantity()));
+                cells[2].setPadding(5);
+                table.addCell(cells[2]);
+
+                cells[3] = new PdfPCell(new Phrase("£"+ currentPartCost));
+                cells[3].setPadding(5);
+                table.addCell(cells[3]);
+
                 table.completeRow();
+                totalCost += currentPartCost;
             }
 
             document.add(table);
+
+
+            Paragraph partCost = new Paragraph("\nTotal Cost: £"+totalCost,boldFont);
+            partCost.setAlignment(Element.ALIGN_RIGHT);
+            document.add(partCost);
 
             document.close();
 
