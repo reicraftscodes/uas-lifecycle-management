@@ -5,14 +5,14 @@ import com.uas.api.models.dtos.AircraftPartsDTO;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.dtos.PlatformStatusAndroidFullDTO;
 import com.uas.api.models.dtos.PlatformStatusDTO;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.AircraftUser;
-import com.uas.api.models.entities.AircraftUserKey;
-import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.*;
+import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.AircraftRepository;
 import com.uas.api.repositories.AircraftUserRepository;
+import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.RepairRepository;
 import com.uas.api.repositories.auth.UserRepository;
 import org.apache.coyote.Response;
@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,6 +51,9 @@ public class AircraftServiceTests {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PartRepository partRepository;
 
     @Autowired
     @InjectMocks
@@ -254,5 +258,46 @@ public class AircraftServiceTests {
         assertEquals("Should return tail number G-001", "G-001", aircraftDTOList.get(0).getTailNumber());
         assertEquals("Should return platform status operational", "Operational", aircraftDTOList.get(0).getPlatformStatus());
         assertEquals("Should return tail number G-002", "G-003", aircraftDTOList.get(1).getTailNumber());
+    }
+
+    @Test
+    public void getAircraftForCeoReturnSuccess() {
+        Location location = new Location("London","123 London road",null,"LL12 2LL","England");
+
+        List<Aircraft> aircrafts = new ArrayList<>();
+        Aircraft aircraft1 = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
+        Aircraft aircraft2 = new Aircraft("G-002",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_B,0);
+        aircrafts.add(aircraft1);
+        aircrafts.add(aircraft2);
+
+        PartType partType = new PartType(1L, PartName.WING_A,BigDecimal.valueOf(100),1000L,500L);
+        LocalDateTime ldc = LocalDateTime.now();
+
+        List<Part> parts = new ArrayList<>();
+        parts.add(new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0));
+        parts.add(new Part(2L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0));
+
+        List<Repair> repairs = new ArrayList<>();
+        repairs.add(new Repair(1L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0),BigDecimal.valueOf(1000)));
+        repairs.add(new Repair(2L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0),BigDecimal.valueOf(1000)));
+
+        when(aircraftRepository.findAll()).thenReturn(aircrafts);
+        when(aircraftRepository.getTotalPartCostofAircraft(anyString())).thenReturn(1000.0);
+
+        when(partRepository.findAllPartsByAircraft(any())).thenReturn(parts);
+
+        when(repairRepository.findAllByPart(any())).thenReturn(repairs);
+        when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(1234.0);
+
+        List<AircraftCostsDetailDTO> costsList = aircraftService.getAircraftForCEOReturn();
+
+        assertEquals("Expect 2 aircraft: ",2,costsList.size());
+        assertEquals("Aircraft 1 should have tailNumber G-001: ","G-001",costsList.get(0).getTailNumber());
+        assertEquals("Aircraft 2 should have tailNumber G-002: ","G-002",costsList.get(1).getTailNumber());
+        assertEquals("Aircraft 1 should have partcost of 1000: ",1000.0,costsList.get(0).getPartCost());
+        assertEquals("Aircraft 1 should have repaircost of 1234: ",1234.0,costsList.get(0).getRepairCost());
+        assertEquals("Aircraft 1 should have totalcost of 2234: ",2234.0,costsList.get(0).getTotalCost());
+        assertEquals("Aircraft 1 should have 2 parts: ",2,costsList.get(0).getParts().size());
+
     }
 }
