@@ -65,7 +65,8 @@ pages:
 connect-uat:
   stage: connect
   image: ubuntu:latest
-  tags: general-docker
+  tags: 
+    - general-docker
   environment: uat
   variables:
     MYSQL_DATABASE: $HEROKU_UAT_DB
@@ -103,7 +104,8 @@ connect-uat:
 
 deploy-to-uat:
   stage: deploy
-  tags: general-docker
+  tags: 
+    - general-docker
   image: ruby:latest
   environment: uat
   dependencies:
