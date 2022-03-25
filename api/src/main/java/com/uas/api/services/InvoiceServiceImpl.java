@@ -4,6 +4,7 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.uas.api.models.dtos.InvoiceDTO;
 import com.uas.api.models.entities.Orders;
 import com.uas.api.models.entities.StockToOrders;
 import com.uas.api.repositories.StockToOrdersRepository;
@@ -40,13 +41,42 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     /**
+     * Method for creating an invoice Dto before being passed to create the pdf.
+     * @param givenOrder The order the invoice is being created for.
+     * @return an invoiceDTO.
+     */
+    public InvoiceDTO getInvoiceData(Orders givenOrder){
+        InvoiceDTO invoiceDTO = new InvoiceDTO();
+        invoiceDTO.setOrderID(givenOrder.getOrderID());
+        invoiceDTO.setSupplierEmail(givenOrder.getSupplierEmail());
+        invoiceDTO.setGenerationTime(givenOrder.getOrderDateTime().toString());
+
+        if (givenOrder.getLocationName().getAddressLine2()==null) {
+            givenOrder.getLocationName().setAddressLine2("");
+        }
+        invoiceDTO.setDeliveryLocation(givenOrder.getLocationName());
+
+        List<StockToOrders> totalOrder = stockToOrdersRepository.findAllByOrderID(givenOrder.getOrderID());
+
+        double totalCost = 0;
+        for(StockToOrders order : totalOrder) {
+            totalCost += order.getPartID().getPrice().doubleValue()*order.getQuantity();
+        }
+
+        invoiceDTO.setPartOrders(totalOrder);
+        invoiceDTO.setTotalCost(totalCost);
+
+        return invoiceDTO;
+    }
+
+    /**
      * Generates a pdf for a given order.
-     * @param givenOrder The order that a pdf is being generated for.
+     * @param invoiceDTO of the order that a pdf is being generated for.
      * @return A string with the document name or a string containing error.
      */
     @Override
-    public String generatePDF(Orders givenOrder) {
-        String fileName = "src/main/resources/invoices/order_"+givenOrder.getOrderID()+".pdf";
+    public String generatePDF(InvoiceDTO invoiceDTO) {
+        String fileName = "src/main/resources/invoices/order_"+invoiceDTO.getOrderID()+".pdf";
         Document document = new Document();
 
         try {
@@ -61,33 +91,26 @@ public class InvoiceServiceImpl implements InvoiceService {
             img.setAbsolutePosition(10,782);
             document.add(img);
 
-            Paragraph orderNum = new Paragraph("\n\nOrder #"+givenOrder.getOrderID(), boldFont);
+            Paragraph orderNum = new Paragraph("\n\nOrder #"+invoiceDTO.getOrderID(), boldFont);
             document.add(orderNum);
 
-            Paragraph email = new Paragraph("Recipient: "+givenOrder.getSupplierEmail());
+            Paragraph email = new Paragraph("Recipient: "+invoiceDTO.getSupplierEmail());
             document.add(email);
 
-            Paragraph date = new Paragraph("Generated on: "+givenOrder.getOrderDateTime().toString());
+            Paragraph date = new Paragraph("Generated on: "+invoiceDTO.getGenerationTime());
             document.add(date);
 
             Paragraph addressLabel = new Paragraph("\n\n\nShip to:",boldFont);
             addressLabel.setAlignment(Element.ALIGN_RIGHT);
             document.add(addressLabel);
 
-            //checks if the address line 2 is blank in the database, if it is it changes it from null
-            // to nothing.
-            if(givenOrder.getLocationName().getAddressLine2()==null){
-                givenOrder.getLocationName().setAddressLine2("");
-            } else {
-                givenOrder.getLocationName().setAddressLine2("\n"+givenOrder.getLocationName().getAddressLine2());
-            }
             //Displays the address delivery address
             Paragraph address = new Paragraph(
                     "Sierra Nevada Corporation Mission Systems UK \n"
-                    +givenOrder.getLocationName().getAddressLine1()
-                    +givenOrder.getLocationName().getAddressLine2()+"\n"
-                    +givenOrder.getLocationName().getPostcode()+"\n"
-                    +givenOrder.getLocationName().getCountry()+"\n");
+                            +invoiceDTO.getDeliveryLocation().getAddressLine1()
+                            +invoiceDTO.getDeliveryLocation().getAddressLine2()+"\n" +
+                            invoiceDTO.getDeliveryLocation().getPostcode()+"\n" +
+                            invoiceDTO.getDeliveryLocation().getCountry()+"\n");
             address.setAlignment(Element.ALIGN_RIGHT);
             document.add(address);
 
@@ -103,7 +126,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             partNumCell.setPadding(3);
             table.addCell(partNumCell);
 
-            PdfPCell partNameCell = new PdfPCell(new Phrase("Part Name (Varient)"));
+            PdfPCell partNameCell = new PdfPCell(new Phrase("Part Name (Variant)"));
             partNameCell.setPadding(3);
             table.addCell(partNameCell);
 
@@ -118,8 +141,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             table.completeRow();
 
             //gets a list stocktoorder objects and loops through adding rows to the table.
-            List<StockToOrders> totalOrder = stockToOrdersRepository.findAllByOrderID(givenOrder.getOrderID());
-            double totalCost = 0;
+            List<StockToOrders> totalOrder = invoiceDTO.getPartOrders();
             for(StockToOrders order : totalOrder) {
                 double currentPartCost = order.getPartID().getPrice().doubleValue()*order.getQuantity();
 
@@ -142,12 +164,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                 table.addCell(cells[3]);
 
                 table.completeRow();
-                totalCost += currentPartCost;
             }
 
             document.add(table);
 
-            Paragraph partCost = new Paragraph("\nTotal Cost: £"+totalCost,boldFont);
+            Paragraph partCost = new Paragraph("\nTotal Cost: £"+invoiceDTO.getTotalCost(),boldFont);
             partCost.setAlignment(Element.ALIGN_RIGHT);
             document.add(partCost);
 

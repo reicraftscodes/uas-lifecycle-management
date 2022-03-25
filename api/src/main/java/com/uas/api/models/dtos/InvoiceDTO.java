@@ -4,23 +4,25 @@ import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.StockToOrders;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class InvoiceDTO {
-    private final String orderID;
+    private long orderID;
 
-    private final String supplierEmail;
+    private String supplierEmail;
 
-    private final String generationTime;
+    private String generationTime;
 
-    private final Location deliveryLocation;
+    private Location deliveryLocation;
 
-    private final List<StockToOrders> partOrders;
+    private List<StockToOrders> partOrders;
 
-    private final double totalCost;
+    private double totalCost;
 }

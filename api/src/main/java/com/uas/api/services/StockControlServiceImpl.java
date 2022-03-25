@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.InvoiceDTO;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.Orders;
 import com.uas.api.models.entities.PartType;
@@ -96,7 +97,8 @@ public class StockControlServiceImpl implements StockControlService {
 
         //passes order to invoice service to generate invoice.
         Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getSupplierEmail());
-        String fileName = invoiceService.generatePDF(invoiceOrder);
+        InvoiceDTO invoiceDTO = invoiceService.getInvoiceData(invoiceOrder);
+        String fileName = invoiceService.generatePDF(invoiceDTO);
 
         try{
             invoiceService.emailInvoice(fileName, moreStockRequest.getSupplierEmail());
