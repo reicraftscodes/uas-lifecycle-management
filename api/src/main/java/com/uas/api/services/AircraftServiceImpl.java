@@ -361,6 +361,7 @@ public class AircraftServiceImpl implements AircraftService {
         List<Part> parts = partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR);
         List<Aircraft> aircraftList = new ArrayList<>();
         for (Part part : parts
+                part.get
         ) {
             if (aircraftList.contains(part.getAircraft())) {
                 continue;

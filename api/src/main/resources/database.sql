@@ -85,6 +85,17 @@ CREATE TABLE Repairs (
     FOREIGN KEY (AircraftPartID) REFERENCES AircraftPart(AircraftPartID)
 );
 
+CREATE TABLE Stock (
+	StockID int NOT NULL AUTO_INCREMENT,
+    PartID int NOT NULL,
+    StockQuantity INT (11),
+	LocationName varchar(255) NOT NULL,
+    PRIMARY KEY(StockID),
+    FOREIGN KEY (PartID) REFERENCES Parts(PartID),
+    FOREIGN KEY (LocationName) REFERENCES Aircraft(LocationName)
+);
+
+
 # Needed to store the orders for new parts.
 CREATE TABLE Orders (
 	OrderID INT NOT NULL AUTO_INCREMENT,
@@ -220,6 +231,11 @@ INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES (
 INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","3000","2668");
 INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","2000","767");
 INSERT INTO Parts (PartID, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","1000","566");
+
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("1", "10","Cardiff");
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("1", "10","London");
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("2", "1","London");
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("3", "55","London");
 
 INSERT INTO Platforms (PlatformType) VALUES ("Platform A");
 INSERT INTO Platforms (PlatformType) VALUES ("Platform B");

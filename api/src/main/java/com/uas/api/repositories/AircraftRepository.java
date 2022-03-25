@@ -14,14 +14,15 @@ public interface AircraftRepository extends JpaRepository<Aircraft, String> {
      * @param tailNumber The tailnumber of the aircraft that the cost is being calculated for.
      * @return returns a double of the total cost.
      */
-    @Query(value = "SELECT SUM(price) FROM part WHERE partNumber = ANY(SELECT PartID FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
+    @Query(value = "SELECT SUM(price) FROM parts WHERE partNumber = ANY(SELECT PartNumber FROM AircraftPart WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
     Double getTotalPartCostofAircraft(@Param("tailNumber") String tailNumber);
+
 
     /**
      * Uses SQL query to get the total part cost of all aircraft.
      * @return returns the total cost.
      */
-    @Query(value = "SELECT SUM(price) FROM parttypes WHERE partID = ANY(SELECT PartID FROM parts WHERE AircraftTailNumber IS NOT NULL)", nativeQuery = true)
+    @Query(value = "SELECT SUM(price) FROM parts WHERE partNumber = ANY(SELECT PartNumber FROM AircraftPart WHERE AircraftTailNumber IS NOT NULL)", nativeQuery = true)
     Double getTotalPartCostofAllAircraft();
 
     /**
@@ -36,7 +37,8 @@ public interface AircraftRepository extends JpaRepository<Aircraft, String> {
      * @param locations the locations to be included in the search.
      * @param platformStatuses the platform statuses to be included in the search.
      * @return the filtered list of aircraft.
+     * LocationName in (:locations) and
      */
-    @Query(value = "select * from aircraft where LocationName in (:locations) and PlatformStatus in (:platformStatuses)", nativeQuery = true)
+    @Query(value = "select * from aircraft where PlatformStatus in (:platformStatuses)", nativeQuery = true)
     List<Aircraft> findAllByLocationsAndPlatformStatus(@Param("locations") List<String> locations, @Param("platformStatuses") List<String> platformStatuses);
 }
