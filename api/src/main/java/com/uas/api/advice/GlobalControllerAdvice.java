@@ -71,7 +71,9 @@ public class GlobalControllerAdvice {
     }
 
     /**
-     * Error response for NotFoundExceptions
+     * Error response for NotFoundExceptions.
+     * @param notFoundException this error is thrown when objects cannot be found.
+     * @return an error response with a bad request (400) and the message.
      */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

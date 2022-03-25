@@ -518,7 +518,7 @@ public class AircraftServiceImpl implements AircraftService {
      * @return returns list of aircraft costs and repair costs dto.
      */
     @Override
-    public AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(String aircraftId) throws NotFoundException {
+    public AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(final String aircraftId) throws NotFoundException {
         Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftId);
         if (aircraft.isEmpty()) {
             throw new NotFoundException("Aircraft not found.");

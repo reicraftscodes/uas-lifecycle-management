@@ -240,11 +240,12 @@ public class AircraftController {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
     }
     /**
-     * Get method that returns a smaller list with less information that getOverallRunningCost() to improve request performance.
-     * @return returns a response entity with a dto object.
+     * Get method that returns the repair cost for a particular aircraft.
+     * @param id the id of the aircraft.
+     * @return returns a response entity with the repair cost dto.
      */
     @GetMapping("ceo-aircraft-cost/{id}")
-    public ResponseEntity<?> getStreamlinedRunningCost(@PathVariable String id) throws NotFoundException {
+    public ResponseEntity<?> getStreamlinedRunningCost(@PathVariable final String id) throws NotFoundException {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimisedIdParam(id));
     }
 

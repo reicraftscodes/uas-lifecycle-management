@@ -117,6 +117,7 @@ public interface AircraftService {
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
     /**
      * Method for creating an aircraft DTO with just their repair and parts cost.
+     * @param aircraftId the aircraft id.
      * @return returns aircraft dto.
      */
     AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(String aircraftId) throws NotFoundException;
