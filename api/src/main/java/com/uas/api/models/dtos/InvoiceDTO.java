@@ -14,15 +14,28 @@ import java.util.List;
 @Getter
 @Setter
 public class InvoiceDTO {
+    /**
+     * The order ID.
+     */
     private long orderID;
-
+    /**
+     * The email the invoice is going to be sent to.
+     */
     private String supplierEmail;
-
+    /**
+     * When the order was generated.
+     */
     private String generationTime;
-
+    /**
+     * Where the order should be delivered.
+     */
     private Location deliveryLocation;
-
+    /**
+     * A list of StockToOrders DTOs containing parts and quantities required.
+     */
     private List<StockToOrders> partOrders;
-
+    /**
+     *  The total cost of the whole order.
+     */
     private double totalCost;
 }

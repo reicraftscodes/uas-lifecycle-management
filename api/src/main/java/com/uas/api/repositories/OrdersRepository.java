@@ -5,9 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-
 public interface OrdersRepository extends JpaRepository<Orders, Integer> {
      /**
       * Used to get an order without knowning its assigned orderID yet. It will display the most recent order that also

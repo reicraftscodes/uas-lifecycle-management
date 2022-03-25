@@ -44,9 +44,10 @@ public class Orders {
     private Timestamp orderDateTime;
 
     /**
-     * Constructor.
+     * constructor.
      * @param locationName required.
      * @param totalCost required.
+     * @param supplierEmail required.
      * @param orderDateTime required.
      */
     public Orders(final Location locationName, final double totalCost, final String supplierEmail, final Timestamp orderDateTime) {

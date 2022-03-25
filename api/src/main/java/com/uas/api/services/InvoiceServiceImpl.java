@@ -36,7 +36,7 @@ public class InvoiceServiceImpl implements InvoiceService {
      * @param stockToOrdersRepository Gets stock for an order.
      */
     @Autowired
-    public InvoiceServiceImpl(StockToOrdersRepository stockToOrdersRepository) {
+    public InvoiceServiceImpl(final StockToOrdersRepository stockToOrdersRepository) {
         this.stockToOrdersRepository = stockToOrdersRepository;
     }
 
@@ -45,13 +45,13 @@ public class InvoiceServiceImpl implements InvoiceService {
      * @param givenOrder The order the invoice is being created for.
      * @return an invoiceDTO.
      */
-    public InvoiceDTO getInvoiceData(Orders givenOrder){
+    public InvoiceDTO getInvoiceData(final Orders givenOrder) {
         InvoiceDTO invoiceDTO = new InvoiceDTO();
         invoiceDTO.setOrderID(givenOrder.getOrderID());
         invoiceDTO.setSupplierEmail(givenOrder.getSupplierEmail());
         invoiceDTO.setGenerationTime(givenOrder.getOrderDateTime().toString());
 
-        if (givenOrder.getLocationName().getAddressLine2()==null) {
+        if (givenOrder.getLocationName().getAddressLine2() == null) {
             givenOrder.getLocationName().setAddressLine2("");
         }
         invoiceDTO.setDeliveryLocation(givenOrder.getLocationName());
@@ -59,8 +59,8 @@ public class InvoiceServiceImpl implements InvoiceService {
         List<StockToOrders> totalOrder = stockToOrdersRepository.findAllByOrderID(givenOrder.getOrderID());
 
         double totalCost = 0;
-        for(StockToOrders order : totalOrder) {
-            totalCost += order.getPartID().getPrice().doubleValue()*order.getQuantity();
+        for (StockToOrders order : totalOrder) {
+            totalCost += order.getPartID().getPrice().doubleValue() * order.getQuantity();
         }
 
         invoiceDTO.setPartOrders(totalOrder);
@@ -75,8 +75,8 @@ public class InvoiceServiceImpl implements InvoiceService {
      * @return A string with the document name or a string containing error.
      */
     @Override
-    public String generatePDF(InvoiceDTO invoiceDTO) {
-        String fileName = "src/main/resources/invoices/order_"+invoiceDTO.getOrderID()+".pdf";
+    public String generatePDF(final InvoiceDTO invoiceDTO) {
+        String fileName = "src/main/resources/invoices/order_" + invoiceDTO.getOrderID() + ".pdf";
         Document document = new Document();
 
         try {
@@ -87,38 +87,38 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             //adds the sncmsuk logo and sets its position
             Image img = Image.getInstance("src/main/resources/img/logo.png");
-            img.scaleAbsolute(160,50);
-            img.setAbsolutePosition(10,782);
+            img.scaleAbsolute(160, 50);
+            img.setAbsolutePosition(10, 782);
             document.add(img);
 
-            Paragraph orderNum = new Paragraph("\n\nOrder #"+invoiceDTO.getOrderID(), boldFont);
+            Paragraph orderNum = new Paragraph("\n\nOrder #" + invoiceDTO.getOrderID(), boldFont);
             document.add(orderNum);
 
-            Paragraph email = new Paragraph("Recipient: "+invoiceDTO.getSupplierEmail());
+            Paragraph email = new Paragraph("Recipient: " + invoiceDTO.getSupplierEmail());
             document.add(email);
 
-            Paragraph date = new Paragraph("Generated on: "+invoiceDTO.getGenerationTime());
+            Paragraph date = new Paragraph("Generated on: " + invoiceDTO.getGenerationTime());
             document.add(date);
 
-            Paragraph addressLabel = new Paragraph("\n\n\nShip to:",boldFont);
+            Paragraph addressLabel = new Paragraph("\n\n\nShip to:", boldFont);
             addressLabel.setAlignment(Element.ALIGN_RIGHT);
             document.add(addressLabel);
 
             //Displays the address delivery address
             Paragraph address = new Paragraph(
                     "Sierra Nevada Corporation Mission Systems UK \n"
-                            +invoiceDTO.getDeliveryLocation().getAddressLine1()
-                            +invoiceDTO.getDeliveryLocation().getAddressLine2()+"\n" +
-                            invoiceDTO.getDeliveryLocation().getPostcode()+"\n" +
-                            invoiceDTO.getDeliveryLocation().getCountry()+"\n");
+                            + invoiceDTO.getDeliveryLocation().getAddressLine1()
+                            + invoiceDTO.getDeliveryLocation().getAddressLine2() + "\n"
+                            + invoiceDTO.getDeliveryLocation().getPostcode() + "\n"
+                            + invoiceDTO.getDeliveryLocation().getCountry() + "\n");
             address.setAlignment(Element.ALIGN_RIGHT);
             document.add(address);
 
-            Paragraph partHeading = new Paragraph("Part Order: \n\n",boldFont);
+            Paragraph partHeading = new Paragraph("Part Order: \n\n", boldFont);
             document.add(partHeading);
 
             //Creating a table for the parts that have been ordered.
-            float[] columnWidths = {2f,5f,2f,2f};
+            float[] columnWidths = {2f, 5f, 2f, 2f};
             PdfPTable table = new PdfPTable(columnWidths);
             table.setWidthPercentage(100);
 
@@ -142,8 +142,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             //gets a list stocktoorder objects and loops through adding rows to the table.
             List<StockToOrders> totalOrder = invoiceDTO.getPartOrders();
-            for(StockToOrders order : totalOrder) {
-                double currentPartCost = order.getPartID().getPrice().doubleValue()*order.getQuantity();
+            for (StockToOrders order : totalOrder) {
+                double currentPartCost = order.getPartID().getPrice().doubleValue() * order.getQuantity();
 
                 PdfPCell[] cells = new PdfPCell[4];
 
@@ -155,11 +155,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                 cells[1].setPadding(5);
                 table.addCell(cells[1]);
 
-                cells[2] = new PdfPCell(new Phrase(""+order.getQuantity()));
+                cells[2] = new PdfPCell(new Phrase("" + order.getQuantity()));
                 cells[2].setPadding(5);
                 table.addCell(cells[2]);
 
-                cells[3] = new PdfPCell(new Phrase("£"+ currentPartCost));
+                cells[3] = new PdfPCell(new Phrase("£" + currentPartCost));
                 cells[3].setPadding(5);
                 table.addCell(cells[3]);
 
@@ -168,7 +168,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             document.add(table);
 
-            Paragraph partCost = new Paragraph("\nTotal Cost: £"+invoiceDTO.getTotalCost(),boldFont);
+            Paragraph partCost = new Paragraph("\nTotal Cost: £" + invoiceDTO.getTotalCost(), boldFont);
             partCost.setAlignment(Element.ALIGN_RIGHT);
             document.add(partCost);
 
@@ -177,7 +177,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             return fileName;
 
         } catch (Exception e) {
-            System.out.println("Exception in generatePDF: "+e);
+            System.out.println("Exception in generatePDF: " + e);
             return "error";
         }
     }
@@ -188,20 +188,20 @@ public class InvoiceServiceImpl implements InvoiceService {
      * @param recipientAddress The email adress the invoice is being sent to.
      * @return returns a boolean for success for failure.
      */
-    public boolean emailInvoice(String invoicePath, String recipientAddress) {
+    public boolean emailInvoice(final String invoicePath, final String recipientAddress) {
         //Setting the mail server properties.
         Properties prop = new Properties();
-        prop.put("mail.smtp.auth",true);
-        prop.put("mail.smtp.host","smtp.gmail.com");
-        prop.put("mail.smtp.port",587);
-        prop.put("mail.smtp.starttls.enable",true);
-        prop.put("mail.transport.protocol","smtp");
+        prop.put("mail.smtp.auth", true);
+        prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.port", 587);
+        prop.put("mail.smtp.starttls.enable", true);
+        prop.put("mail.transport.protocol", "smtp");
 
         //the email login of the account sending the email.
-        Session session = Session.getInstance(prop, new Authenticator() {
+        Session session = Session.getInstance(prop,  new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("SNCMSUKTestEmail@gmail.com","UASProject1");
+                return new PasswordAuthentication("SNCMSUKTestEmail@gmail.com", "UASProject1");
             }
         });
 
@@ -222,7 +222,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             //sets a message body.
             MimeBodyPart messageContent = new MimeBodyPart();
-            messageContent.setContent("<h4>Order from SNCMSUK</h4><p>Dear Sales Department,<br/><br/>We have attached the list of parts we would like to order with the delivery location. <br/><br/> Yours Sincerely,<br/> SNCMSUK </p>","text/html");
+            messageContent.setContent("<h4>Order from SNCMSUK</h4><p>Dear Sales Department,<br/><br/>We have attached the list of parts we would like to order with the delivery location. <br/><br/> Yours Sincerely,<br/> SNCMSUK </p>", "text/html");
             body.addBodyPart(messageContent);
 
             message.setContent(body);
@@ -230,7 +230,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             //sends the email.
             Transport.send(message);
         } catch (Exception e) {
-            System.out.println("Exception in emailInvoice: "+e);
+            System.out.println("Exception in emailInvoice: " + e);
             return false;
         }
 

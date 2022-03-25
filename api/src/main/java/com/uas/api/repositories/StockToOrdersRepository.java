@@ -8,7 +8,11 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface StockToOrdersRepository extends JpaRepository<StockToOrders, Integer> {
-
-    @Query(value="SELECT * FROM stocktoorders WHERE OrderID=:orderID",nativeQuery = true)
-    List<StockToOrders> findAllByOrderID(@Param("orderID") long OrderID);
+    /**
+     * Finds all Stock requests from a specific orderID.
+     * @param orderID The order id for requested parts.
+     * @return returns a list of stockToOrders objects.
+     */
+    @Query(value = "SELECT * FROM stocktoorders WHERE OrderID = :orderID", nativeQuery = true)
+    List<StockToOrders> findAllByOrderID(@Param("orderID") long orderID);
 }

@@ -37,7 +37,9 @@ public class StockControlServiceImpl implements StockControlService {
      * Repository for communication between api and stock to order table.
      */
     private final StockToOrdersRepository stockToOrdersRepository;
-
+    /**
+     * Service used to generate and send part invoices.
+     */
     private final InvoiceService invoiceService;
 
     /**
@@ -46,10 +48,10 @@ public class StockControlServiceImpl implements StockControlService {
      * @param ordersRepository required.
      * @param partTypeRepository required.
      * @param stockToOrdersRepository required.
-     * @param invoiceService
+     * @param invoiceService Service used to generate and send part invoices.
      */
     @Autowired
-    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository, InvoiceService invoiceService) {
+    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository, final InvoiceService invoiceService) {
         this.locationRepository = locationRepository;
         this.ordersRepository = ordersRepository;
         this.partTypeRepository = partTypeRepository;
@@ -79,7 +81,7 @@ public class StockControlServiceImpl implements StockControlService {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Timestamp ts = Timestamp.valueOf(orderTime.format(dtf));
 
-        Orders newOrder = new Orders(orderLocation, 0 ,moreStockRequest.getSupplierEmail(), ts);
+        Orders newOrder = new Orders(orderLocation,  0, moreStockRequest.getSupplierEmail(), ts);
         ordersRepository.save(newOrder);
         double totalCost = 0;
         for (int i = 0; i < partTypes.size(); i++) {
@@ -89,7 +91,7 @@ public class StockControlServiceImpl implements StockControlService {
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType, quantity);
             stockToOrdersRepository.save(newStockToOrder);
 
-            totalCost += partType.getPrice().doubleValue()*quantity;
+            totalCost += partType.getPrice().doubleValue() * quantity;
         }
 
         newOrder.setTotalCost(totalCost);
@@ -100,7 +102,7 @@ public class StockControlServiceImpl implements StockControlService {
         InvoiceDTO invoiceDTO = invoiceService.getInvoiceData(invoiceOrder);
         String fileName = invoiceService.generatePDF(invoiceDTO);
 
-        try{
+        try {
             invoiceService.emailInvoice(fileName, moreStockRequest.getSupplierEmail());
         } catch (Exception e) {
             System.out.println(e);

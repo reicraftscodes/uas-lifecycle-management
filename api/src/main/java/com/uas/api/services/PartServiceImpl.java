@@ -67,7 +67,6 @@ public class PartServiceImpl implements PartService {
      * @param partTypeRepository required repository.
      * @param aircraftService required service.
      * @param repairRepository required repair repository.
-     * @param invoiceService
      */
     @Autowired
     public PartServiceImpl(final PartRepository partRepository,
