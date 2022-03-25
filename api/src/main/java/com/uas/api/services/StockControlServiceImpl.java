@@ -98,6 +98,13 @@ public class StockControlServiceImpl implements StockControlService {
         Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getSupplierEmail());
         String fileName = invoiceService.generatePDF(invoiceOrder);
 
+        try{
+            invoiceService.emailInvoice(fileName, moreStockRequest.getSupplierEmail());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
         return true;
     }
 }
