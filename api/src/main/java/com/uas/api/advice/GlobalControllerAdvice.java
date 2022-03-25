@@ -5,6 +5,7 @@ import com.uas.api.exceptions.EmailConfirmException;
 import com.uas.api.exceptions.PasswordConfirmException;
 import com.uas.api.exceptions.UserNotFoundException;
 import com.uas.api.response.ErrorResponse;
+import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,5 +68,14 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException userNotFoundException) {
         return new ErrorResponse(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST.name());
+    }
+
+    /**
+     * Error response for NotFoundExceptions
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotFoundException(final NotFoundException notFoundException) {
+        return new ErrorResponse(notFoundException.getMessage(), HttpStatus.BAD_REQUEST.name());
     }
 }

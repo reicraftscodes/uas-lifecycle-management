@@ -2,6 +2,7 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -114,6 +115,11 @@ public interface AircraftService {
      * @return returns a list of aircraft dtos.
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
+    /**
+     * Method for creating an aircraft DTO with just their repair and parts cost.
+     * @return returns aircraft dto.
+     */
+    AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(String aircraftId) throws NotFoundException;
 
     /**
      * Used to update the user flytime of an aircraft in the database.
