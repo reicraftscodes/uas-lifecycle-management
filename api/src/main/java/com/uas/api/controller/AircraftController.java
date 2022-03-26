@@ -3,9 +3,11 @@ package com.uas.api.controller;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Part;
+import com.uas.api.repositories.PartRepository;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,18 +31,24 @@ public class AircraftController {
      * User service for communication between controller and DB.
      */
     private final UserService userService;
+    /**
+     * Repository for communication between service and Part table in DB.
+     */
+    private final PartRepository partRepository;
 
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
      * @param partService
      * @param userService User service for communication between controller and DB.
+     * @param partRepository communication between service and part table in DB.
      */
     @Autowired
-    public AircraftController(final AircraftService aircraftService, final PartService partService, final UserService userService) {
+    public AircraftController(final AircraftService aircraftService, final PartService partService, final UserService userService, final PartRepository partRepository) {
         this.aircraftService = aircraftService;
         this.partService = partService;
         this.userService = userService;
+        this.partRepository = partRepository;
     }
 
     /**
@@ -97,7 +105,7 @@ public class AircraftController {
         //checks that an aircraft has been found from the aircraft input and if not sets the error variable.
         if (aircraft.isPresent()) {
             //gets all parts associated with the aircraft and stores them in the list.
-            List<Part> parts = partService.findPartsAssociatedWithAircraft(aircraft.get());
+            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
             //Uses a try and catch statement to check if the user input hours is an integer.
             try {
                 int hoursInput = request.getFlyTime();
@@ -230,6 +238,15 @@ public class AircraftController {
     @GetMapping("ceo-aircraft-cost")
     public ResponseEntity<?> getStreamlinedRunningCost() {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
+    }
+    /**
+     * Get method that returns the repair cost for a particular aircraft.
+     * @param id the id of the aircraft.
+     * @return returns a response entity with the repair cost dto.
+     */
+    @GetMapping("ceo-aircraft-cost/{id}")
+    public ResponseEntity<?> getStreamlinedRunningCost(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimisedIdParam(id));
     }
 
     /**

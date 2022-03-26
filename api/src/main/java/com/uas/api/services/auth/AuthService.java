@@ -107,7 +107,7 @@ public class AuthService {
      * @param signupRequest login request.
      * @return response success.
      */
-    public ResponseEntity<MessageResponse> registerUser(final SignupRequest signupRequest) {
+    public MessageResponse registerUser(final SignupRequest signupRequest) {
         validateSignupRequest(signupRequest);
 
         Set<Role> roles = new HashSet<>();
@@ -124,7 +124,7 @@ public class AuthService {
                 uuid.toString());
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return new MessageResponse("User registered successfully!");
 
     }
 

@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
@@ -7,19 +8,15 @@ import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.PartType;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
-import com.uas.api.repositories.LocationRepository;
-import com.uas.api.repositories.PartRepository;
-import com.uas.api.repositories.PartTypeRepository;
-import com.uas.api.repositories.RepairRepository;
+import com.uas.api.repositories.*;
 import com.uas.api.repositories.projections.PartTypeFailureTimeProjection;
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -42,7 +39,7 @@ public class PartServiceImpl implements PartService {
     /**
      * Repository for service for communicating with aircraft table in the db.
      */
-    private final AircraftService aircraftService;
+    private final AircraftRepository aircraftRepository;
 
     /**
      * Repository for service for communicating with repairs table in the db.
@@ -64,19 +61,19 @@ public class PartServiceImpl implements PartService {
      * @param partRepository required repository.
      * @param locationRepository required repository.
      * @param partTypeRepository required repository.
-     * @param aircraftService required service.
+     * @param aircraftRepository required service.
      * @param repairRepository required repair repository.
      */
     @Autowired
     public PartServiceImpl(final PartRepository partRepository,
                            final LocationRepository locationRepository,
                            final PartTypeRepository partTypeRepository,
-                           final AircraftService aircraftService,
-                           final RepairRepository repairRepository) {
+                           final RepairRepository repairRepository,
+                           final AircraftRepository aircraftRepository) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
         this.partTypeRepository = partTypeRepository;
-        this.aircraftService = aircraftService;
+        this.aircraftRepository = aircraftRepository;
         this.repairRepository = repairRepository;
     }
 
@@ -85,11 +82,12 @@ public class PartServiceImpl implements PartService {
      * @return list of location part stock level dtos.
      */
     @Override
-    public List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations() {
+    public List<LocationStockLevelsDTO> getPartStockLevelsForAllLocations() throws NotFoundException {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = new ArrayList<>();
         List<Location> locations = locationRepository.findAll();
         if (locations.isEmpty()) {
             log.debug("No locations found when getting parts at low stock.");
+            throw new NotFoundException("No locations found!");
         }
         for (Location location : locations) {
             List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
@@ -108,7 +106,11 @@ public class PartServiceImpl implements PartService {
      * @return list of part stock level dtos.
      */
     @Override
-    public List<PartStockLevelDTO> getPartStockLevelsAtLocation(final String locationName) {
+    public List<PartStockLevelDTO> getPartStockLevelsAtLocation(final String locationName) throws NotFoundException {
+        Optional<Location> validLocation = locationRepository.findLocationByLocationName(locationName);
+        if (validLocation.isEmpty()) {
+            throw new NotFoundException("Location not found!");
+        }
         List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
         for (PartName partName : PartName.values()) {
             double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, locationName);
@@ -123,11 +125,12 @@ public class PartServiceImpl implements PartService {
      * @return list of part stock level dtos.
      */
     @Override
-    public List<PartStockLevelDTO> getPartsAtLowStock() {
+    public List<PartStockLevelDTO> getPartsAtLowStock() throws NotFoundException {
         List<PartStockLevelDTO> partStockLevelDTOs = new ArrayList<>();
         List<Location> locations = locationRepository.findAll();
         if (locations.isEmpty()) {
             log.debug("No locations found when getting parts at low stock.");
+            throw new NotFoundException("No locations found!");
         }
         for (Location location : locations) {
             for (PartName partName : PartName.values()) {
@@ -143,34 +146,30 @@ public class PartServiceImpl implements PartService {
     /**
      *  Adds a part from json data to the db.
      * @param requestData a hashmap of the json request data.
-     * @return returns a string which contains errors or is blank if no errors occur.
      */
     @Override
-    public String addPartFromJSON(final HashMap<String, String> requestData) {
-        //stores error messages that occur in execution.
-        String error = "";
-
+    public void addPartFromJSON(final AddPartDTO requestData) throws InvalidDTOAttributeException {
         //retrieves objects from the json. Some are optional as the user input may not return an object due to error in user input.
-        Optional<PartType> partType = Optional.ofNullable(partTypeRepository.findPartTypeById(Long.parseLong(requestData.get("partType"))));
-        Optional<Aircraft> aircraft = aircraftService.findAircraftById(requestData.get("aircraft"));
-        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.get("location"));
+        Optional<PartType> partType = partTypeRepository.findPartTypeById(requestData.getPartType());
+        Optional<Aircraft> aircraft = aircraftRepository.findById(requestData.getTailNumber());
+        Optional<Location> location = locationRepository.findLocationByLocationName(requestData.getLocationName());
         //string to store json manufacture datetime.
-        String manufacture = requestData.get("manufacture");
+        String manufacture = requestData.getManufacture();
 
         // creates enum from json string but if invalid string will set error variable.
         PartStatus partStatus = PartStatus.OPERATIONAL;
         try {
-            partStatus = PartStatus.valueOf(requestData.get("partStatus"));
+            partStatus = PartStatus.valueOf(requestData.getPartStatus());
         } catch (Exception e) {
-            error = "Invalid part status.";
+            throw new InvalidDTOAttributeException("Invalid part status.");
         }
 
         //checks that valid partType and location have been entered and if not error variable set.
         if (location.isEmpty()) {
-            error = "Invalid location.";
+            throw new InvalidDTOAttributeException("Invalid location.");
         }
         if (partType.isEmpty()) {
-            error = "Invalid part type.";
+            throw new InvalidDTOAttributeException("Invalid part type.");
         }
         //checks that the user inputted manufacture date can be formatted correctly and if not sets error.
         if (!Objects.equals(manufacture, "")) {
@@ -178,35 +177,33 @@ public class PartServiceImpl implements PartService {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 LocalDateTime.parse(manufacture, formatter);
             } catch (Exception e) {
-                error = "Invalid datetime.";
+                throw new InvalidDTOAttributeException("Invalid datetime.");
             }
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime timeStamp = LocalDateTime.parse(manufacture, formatter);
 
         //if no errors have occured above then the parts are created and saved depending on which json inputs they have.
-        if (error.equals("")) {
-            if (aircraft.isPresent() && !manufacture.equals("")) {
-                //part with aircraft and manufacture date
-                Part part = new Part(partType.get(), timeStamp, BigDecimal.valueOf(0), 0L, 0L);
-                partRepository.save(part);
-            } else if (!manufacture.equals("")) {
-                //part without aircraft but with manufacture date
-                Part part = new Part(partType.get(), timeStamp, BigDecimal.valueOf(0), 0L, 0L);
-                partRepository.save(part);
-            } else if (aircraft.isPresent()) {
-                Part part = new Part(partType.get(), timeStamp, BigDecimal.valueOf(0), 0L, 0L);
-                partRepository.save(part);
-            } else {
-                //part without aircraft and without manufacture date
-                Part part = new Part(partType.get(), BigDecimal.valueOf(0), 0L, 0L);
-                partRepository.save(part);
-            }
+        if (aircraft.isPresent() && !manufacture.equals("")) {
+            //part with aircraft and manufacture date
+            Part part = new Part(partType.get(), aircraft.get(), location.get(), manufacture, partStatus);
+            partRepository.save(part);
+        } else if (!manufacture.equals("")) {
+            //part without aircraft but with manufacture date
+            Part part = new Part(partType.get(), location.get(), manufacture, partStatus);
+            partRepository.save(part);
+        } else if (aircraft.isPresent()) {
+            Part part = new Part(partType.get(), aircraft.get(), location.get(), partStatus);
+            partRepository.save(part);
+        } else {
+            //part without aircraft and without manufacture date
+            Part part = new Part(partType.get(), location.get(), partStatus);
+            partRepository.save(part);
         }
+
 
         //returns error messages or a blank string if no error occured.
         //This is used to return a http response of ok or bad request with the error message as the body.
-        return error;
     }
 
     /**
@@ -249,44 +246,36 @@ public class PartServiceImpl implements PartService {
      * @param topN the number of results to return.
      * @return the PartRepairsDTO list.
      */
-    public List<PartRepairsDTO> getMostCommonFailingParts(final int topN) {
-        Page<Map<Object, Object>> objects = repairRepository.findPartsWithMostRepairsAndTheirCost(PageRequest.of(0, topN, Sort.by(Sort.Direction.DESC, "repairCount")));
+    public List<PartRepairsDTO> getMostCommonFailingParts(final int topN) throws NotFoundException {
+        List<Map<Object, Object>> objects = repairRepository.findPartsWithMostRepairsAndTheirCostWithLimit(topN);
+        if (objects.size() == 0) {
+            throw new NotFoundException("No parts and repair costs were found!");
+        }
         List<PartRepairsDTO> partRepairsDTOs = new ArrayList<>();
-        for (Map<Object, Object> objectMap : objects.getContent()) {
-            long partNumber = (Long) objectMap.get("partNumber");
-            long repairCount = (Long) objectMap.get("repairCount");
-            BigDecimal totalCost = (BigDecimal) objectMap.get("totalCost");
+        for (Map<Object, Object> object : objects) {
+            int partNumber = (Integer) object.get("partNumber");
+            BigInteger repairCount = (BigInteger) object.get("repairCount");
+            BigDecimal totalCost = (BigDecimal) object.get("totalCost");
             String partType = partTypeRepository.getPartTypeByPartNumber(partNumber);
-            partRepairsDTOs.add(new PartRepairsDTO(partNumber, partType, repairCount, totalCost));
+            partRepairsDTOs.add(new PartRepairsDTO(partNumber, partType, repairCount.longValue(), totalCost));
         }
         return partRepairsDTOs;
     }
 
-    /**
-     * The Finds all the parts from the aircraft given.
-     * @param aircraft The aircraft with the parts we are searching for.
-     * @return returns a list of parts.
-     */
-    public List<Part> findPartsAssociatedWithAircraft(final Aircraft aircraft) {
-        List<Part> parts;
-
-        parts = partRepository.findAllPartsByAircraft(aircraft);
-
-        return parts;
-    }
 
     /**
      * Updates the fly time for parts.
      * @param parts The list of parts to update.
      * @param flyTime The flight time to be added to the parts flight time.
      */
+    @Override
     public void updatePartFlyTime(final List<Part> parts, final int flyTime) {
         for (int i = 0; i < parts.size(); i++) {
             Part part = parts.get(i);
 
             int flyTimeOld;
             //checks that the part flighttime isnt null and if it is sets it to 0
-            if (parts.get(i). == null) {
+            if (parts.get(i).getFlyTimeHours() == null) {
                 flyTimeOld = 0;
             } else {
                 flyTimeOld = parts.get(i).getFlyTimeHours();
