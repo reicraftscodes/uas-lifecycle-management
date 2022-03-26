@@ -40,6 +40,7 @@ import static org.mockito.Mockito.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = PartsController.class)
@@ -153,7 +154,7 @@ public class PartControllerTests {
         partTypes.add(1L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
         String json = objectMapper.writeValueAsString(newStock);
         mockMvc.perform(post("/parts/stockrequest")
                         .contentType(MediaType.APPLICATION_JSON)

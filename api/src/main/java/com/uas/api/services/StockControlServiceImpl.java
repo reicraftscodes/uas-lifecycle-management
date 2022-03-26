@@ -84,8 +84,23 @@ public class StockControlServiceImpl implements StockControlService {
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType.get(), quantity);
             stockToOrdersRepository.save(newStockToOrder);
 
-            totalCost += partType.getPrice().doubleValue() * quantity;
+            totalCost += partType.get().getPrice().doubleValue() * quantity;
         }
+
+        newOrder.setTotalCost(totalCost);
+        ordersRepository.save(newOrder);
+
+        //passes order to invoice service to generate invoice.
+        Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getSupplierEmail());
+        InvoiceDTO invoiceDTO = invoiceService.getInvoiceData(invoiceOrder);
+        String fileName = invoiceService.generatePDF(invoiceDTO);
+
+        try {
+            invoiceService.emailInvoice(fileName, moreStockRequest.getSupplierEmail());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
         reciept = new StockReceipt(String.valueOf(newOrder.getTotalCost()));
         return reciept;
 
@@ -117,6 +132,7 @@ public class StockControlServiceImpl implements StockControlService {
             throw new IndexOutOfBoundsException("Missing quantity for part type in order!");
         }
     }
+
     static class StockReceipt {
         /**
          * The cost of the order.
@@ -131,21 +147,5 @@ public class StockControlServiceImpl implements StockControlService {
             return cost;
         }
 
-        newOrder.setTotalCost(totalCost);
-        ordersRepository.save(newOrder);
-
-        //passes order to invoice service to generate invoice.
-        Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getSupplierEmail());
-        InvoiceDTO invoiceDTO = invoiceService.getInvoiceData(invoiceOrder);
-        String fileName = invoiceService.generatePDF(invoiceDTO);
-
-        try {
-            invoiceService.emailInvoice(fileName, moreStockRequest.getSupplierEmail());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-
-        return true;
     }
 }
