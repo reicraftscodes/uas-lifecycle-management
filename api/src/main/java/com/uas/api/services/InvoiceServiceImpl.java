@@ -53,6 +53,8 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         if (givenOrder.getLocationName().getAddressLine2() == null) {
             givenOrder.getLocationName().setAddressLine2("");
+        } else {
+            givenOrder.getLocationName().setAddressLine2("\n" + givenOrder.getLocationName().getAddressLine2());
         }
         invoiceDTO.setDeliveryLocation(givenOrder.getLocationName());
 
