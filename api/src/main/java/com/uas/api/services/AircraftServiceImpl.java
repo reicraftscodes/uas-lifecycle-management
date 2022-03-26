@@ -8,6 +8,7 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.UserRepository;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,13 +79,6 @@ public class AircraftServiceImpl implements AircraftService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Used to save an aircraft to the database.
-     * @param aircraft The aircraft entity to be saved.
-     */
-    public void addAircraft(final Aircraft aircraft) {
-        aircraftRepository.save(aircraft);
-    }
 
     /**
      * Takes the post request body and adds an aircraft from this.
@@ -92,6 +86,7 @@ public class AircraftServiceImpl implements AircraftService {
      * @return Returns a string which is null if the aircraft is successfully added but if there is an error this string is used so
      * it can be returned in the response body.
      */
+    //TODO1: Refactor this and create exceptions.
     @Override
     public String addAircraftFromJson(final AircraftAddNewDTO requestData) {
         //Stores error messages and tracks if any errors have occured.
@@ -516,6 +511,27 @@ public class AircraftServiceImpl implements AircraftService {
             ceoAircraftCostsOverviewDTOS.add(ceoAircraftCostsOverviewDTO);
         }
         return ceoAircraftCostsOverviewDTOS;
+    }
+
+    /**
+     * Creates another aircraft dto but with less information to reduce request time.
+     * @return returns list of aircraft costs and repair costs dto.
+     */
+    @Override
+    public AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(final String aircraftId) throws NotFoundException {
+        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftId);
+        if (aircraft.isEmpty()) {
+            throw new NotFoundException("Aircraft not found.");
+        } else {
+            double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft.get());
+            double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft.get());
+            AircraftCostsOverviewDTO ceoAircraftCostsOverviewDTO = new AircraftCostsOverviewDTO();
+            ceoAircraftCostsOverviewDTO.setTailNumber(aircraft.get().getTailNumber());
+            ceoAircraftCostsOverviewDTO.setRepairCost(totalRepairCost);
+            ceoAircraftCostsOverviewDTO.setPartCost(totalPartCost);
+            ceoAircraftCostsOverviewDTO.setTotalCost(totalRepairCost + totalPartCost);
+            return ceoAircraftCostsOverviewDTO;
+        }
     }
 
     /**

@@ -21,6 +21,8 @@ import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
+import javassist.NotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,7 +285,7 @@ public class AircraftControllerTest {
         when(aircraftService.getTotalRepairCostForSpecificAircraft(any())).thenReturn(1001.0);
         when(aircraftService.getAircraftForCEOReturnMinimised()).thenReturn(ceoAircraftCostsOverviewDTOList);
 
-        mockMvc.perform(get("http://localhost:8080/aircraft/ceo-aircraft-cost")
+        mockMvc.perform(get("/aircraft/ceo-aircraft-cost")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -293,6 +295,35 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$[0].repairCost").value(1001.0))
                 .andExpect(jsonPath("$[0].partCost").value(1002.0))
                 .andExpect(jsonPath("$[0].totalCost").value(2003.0));
+    }
+
+    @Test
+    public void viewCEOFullAircraftCostsWithAircraftId() throws Exception {
+       AircraftCostsOverviewDTO ceoAircraftCostsOverviewDTO = new AircraftCostsOverviewDTO("G-001",1001.0,1002.0,2003.0);
+        List<Aircraft> aircrafts = new ArrayList<>();
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        aircrafts.add(new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286));
+
+        when(aircraftService.getTotalPartCostForSpecificAircraft(any())).thenReturn(1002.0);
+        when(aircraftService.getTotalRepairCostForSpecificAircraft(any())).thenReturn(1001.0);
+        when(aircraftService.getAircraftForCEOReturnMinimisedIdParam(anyString())).thenReturn(ceoAircraftCostsOverviewDTO);
+
+       mockMvc.perform(get("/aircraft/ceo-aircraft-cost/G-001")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tailNumber").value("G-001"))
+                .andExpect(jsonPath("$.repairCost").value(1001.0))
+                .andExpect(jsonPath("$.partCost").value(1002.0))
+                .andExpect(jsonPath("$.totalCost").value(2003.0));
+    }
+    @Test
+    public void fullAircraftCostsWithAircraftThrowError() throws Exception {
+        when(aircraftService.getAircraftForCEOReturnMinimisedIdParam(anyString())).thenThrow(new NotFoundException("Aircraft not found."));
+        mockMvc.perform(get("/aircraft/ceo-aircraft-cost/G-006")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @WithMockUser(value = "user")
@@ -586,6 +617,35 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].repairID").value(1))
                 .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].partType").value("Wing A"))
                 .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].cost").value(200));
-        
+
+    }
+
+    @Test
+    public void getAllAircraft() throws Exception {
+        mockMvc.perform(get("/aircraft/all"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getTimeOperational() throws Exception {
+        mockMvc.perform(get("/aircraft/time-operational"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getCeoAircraftCostFull() throws Exception {
+        mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void updateAircraftStatus() throws Exception {
+        UpdateAircraftStatusDTO mockAircraftStatus = new UpdateAircraftStatusDTO("M-009", "OPERATIONAL");
+        String json = objectMapper.writeValueAsString(mockAircraftStatus);
+        mockMvc.perform(post("/aircraft/update-aircraft-status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
     }
 }
