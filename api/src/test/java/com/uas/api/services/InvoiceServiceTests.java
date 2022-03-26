@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -59,5 +60,33 @@ public class InvoiceServiceTests {
         assertEquals("Supplier email same:","sncmsuktestemail@gmail.com",invoiceDTO.getSupplierEmail());
         assertEquals("Total cost is 2000:",2100.0,invoiceDTO.getTotalCost());
         assertEquals("Expected part orders:",stockOrder,invoiceDTO.getPartOrders());
+    }
+
+    @Test
+    public void generatePDFSuccess() {
+        Location location = new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales");
+
+        List<StockToOrders> stockOrder = new ArrayList<>();
+        Orders order = new Orders(-1, location,2100,"sncmsuktestemail@gmail.com", Timestamp.from(Instant.now()));
+        PartType wingA = new PartType(1l, PartName.WING_A, BigDecimal.valueOf(300),1500l,100l);
+        PartType wingB = new PartType(2l, PartName.WING_B, BigDecimal.valueOf(300),1500l,100l);
+        StockToOrders stock1 = new StockToOrders(order,wingA,4);
+        StockToOrders stock2 = new StockToOrders(order,wingB,3);
+        stockOrder.add(stock1);
+        stockOrder.add(stock2);
+
+        InvoiceDTO invoiceDTO = new InvoiceDTO(-1,"sncmsuktestemail@gmail.com",order.getOrderDateTime().toString(),location,stockOrder,2100);
+
+        String result = invoiceService.generatePDF(invoiceDTO);
+
+        File invoicePDF = new File("src/main/resources/invoices/order_-1.pdf");
+        boolean exists = invoicePDF.exists();
+
+        assertEquals("Filename path is returned","src/main/resources/invoices/order_-1.pdf",result);
+        assertEquals("File is created:",true,exists);
+
+        if (exists) {
+            invoicePDF.delete();
+        }
     }
 }
