@@ -26,8 +26,8 @@ public class Stock {
     /**
      * PartID.
      */
-    @OneToOne
-    @Column(name = "PartNumber")
+    @ManyToOne
+    @JoinColumn(name = "partNumber", referencedColumnName = "partNumber")
     private Part part;
 
     /**
