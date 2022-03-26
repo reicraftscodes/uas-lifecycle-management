@@ -1,6 +1,5 @@
 package com.uas.api.services;
 
-import com.uas.api.models.dtos.InvoiceDTO;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.Orders;
 import com.uas.api.models.entities.PartType;
@@ -37,10 +36,6 @@ public class StockControlServiceImpl implements StockControlService {
      * Repository for communication between api and stock to order table.
      */
     private final StockToOrdersRepository stockToOrdersRepository;
-    /**
-     * Service used to generate and send part invoices.
-     */
-    private final InvoiceService invoiceService;
 
     /**
      * Constructor.
@@ -48,15 +43,13 @@ public class StockControlServiceImpl implements StockControlService {
      * @param ordersRepository required.
      * @param partTypeRepository required.
      * @param stockToOrdersRepository required.
-     * @param invoiceService Service used to generate and send part invoices.
      */
     @Autowired
-    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository, final InvoiceService invoiceService) {
+    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository) {
         this.locationRepository = locationRepository;
         this.ordersRepository = ordersRepository;
         this.partTypeRepository = partTypeRepository;
         this.stockToOrdersRepository = stockToOrdersRepository;
-        this.invoiceService = invoiceService;
     }
 
     /**
@@ -73,34 +66,15 @@ public class StockControlServiceImpl implements StockControlService {
         LocalDateTime orderTime = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Timestamp ts = Timestamp.valueOf(orderTime.format(dtf));
-
-        Orders newOrder = new Orders(orderLocation,  0, moreStockRequest.getSupplierEmail(), ts);
+        Orders newOrder = new Orders(orderLocation, moreStockRequest.getCost(), ts);
         ordersRepository.save(newOrder);
-        double totalCost = 0;
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);
             Optional<PartType> partType = partTypeRepository.findPartTypeById(part);
             int quantity = quantities.get(i);
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType.get(), quantity);
             stockToOrdersRepository.save(newStockToOrder);
-
-            totalCost += partType.get().getPrice().doubleValue() * quantity;
         }
-
-        newOrder.setTotalCost(totalCost);
-        ordersRepository.save(newOrder);
-
-        //passes order to invoice service to generate invoice.
-        Orders invoiceOrder = ordersRepository.findByAttributes(moreStockRequest.getLocation(), moreStockRequest.getSupplierEmail());
-        InvoiceDTO invoiceDTO = invoiceService.getInvoiceData(invoiceOrder);
-        String fileName = invoiceService.generatePDF(invoiceDTO);
-
-        try {
-            invoiceService.emailInvoice(fileName, moreStockRequest.getSupplierEmail());
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
         reciept = new StockReceipt(String.valueOf(newOrder.getTotalCost()));
         return reciept;
 
@@ -132,7 +106,6 @@ public class StockControlServiceImpl implements StockControlService {
             throw new IndexOutOfBoundsException("Missing quantity for part type in order!");
         }
     }
-
     static class StockReceipt {
         /**
          * The cost of the order.
@@ -146,6 +119,5 @@ public class StockControlServiceImpl implements StockControlService {
         public String getCost() {
             return cost;
         }
-
     }
 }

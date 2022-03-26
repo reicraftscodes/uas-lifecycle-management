@@ -46,7 +46,6 @@ public class PartServiceImpl implements PartService {
      */
     private final RepairRepository repairRepository;
 
-
     // This will probably change.
     /**
      * Max stock allowance.
