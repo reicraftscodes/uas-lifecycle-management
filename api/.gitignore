@@ -1,6 +1,7 @@
 .gradle
 #build/
 #!build/reports
+*.json
 build/classes
 build/generated
 build/jacoco
