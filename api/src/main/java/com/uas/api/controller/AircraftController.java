@@ -7,6 +7,7 @@ import com.uas.api.repositories.PartRepository;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -237,6 +238,15 @@ public class AircraftController {
     @GetMapping("ceo-aircraft-cost")
     public ResponseEntity<?> getStreamlinedRunningCost() {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
+    }
+    /**
+     * Get method that returns the repair cost for a particular aircraft.
+     * @param id the id of the aircraft.
+     * @return returns a response entity with the repair cost dto.
+     */
+    @GetMapping("ceo-aircraft-cost/{id}")
+    public ResponseEntity<?> getStreamlinedRunningCost(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimisedIdParam(id));
     }
 
     /**

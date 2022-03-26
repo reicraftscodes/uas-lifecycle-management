@@ -12,6 +12,7 @@ import com.uas.api.repositories.AircraftUserRepository;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.repositories.RepairRepository;
 import com.uas.api.repositories.auth.UserRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -398,6 +399,21 @@ public class AircraftServiceTests {
             Assertions.assertDoesNotThrow(() -> {
                 aircraftService.getAircraftForCEOReturnMinimised();
             });
+        }
+        @Test
+        public void whenAircraftExistsAndRepairInfoIsFetchedThenShouldReturnWithoutError() {
+            when(aircraftRepository.findById(anyString())).thenReturn(Optional.of(aircraftOne));
+            Assertions.assertDoesNotThrow(() -> {
+               aircraftService.getAircraftForCEOReturnMinimisedIdParam("G-001");
+            });
+        }
+        @Test
+        public void whenAircraftDoesNotExistAndRepairInfoIsFetchedThenShouldReturnError() {
+            when(aircraftRepository.findById(anyString())).thenReturn(Optional.empty());
+            NotFoundException thrown = Assertions.assertThrows(NotFoundException.class, () -> {
+                aircraftService.getAircraftForCEOReturnMinimisedIdParam("G-001");
+            });
+            Assertions.assertEquals("Aircraft not found.", thrown.getMessage());
         }
         @Test
         public void whenHoursOperationalForAnAircraftAreUpdatedThenNumberShouldIncrease() {

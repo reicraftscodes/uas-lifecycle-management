@@ -8,6 +8,7 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.UserRepository;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -510,6 +511,27 @@ public class AircraftServiceImpl implements AircraftService {
             ceoAircraftCostsOverviewDTOS.add(ceoAircraftCostsOverviewDTO);
         }
         return ceoAircraftCostsOverviewDTOS;
+    }
+
+    /**
+     * Creates another aircraft dto but with less information to reduce request time.
+     * @return returns list of aircraft costs and repair costs dto.
+     */
+    @Override
+    public AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(final String aircraftId) throws NotFoundException {
+        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftId);
+        if (aircraft.isEmpty()) {
+            throw new NotFoundException("Aircraft not found.");
+        } else {
+            double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft.get());
+            double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft.get());
+            AircraftCostsOverviewDTO ceoAircraftCostsOverviewDTO = new AircraftCostsOverviewDTO();
+            ceoAircraftCostsOverviewDTO.setTailNumber(aircraft.get().getTailNumber());
+            ceoAircraftCostsOverviewDTO.setRepairCost(totalRepairCost);
+            ceoAircraftCostsOverviewDTO.setPartCost(totalPartCost);
+            ceoAircraftCostsOverviewDTO.setTotalCost(totalRepairCost + totalPartCost);
+            return ceoAircraftCostsOverviewDTO;
+        }
     }
 
     /**
