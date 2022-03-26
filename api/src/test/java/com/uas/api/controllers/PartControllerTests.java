@@ -160,14 +160,12 @@ public class PartControllerTests {
         assertEquals("", mvcRes.getResponse().getContentAsString());
     }
 
-
-
-//    @Test
-////    public void whenRequestMoreStockThenShouldBeTrue(){
-////        MoreStockRequest mockStockRequest = new MoreStockRequest("Cardiff", 100.00, new ArrayList<>(), new ArrayList<>());
-////        when(stockControlService.addMoreStock(mockStockRequest)).thenReturn(true);
-////        Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
-////    }
+    @Test
+    public void whenRequestMoreStockThenShouldBeTrue(){
+        MoreStockRequest mockStockRequest = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", new ArrayList<>(), new ArrayList<>());
+        when(stockControlService.addMoreStock(mockStockRequest)).thenReturn(true);
+        Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
+    }
 
 
 

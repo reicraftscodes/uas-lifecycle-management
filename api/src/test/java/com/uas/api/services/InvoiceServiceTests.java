@@ -89,4 +89,11 @@ public class InvoiceServiceTests {
             invoicePDF.delete();
         }
     }
+
+    @Test
+    public void emailInvoiceFailure() {
+        boolean result = invoiceService.emailInvoice(null,null);
+
+        assertEquals("Should fail with no email or pdf: ",false,result);
+    }
 }
