@@ -1,8 +1,6 @@
 package com.uas.api.services;
 
-import com.uas.api.models.dtos.InvoiceDTO;
 import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.Orders;
 import com.uas.api.models.entities.PartType;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.repositories.LocationRepository;
@@ -20,12 +18,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -43,9 +38,6 @@ public class StockControlServiceTests {
     @Mock
     private PartTypeRepository partTypeRepository;
 
-    @Mock
-    private InvoiceServiceImpl invoiceService;
-
     @InjectMocks
     @MockBean
     private StockControlServiceImpl stockControlService;
@@ -56,9 +48,9 @@ public class StockControlServiceTests {
         partTypes.add(1L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Fake Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Fake Cardiff", 40.00, partTypes, quantities);
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            when(stockControlService.addMoreStock(newStock)).thenReturn(new StockControlServiceImpl.StockReceipt("1000"));
+            when(stockControlService.addMoreStock(newStock)).thenReturn(new StockControlServiceImpl.StockReceipt(String.valueOf(newStock.getCost())));
             stockControlService.addMoreStock(newStock);
         });
         Assertions.assertEquals("Location does not exist!", thrown.getMessage());
@@ -71,7 +63,7 @@ public class StockControlServiceTests {
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
         quantities.add(10);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         IndexOutOfBoundsException thrown = Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
@@ -86,7 +78,7 @@ public class StockControlServiceTests {
         partTypes.add(111L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         IndexOutOfBoundsException thrown = Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
@@ -102,18 +94,12 @@ public class StockControlServiceTests {
         partTypes.add(1L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
-        Orders order = new Orders(1, mockLocation,100,"sncmsuktestemail@gmail.com", Timestamp.from(Instant.now()));
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         when(partTypeRepository.findPartTypeById(anyLong())).thenReturn(Optional.of(mockPartType));
-        when(ordersRepository.findByAttributes(any(),any())).thenReturn(order);
-        when(invoiceService.getInvoiceData(any())).thenReturn(new InvoiceDTO());
-        when(invoiceService.generatePDF(any())).thenReturn("");
-        when(invoiceService.emailInvoice(any(),any())).thenReturn(true);
-
         StockControlServiceImpl.StockReceipt receipt = stockControlService.addMoreStock(newStock);
-        Assertions.assertEquals("100.0", receipt.getCost());
+        Assertions.assertEquals("40.0", receipt.getCost());
     }
 
 }
