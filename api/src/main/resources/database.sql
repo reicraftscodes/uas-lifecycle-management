@@ -87,11 +87,11 @@ CREATE TABLE Repairs (
 
 CREATE TABLE Stock (
 	StockID int NOT NULL AUTO_INCREMENT,
-    PartID int NOT NULL,
+    PartNumber int NOT NULL,
     StockQuantity INT (11),
 	LocationName varchar(255) NOT NULL,
     PRIMARY KEY(StockID),
-    FOREIGN KEY (PartID) REFERENCES Parts(PartID),
+    FOREIGN KEY (PartNumber) REFERENCES Parts(PartNumber),
     FOREIGN KEY (LocationName) REFERENCES Aircraft(LocationName)
 );
 

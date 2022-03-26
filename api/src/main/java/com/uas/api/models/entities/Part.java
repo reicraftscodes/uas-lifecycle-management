@@ -75,4 +75,11 @@ public class Part {
     }
 
 
+    public Part(PartType partType, LocalDateTime manufacture, BigDecimal price, long weight, long typicalFailureTime) {
+        this.partType = partType;
+        this.manufacture = manufacture;
+        this.price = price;
+        this.weight = weight;
+        this.typicalFailureTime = typicalFailureTime;
+    }
 }

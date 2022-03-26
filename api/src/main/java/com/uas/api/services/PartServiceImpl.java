@@ -181,23 +181,25 @@ public class PartServiceImpl implements PartService {
                 error = "Invalid datetime.";
             }
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime timeStamp = LocalDateTime.parse(manufacture, formatter);
 
         //if no errors have occured above then the parts are created and saved depending on which json inputs they have.
         if (error.equals("")) {
             if (aircraft.isPresent() && !manufacture.equals("")) {
                 //part with aircraft and manufacture date
-                Part part = new Part(partType.get(), aircraft.get(), location.get(), manufacture, partStatus);
+                Part part = new Part(partType.get(), timeStamp, BigDecimal.valueOf(0), 0L, 0L);
                 partRepository.save(part);
             } else if (!manufacture.equals("")) {
                 //part without aircraft but with manufacture date
-                Part part = new Part(partType.get(), location.get(), manufacture, partStatus);
+                Part part = new Part(partType.get(), timeStamp, BigDecimal.valueOf(0), 0L, 0L);
                 partRepository.save(part);
             } else if (aircraft.isPresent()) {
-                Part part = new Part(partType.get(), aircraft.get(), location.get(), partStatus);
+                Part part = new Part(partType.get(), timeStamp, BigDecimal.valueOf(0), 0L, 0L);
                 partRepository.save(part);
             } else {
                 //part without aircraft and without manufacture date
-                Part part = new Part(partType.get(), location.get(), partStatus);
+                Part part = new Part(partType.get(), BigDecimal.valueOf(0), 0L, 0L);
                 partRepository.save(part);
             }
         }
@@ -284,7 +286,7 @@ public class PartServiceImpl implements PartService {
 
             int flyTimeOld;
             //checks that the part flighttime isnt null and if it is sets it to 0
-            if (parts.get(i).getFlyTimeHours() == null) {
+            if (parts.get(i). == null) {
                 flyTimeOld = 0;
             } else {
                 flyTimeOld = parts.get(i).getFlyTimeHours();

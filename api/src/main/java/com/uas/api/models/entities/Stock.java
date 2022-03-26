@@ -27,7 +27,7 @@ public class Stock {
      * PartID.
      */
     @OneToOne
-    @Column(name = "PartID")
+    @Column(name = "PartNumber")
     private Part part;
 
     /**

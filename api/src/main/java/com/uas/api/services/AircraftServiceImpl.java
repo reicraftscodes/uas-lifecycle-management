@@ -33,7 +33,10 @@ public class AircraftServiceImpl implements AircraftService {
     /**
      * Contains methods for communication with the aircraft_user table of the db.
      */
-    private final AircraftUserRepository aircraftUserRepository;
+    private final AircraftUserRepository aircraftUserRepository;/**
+     * Contains methods for communication with the aircraft_user table of the db.
+     */
+    private final AircraftPartRepository aircraftPartRepository;
     /**
      * Contains methods for communication with the repair table of the db.
      */
@@ -60,6 +63,7 @@ public class AircraftServiceImpl implements AircraftService {
      * @param aircraftRepository Repository used to modify aircraft data in db.
      * @param locationRepository Repository used to retrieve location data in db.
      * @param aircraftUserRepository Repository used to modify aircraft user data in db.
+     * @param aircraftPartRepository
      * @param repairRepository
      * @param partRepository
      * @param userRepository
@@ -68,10 +72,11 @@ public class AircraftServiceImpl implements AircraftService {
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
-                               final RepairRepository repairRepository,
+                               AircraftPartRepository aircraftPartRepository, final RepairRepository repairRepository,
                                final PartRepository partRepository, final UserRepository userRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;
+        this.aircraftPartRepository = aircraftPartRepository;
         this.repairRepository = repairRepository;
         this.aircraftUserRepository = aircraftUserRepository;
         this.partRepository = partRepository;
@@ -361,16 +366,18 @@ public class AircraftServiceImpl implements AircraftService {
         List<Part> parts = partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR);
         List<Aircraft> aircraftList = new ArrayList<>();
         for (Part part : parts
-                part.get
+
         ) {
-            if (aircraftList.contains(part.getAircraft())) {
+            AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
+            if (aircraftList.contains(aircraftPart.getAircraft())) {
                 continue;
             } else {
-                aircraftList.add(part.getAircraft());
+                aircraftList.add(aircraftPart.getAircraft());
             }
         }
         return aircraftList.size();
     }
+
 
     /**
      * Gets a list of all aircrafts in the db.
