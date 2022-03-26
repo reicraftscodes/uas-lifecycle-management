@@ -46,3 +46,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+###Ignore invoices###
+/api/src/main/resources/invoices/**
+/api/src/main/resources/invoices/

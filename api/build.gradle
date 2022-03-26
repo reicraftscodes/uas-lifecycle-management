@@ -33,6 +33,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.security:spring-security-test'
     implementation "io.jsonwebtoken:jjwt:0.9.1"
+    // https://mvnrepository.com/artifact/com.itextpdf/itextpdf
+    implementation group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13.3'
+    // https://mvnrepository.com/artifact/javax.mail/javax.mail-api
+    implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
     //https://search.maven.org/artifact/com.google.code.gson/gson/2.8.9/jar
     implementation 'com.google.code.gson:gson:2.8.6'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.20.2'

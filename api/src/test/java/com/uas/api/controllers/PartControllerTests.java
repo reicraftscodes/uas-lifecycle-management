@@ -39,8 +39,8 @@ import static org.mockito.Mockito.*;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = PartsController.class)
@@ -82,6 +82,7 @@ public class PartControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
+        MockHttpServletRequestBuilder mockResponse = MockMvcRequestBuilders.post("/parts/add").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(json);
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
@@ -153,7 +154,7 @@ public class PartControllerTests {
         partTypes.add(1L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
         String json = objectMapper.writeValueAsString(newStock);
         mockMvc.perform(post("/parts/stockrequest")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -162,53 +163,7 @@ public class PartControllerTests {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    public void whenStockIsCheckedAtAllLocationsThenAListOfLowStockShouldBeReturned() throws Exception {
-        mockMvc.perform(get("/parts/stock")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void whenALocationsStockIsCheckedThenAListOfLowStockShouldBeReturned() throws Exception {
-        mockMvc.perform(get("/parts/location/stock")
-                        .param("location", "Cardiff")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void whenFailureTimeIsCheckedThenReturnListOfPartsWithFailureTime() throws Exception {
-        mockMvc.perform(get("/parts/failuretime")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void whenTopFailingPartsIsCheckedThenTopFailingPartsShouldBeReturned() throws Exception {
-        mockMvc.perform(get("/parts/most-failing/{topN}", "3")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-    @Test
-    public void whenAPartTypeIsCheckedForBeingUnassignedThenAListOfAvailablePartsShouldBeReturned() throws Exception {
-        long id = 1;
-        String json = objectMapper.writeValueAsString(id);
 
-        mockMvc.perform(post("/parts/get-by-type")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andExpect(status().isOk())
-                .andReturn();
-
-    }
-
-
-
-//    @Test
-//    public void whenRequestMoreStockThenShouldBeTrue(){
-//        MoreStockRequest mockStockRequest = new MoreStockRequest("Cardiff", 100.00, new ArrayList<>(), new ArrayList<>());
-//        when(stockControlService.addMoreStock(mockStockRequest)).thenReturn(true);
-//        Assertions.assertTrue(stockControlService.addMoreStock(mockStockRequest));
-//    }
 
 
 
