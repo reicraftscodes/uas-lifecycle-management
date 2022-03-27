@@ -2,8 +2,10 @@ package com.uas.api.services;
 
 import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.*;
-import com.uas.api.models.entities.enums.PartStatus;
+import com.uas.api.models.entities.Aircraft;
+import com.uas.api.models.entities.AircraftUser;
+import com.uas.api.models.entities.AircraftUserKey;
+import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
@@ -347,7 +349,7 @@ public class AircraftServiceImpl implements AircraftService {
      */
     public Integer calculateTotalRepairs(final String tailNumber) {
 
-        Integer totalRepairs = repairRepository.findAllByPart_Aircraft_TailNumber(tailNumber).size();
+        Integer totalRepairs = repairRepository.findAllByAircraftPart_Aircraft_TailNumber(tailNumber).size();
 
         return totalRepairs;
     }
@@ -358,18 +360,18 @@ public class AircraftServiceImpl implements AircraftService {
     @Override
     public Integer getNumberOfAircraftWithPartsNeedingRepair() {
         //Get all parts which are awaiting repair.
-        List<Part> parts = partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR);
+//        List<Part> parts = partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR);
         List<Aircraft> aircraftList = new ArrayList<>();
-        for (Part part : parts
-
-        ) {
-            AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
-            if (aircraftList.contains(aircraftPart.getAircraft())) {
-                continue;
-            } else {
-                aircraftList.add(aircraftPart.getAircraft());
-            }
-        }
+//        for (Part part : parts
+//
+//        ) {
+//            AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
+//            if (aircraftList.contains(aircraftPart.getAircraft())) {
+//                continue;
+//            } else {
+//                aircraftList.add(aircraftPart.getAircraft());
+//            }
+//        }
         return aircraftList.size();
     }
 

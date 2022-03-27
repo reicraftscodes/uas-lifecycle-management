@@ -26,14 +26,14 @@ public class AircraftPart {
      * Aircraft Tail Number.
      */
     @ManyToOne
-    @Column(name = "AircraftTailNumber")
+    @JoinColumn(name = "AircraftTailNumber", referencedColumnName = "TailNumber")
     private Aircraft aircraft;
 
     /**
-     * PartNumber.
+     * partid.
      */
-    @OneToOne
-    @Column(name = "PartNumber")
+    @ManyToOne
+    @JoinColumn(name = "partid", referencedColumnName = "partid")
     private Part part;
 
     /**
@@ -48,4 +48,10 @@ public class AircraftPart {
     @Column(name = "FlightHours")
     private Integer FlightHours;
 
+    public AircraftPart(Aircraft aircraft, Part part, PartStatus partStatus, Integer flightHours) {
+        this.aircraft = aircraft;
+        this.part = part;
+        this.partStatus = partStatus;
+        FlightHours = flightHours;
+    }
 }

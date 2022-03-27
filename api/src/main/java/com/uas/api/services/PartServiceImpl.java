@@ -3,6 +3,7 @@ package com.uas.api.services;
 import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.*;
+import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.projections.PartFailureTimeProjection;
 import javassist.NotFoundException;
@@ -14,7 +15,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -164,21 +168,31 @@ public class PartServiceImpl implements PartService {
      * @param requestData a hashmap of the json request data.
      */
     @Override
-    public void addPartFromJSON(final AddPartDTO requestData) throws InvalidDTOAttributeException {
+    public void addPartFromJSON(final AddPartDTO requestData) throws InvalidDTOAttributeException, NotFoundException {
         //retrieves objects from the json. Some are optional as the user input may not return an object due to error in user input.
         Optional<PartType> partType = partTypeRepository.findPartTypeById(requestData.getPartType());
-//        Optional<Aircraft> aircraft = aircraftRepository.findById(requestData.getTailNumber());
+        Aircraft aircraft = null;
+        if (!requestData.getAircraft().equals("")) {
+            Optional<Aircraft> aircraftOpt = aircraftRepository.findById(requestData.getAircraft());
+            if (aircraftOpt.isEmpty()) {
+                throw new NotFoundException("Aircraft not found!");
+            } else {
+                aircraft = aircraftOpt.get();
+            }
+        }
         Optional<Location> location = locationRepository.findLocationByLocationName(requestData.getLocationName());
         //string to store json manufacture datetime.
         String manufacture = requestData.getManufacture();
 
         // creates enum from json string but if invalid string will set error variable.
-//        PartStatus partStatus = PartStatus.OPERATIONAL;
-//        try {
-//            partStatus = PartStatus.valueOf(requestData.getPartStatus());
-//        } catch (Exception e) {
-//            throw new InvalidDTOAttributeException("Invalid part status.");
-//        }
+        PartStatus partStatus = null;
+        if (!requestData.getPartStatus().equals("")) {
+            try {
+                partStatus = PartStatus.valueOf(requestData.getPartStatus());
+            } catch (Exception e) {
+                throw new InvalidDTOAttributeException("Invalid part status.");
+            }
+        }
 
         //checks that valid partType and location have been entered and if not error variable set.
         if (location.isEmpty()) {
@@ -188,37 +202,37 @@ public class PartServiceImpl implements PartService {
             throw new InvalidDTOAttributeException("Invalid part type.");
         }
         //checks that the user inputted manufacture date can be formatted correctly and if not sets error.
-        if (!Objects.equals(manufacture, "")) {
+        LocalDateTime timeStamp = null;
+        if(!manufacture.equals("")) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                LocalDateTime.parse(manufacture, formatter);
+                timeStamp = LocalDateTime.parse(manufacture, formatter);
             } catch (Exception e) {
                 throw new InvalidDTOAttributeException("Invalid datetime.");
             }
         }
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime timeStamp = LocalDateTime.parse(manufacture, formatter);
-        //TODO: fix this.
         //if no errors have occured above then the parts are created and saved depending on which json inputs they have.
-//        if (aircraft.isPresent() && !manufacture.equals("")) {
-//            //part with aircraft and manufacture date
-//            Part part = new Part(partType.get(), aircraft.get(), location.get(), manufacture, partStatus);
-//            partRepository.save(part);
-//        } else if (!manufacture.equals("")) {
-//            //part without aircraft but with manufacture date
-//            Part part = new Part(partType.get(), location.get(), manufacture, partStatus);
-//            partRepository.save(part);
-//        } else if (aircraft.isPresent()) {
-//            Part part = new Part(partType.get(), aircraft.get(), location.get(), partStatus);
-//            partRepository.save(part);
-//        } else {
-            //part without aircraft and without manufacture date
-            Part part = new Part(partType.get(), requestData.getPartName(), timeStamp, BigDecimal.valueOf(1000L), 750L, 0);
+        if (aircraft != null && !manufacture.equals("")) {
+            //part with aircraft and manufacture date
+            Part part = new Part(partType.get(), requestData.getPartName(), timeStamp, BigDecimal.valueOf(requestData.getPrice()), requestData.getWeight(), 0);
             partRepository.save(part);
-//        }
-
-        //returns error messages or a blank string if no error occured.
-        //This is used to return a http response of ok or bad request with the error message as the body.
+            AircraftPart aircraftPart = new AircraftPart(aircraft, part, partStatus, 0);
+            aircraftPartRepository.save(aircraftPart);
+        } else if (aircraft == null && !manufacture.equals("")) {
+            //part without aircraft but with manufacture date
+            Part part = new Part(partType.get(), requestData.getPartName(), timeStamp, BigDecimal.valueOf(requestData.getPrice()), requestData.getWeight(), 0);
+            partRepository.save(part);
+        } else if (aircraft != null && manufacture.equals("")) {
+            Part part = new Part(partType.get(), requestData.getPartName(), BigDecimal.valueOf(requestData.getPrice()), requestData.getWeight(), 0);
+            part.setPartNumber(22L);
+            partRepository.save(part);
+            AircraftPart aircraftPart = new AircraftPart(aircraft, part, partStatus, 0);
+            aircraftPartRepository.save(aircraftPart);
+        } else {
+            //part without aircraft and without manufacture date
+            Part part = new Part(partType.get(), requestData.getPartName(), BigDecimal.valueOf(requestData.getPrice()), requestData.getWeight(), 0);
+            partRepository.save(part);
+        }
     }
 
     /**

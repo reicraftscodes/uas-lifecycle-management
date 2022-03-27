@@ -18,40 +18,40 @@ public class Part {
      * Part number id.
      */
     @Id
-    @Column(name = "PartNumber")
+    @Column(name = "partid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partNumber;
     /**
      * Part Type ID.
      */
-    @ManyToOne
-    @JoinColumn(name = "PartTypeID", referencedColumnName = "PartID")
+    @OneToOne
+    @JoinColumn(name = "parttypeid", referencedColumnName = "parttypeid")
     private PartType partType;
 
     /**
      * Part Name
      */
-    @Column(name = "PartName")
+    @Column(name = "partname")
     private String partName;
     /**
      * Manufacture date.
      */
-    @Column(name = "Manufacture")
+    @Column(name = "manufacture")
     private LocalDateTime manufacture;
     /**
      * Cost.
      */
-    @Column(name = "Price")
+    @Column(name = "price")
     private BigDecimal price;
     /**
      * Weight.
      */
-    @Column(name = "Weight")
+    @Column(name = "weight")
     private Long weight;
     /**
      * Failure time.
      */
-    @Column(name = "TypicalFailureTime")
+    @Column(name = "typicalfailuretime")
     private Long typicalFailureTime;
 
     /**

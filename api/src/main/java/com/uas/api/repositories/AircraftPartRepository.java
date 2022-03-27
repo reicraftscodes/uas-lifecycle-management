@@ -9,5 +9,11 @@ import java.util.List;
 public interface AircraftPartRepository extends JpaRepository<AircraftPart, String> {
 
     AircraftPart findAircraftPartByPart_PartNumber(Long partNumber);
+    /**
+     *  Finds all parts associated with an aircraft.
+     * @param aircraft The aircraft the parts are being searched for.
+     * @return A list of all part entities.
+     */
     List<AircraftPart> findAircraftPartsByAircraft(Aircraft aircraft);
+
 }

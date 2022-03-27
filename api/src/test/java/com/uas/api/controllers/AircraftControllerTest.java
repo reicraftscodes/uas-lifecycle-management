@@ -6,6 +6,9 @@ import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.Part;
+import com.uas.api.models.entities.PartType;
+import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
@@ -34,6 +37,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,6 +84,8 @@ public class AircraftControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+    @MockBean
+    private AircraftPartRepository aircraftPartRepository;
 
     @MockBean
     private RoleRepository roleRepository;
@@ -413,8 +419,8 @@ public class AircraftControllerTest {
 //        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
 //        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 //
-//        PartType partType = new PartType(Long.parseLong("1"),PartName.WING_A);
-//        Part part = new Part(partType,aircraft,location,PartStatus.OPERATIONAL, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
+//        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+//        Part part = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
 //        List<Part> parts = new ArrayList<>();
 //        parts.add(part);
 //
@@ -425,7 +431,7 @@ public class AircraftControllerTest {
 //        String json = "G-001";
 //
 //        when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraft));
-//        when(partRepository.findAllPartsByAircraft(any())).thenReturn(parts);
+//        when(aircraftPartRepository.findAircraftPartsByAircraft(any())).thenReturn(parts);
 //
 //        mockMvc.perform(post("/aircraft/aircraft-parts-status")
 //                        .content(json).characterEncoding("utf-8")
@@ -434,31 +440,31 @@ public class AircraftControllerTest {
 //
 //    }
 
-//    @WithMockUser(value = "user")
-//    @Test
-//    public void updateAircraftPartSuccess() throws Exception {
-//        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
-//        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-//
-//        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A);
-//        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B);
-//        Part currentPart = new Part(partType1,aircraft,location,PartStatus.OPERATIONAL, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-//        Part newPart = new Part(partType2,aircraft,location,PartStatus.OPERATIONAL, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-//
-//        UpdateAircraftPartDTO aircraftPartDTO = new UpdateAircraftPartDTO();
-//        aircraftPartDTO.setTailNumber("G-001");
-//        aircraftPartDTO.setNewPartNumber(2);
-//
-//        String json = "{\"tailNumber\":\"G-001\",\"newPartNumber\":1}";
-//
-//        when(partRepository.findPartBypartNumber(1)).thenReturn(Optional.of(currentPart));
-//        when(partRepository.findPartBypartNumber(2)).thenReturn(Optional.of(newPart));
-//
-//        mockMvc.perform(post("/aircraft/update-aircraft-part")
-//                .content(json)
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//    }
+    @WithMockUser(value = "user")
+    @Test
+    public void updateAircraftPartSuccess() throws Exception {
+        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
+        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
+
+        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A);
+        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B);
+        Part currentPart = new Part(partType1, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        Part newPart = new Part(partType2,"Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+
+        UpdateAircraftPartDTO aircraftPartDTO = new UpdateAircraftPartDTO();
+        aircraftPartDTO.setTailNumber("G-001");
+        aircraftPartDTO.setNewPartNumber(2);
+
+        String json = "{\"tailNumber\":\"G-001\",\"newPartNumber\":1}";
+
+        when(partRepository.findPartBypartNumber(1)).thenReturn(Optional.of(currentPart));
+        when(partRepository.findPartBypartNumber(2)).thenReturn(Optional.of(newPart));
+
+        mockMvc.perform(post("/aircraft/update-aircraft-part")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 
     @WithMockUser(value = "user")
     @Test

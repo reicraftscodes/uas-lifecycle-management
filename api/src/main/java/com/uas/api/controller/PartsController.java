@@ -49,7 +49,7 @@ public class PartsController {
      * @return returns a response entity of success or an error with the error message.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    ResponseEntity<?> addPart(@RequestBody final AddPartDTO requestData) {
+    ResponseEntity<?> addPart(@RequestBody final AddPartDTO requestData) throws NotFoundException {
         partService.addPartFromJSON(requestData);
         return new ResponseEntity<>("{\"response\":\"Success\"}", HttpStatus.OK);
     }

@@ -30,7 +30,7 @@ public interface PartService {
      * Adds a part to the db from a json request.
      * @param requestData a hashmap of the json request data.
      */
-    void addPartFromJSON(AddPartDTO requestData);
+    void addPartFromJSON(AddPartDTO requestData) throws NotFoundException;
 
     /**
      * Gets the part name and it's failure time from the part type table using a projection.

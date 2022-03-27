@@ -10,20 +10,20 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Entity
-@Table(name = "PartTypes")
+@Entity(name = "parttypes")
+@Table(name = "parttypes")
 public class PartType {
     /**
      * Id.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PartID")
+    @Column(name = "parttypeid")
     private Long id;
     /**
      * Part name.
      */
-    @Column(name = "PartType")
+    @Column(name = "parttype")
     private PartName partName;
 
 
