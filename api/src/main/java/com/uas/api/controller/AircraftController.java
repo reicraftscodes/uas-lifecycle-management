@@ -33,9 +33,6 @@ public class AircraftController {
      * Repository for communication between service and Part table in DB.
      */
     private final PartRepository partRepository;
-    /**
-     *
-     */
 
     /**
      * Constructor.

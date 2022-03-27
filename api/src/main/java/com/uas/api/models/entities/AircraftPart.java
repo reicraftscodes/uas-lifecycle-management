@@ -48,12 +48,17 @@ public class AircraftPart {
     @Column(name = "FlightHours")
 
     private Double flightHours;
-
-    public AircraftPart(Aircraft aircraft, Part part, PartStatus partStatus, Double flightHours) {
+    /**
+     *  Constructor for AircraftPart.
+     *  @param aircraft The aircraft associated with the part.
+     *  @param part The part to be associated with the aircraft.
+     *  @param partStatus The partStatus of the aircraft part.
+     *  @param flightHours The amount of hours the aircraft has flown.
+     */
+    public AircraftPart(final Aircraft aircraft, final Part part, final PartStatus partStatus, final Double flightHours) {
         this.aircraft = aircraft;
         this.part = part;
         this.partStatus = partStatus;
         this.flightHours = flightHours;
-
     }
 }

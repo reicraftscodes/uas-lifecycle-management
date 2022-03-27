@@ -74,6 +74,8 @@ public class PartServiceImpl implements PartService {
      * @param aircraftService required service.
      * @param aircraftRepository required service.
      * @param repairRepository required repair repository.
+     * @param aircraftPartRepository required aircraft part repository.
+     * @param stockRepository required stock repository.
      */
     @Autowired
     public PartServiceImpl(final PartRepository partRepository,
@@ -203,7 +205,7 @@ public class PartServiceImpl implements PartService {
         }
         //checks that the user inputted manufacture date can be formatted correctly and if not sets error.
         LocalDateTime timeStamp = null;
-        if(!manufacture.equals("")) {
+        if (!manufacture.equals("")) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                 timeStamp = LocalDateTime.parse(manufacture, formatter);
@@ -313,9 +315,12 @@ public class PartServiceImpl implements PartService {
             aircraftPartRepository.save(part);
         }
     }
-
+    /**
+     * Updates the flight hours property for all Aircraft.
+     * @param request The DTO.
+     */
     @Override
-    public void updateAllFlightHours(LogFlightDTO request) throws NotFoundException {
+    public void updateAllFlightHours(final LogFlightDTO request) throws NotFoundException {
         Optional<Aircraft> aircraft = aircraftRepository.findById(request.getAircraft());
         if (aircraft.isEmpty()) {
             throw new NotFoundException("Aircraft not found!");

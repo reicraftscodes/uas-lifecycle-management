@@ -9,7 +9,7 @@ public class AddPartDTO {
      */
     private final Long partType;
     /**
-     * The part name
+     * The part name.
      */
     private final String partName;
     /**
@@ -20,9 +20,21 @@ public class AddPartDTO {
      * The manufacture date as a string.
      */
     private final String manufacture;
+    /**
+     * The price of part.
+     */
     private final double price;
+    /**
+     * The weight of part.
+     */
     private final long weight;
+    /**
+     * The aircraft part is assigned to.
+     */
     private final String aircraft;
+    /**
+     * The status of the part.
+     */
     private final String partStatus;
 
 //    //DTO without aircraft but with manufacture
@@ -65,8 +77,18 @@ public class AddPartDTO {
 //
 //    //DTO with aircraft and with manufacture
 
-
-    public AddPartDTO(Long partType, String partName, String locationName, String manufacture, double price, long weight, String aircraft, String partStatus) {
+    /**
+     * Constructor for a AddPartDTO.
+     * @param partType Type of part.
+     * @param price Price of the part.
+     * @param weight Weight of the part.
+     * @param partName Name of the part.
+     * @param manufacture Timestamp of part.
+     * @param aircraft Aircraft part assigned to.
+     * @param locationName Location part assigned to.
+     * @param partStatus Status of the part.
+     */
+    public AddPartDTO(final Long partType, final String partName, final String locationName, final String manufacture, final double price, final long weight, final String aircraft, final String partStatus) {
         this.partType = partType;
         this.partName = partName;
         this.locationName = locationName;

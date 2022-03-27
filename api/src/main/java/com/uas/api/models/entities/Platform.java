@@ -21,7 +21,9 @@ public class Platform {
     @Column(name = "PlatformID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    /**
+     * PlatformType.
+     */
     @Column(name = "PlatformType")
     private PlatformType platformType;
 

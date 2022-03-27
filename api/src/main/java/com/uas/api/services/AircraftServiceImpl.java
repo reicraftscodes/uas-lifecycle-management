@@ -34,8 +34,9 @@ public class AircraftServiceImpl implements AircraftService {
     /**
      * Contains methods for communication with the aircraft_user table of the db.
      */
-    private final AircraftUserRepository aircraftUserRepository;/**
-     * Contains methods for communication with the aircraft_user table of the db.
+    private final AircraftUserRepository aircraftUserRepository;
+    /**
+     * Contains methods for communication with the aircraft_part table of the db.
      */
     private final AircraftPartRepository aircraftPartRepository;
     /**
@@ -73,7 +74,7 @@ public class AircraftServiceImpl implements AircraftService {
     public AircraftServiceImpl(final AircraftRepository aircraftRepository,
                                final LocationRepository locationRepository,
                                final AircraftUserRepository aircraftUserRepository,
-                               AircraftPartRepository aircraftPartRepository, final RepairRepository repairRepository,
+                               final AircraftPartRepository aircraftPartRepository, final RepairRepository repairRepository,
                                final PartRepository partRepository, final UserRepository userRepository) {
         this.aircraftRepository = aircraftRepository;
         this.locationRepository = locationRepository;

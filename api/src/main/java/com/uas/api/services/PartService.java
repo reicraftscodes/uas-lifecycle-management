@@ -54,6 +54,7 @@ public interface PartService {
 
     /**
      * Update all flight hours.
+     * @param request The DTO with request to update all flight hours.
      */
     void updateAllFlightHours(LogFlightDTO request) throws NotFoundException;
 

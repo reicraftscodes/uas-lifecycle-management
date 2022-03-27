@@ -29,7 +29,7 @@ public class Part {
     private PartType partType;
 
     /**
-     * Part Name
+     * Part Name.
      */
     @Column(name = "partname")
     private String partName;
@@ -71,6 +71,7 @@ public class Part {
      * @param price Price of the part.
      * @param weight Weight of the part.
      * @param typicalFailureTime Typical failure time of the part.
+     * @param partName Name of the part.
      */
     public Part(final PartType partType, final String partName, final BigDecimal price, final long weight, final long typicalFailureTime) {
         this.partType = partType;
@@ -79,9 +80,16 @@ public class Part {
         this.weight = weight;
         this.typicalFailureTime = typicalFailureTime;
     }
-
-
-    public Part(PartType partType, final String partName, LocalDateTime manufacture, BigDecimal price, long weight, long typicalFailureTime) {
+    /**
+     * Constructor for a part.
+     * @param partType Type of part.
+     * @param price Price of the part.
+     * @param weight Weight of the part.
+     * @param typicalFailureTime Typical failure time of the part.
+     * @param partName Name of the part.
+     * @param manufacture Timestamp of part.
+     */
+    public Part(final PartType partType, final String partName, final LocalDateTime manufacture, final BigDecimal price, final long weight, final long typicalFailureTime) {
         this.partType = partType;
         this.partName = partName;
         this.manufacture = manufacture;
