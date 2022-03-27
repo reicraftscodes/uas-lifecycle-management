@@ -286,16 +286,17 @@ public class PartServiceImpl implements PartService {
 
             int flyTimeOld;
             //checks that the part flighttime isnt null and if it is sets it to 0
-            if (parts.get(i). == null) {
+            if (parts == null) {
                 flyTimeOld = 0;
             } else {
-                flyTimeOld = parts.get(i).getFlyTimeHours();
+                //flyTimeOld = parts.get(i).getFlyTimeHours();
             }
 
-            part.setFlyTimeHours(flyTime + flyTimeOld);
+            //part.setFlyTimeHours(flyTime + flyTimeOld);
             partRepository.save(part);
         }
     }
+
 
     /**
      * Gets all the parts for a specific part type that aren't assigned to an aircraft.

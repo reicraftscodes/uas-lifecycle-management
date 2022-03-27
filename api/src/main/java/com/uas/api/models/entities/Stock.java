@@ -27,7 +27,7 @@ public class Stock {
      * PartID.
      */
     @OneToOne
-    @Column(name = "PartNumber")
+    @JoinColumn(name = "partNumber", referencedColumnName = "partNumber")
     private Part part;
 
     /**
@@ -40,7 +40,7 @@ public class Stock {
      * Location.
      */
     @ManyToOne
-    @JoinColumn(name = "LocationName")
+    @JoinColumn(name = "locationName")
     private Location location;
 
 }

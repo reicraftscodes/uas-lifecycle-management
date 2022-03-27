@@ -480,17 +480,18 @@ public class AircraftServiceImpl implements AircraftService {
             List<PartCostsDTO> partsForAircraft = new ArrayList<>();
             for (Part part : parts) {
                 PartCostsDTO aircraftPartDTO = new PartCostsDTO();
+                AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
 
                 aircraftPartDTO.setPartName(part.getPartType().getPartName().getName());
                 aircraftPartDTO.setPartCost(part.getPrice().doubleValue());
-                aircraftPartDTO.setPartStatus(part.getPartStatus().getLabel());
+                aircraftPartDTO.setPartStatus(aircraftPart.getPartStatus().getLabel());
 
                 List<Repair> repairs = repairRepository.findAllByPart(part);
                 List<PartRepairDTO> totalRepairs = new ArrayList<>();
                 for (Repair repair : repairs) {
                     PartRepairDTO repairDTO = new PartRepairDTO();
                     repairDTO.setRepairID(repair.getId());
-                    repairDTO.setPartType(repair.getPart().getPartType().getPartName().getName());
+                    repairDTO.setPartType(repair.getAircraftPart().getPart().getPartType().getPartName().getName());
                     repairDTO.setCost(repair.getCost().doubleValue());
                     totalRepairs.add(repairDTO);
                 }
@@ -587,12 +588,13 @@ public class AircraftServiceImpl implements AircraftService {
 
             List<List<String>> partsReturn = new ArrayList<>();
             for (Part part : parts) {
+                AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
                 //creates a list of part number, type, and status to return.
                 List<String> partInformation = new ArrayList<>();
 
                 partInformation.add(part.getPartNumber().toString());
                 partInformation.add(part.getPartType().getPartName().getName());
-                partInformation.add(part.getPartStatus().getLabel());
+                partInformation.add(aircraftPart.getPartStatus().getLabel());
 
                 partsReturn.add(partInformation);
             }
@@ -624,13 +626,12 @@ public class AircraftServiceImpl implements AircraftService {
 
         for (Part part : parts) {
             if (part.getPartType() == newPart.get().getPartType()) {
-                part.setAircraft(null);
                 partRepository.save(part);
             }
         }
-
-        newPart.get().setAircraft(aircraft.get());
+        AircraftPart aircraftPart = new AircraftPart(aircraft.get(), newPart.get(), PartStatus.OPERATIONAL, (double) 0L);
         partRepository.save(newPart.get());
+        aircraftPartRepository.save(aircraftPart);
 
         return ResponseEntity.ok("");
     }

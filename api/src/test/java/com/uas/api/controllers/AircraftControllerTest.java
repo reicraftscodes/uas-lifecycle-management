@@ -386,7 +386,7 @@ public class AircraftControllerTest {
 
         assertEquals("", response);
     }
-
+/*
     @WithMockUser(value = "user")
     @Test
     public void getAircraftPartsSuccess() throws Exception {
@@ -439,6 +439,8 @@ public class AircraftControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+ */
 
     @WithMockUser(value = "user")
     @Test

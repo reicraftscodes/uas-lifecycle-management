@@ -259,7 +259,7 @@ public class AircraftServiceTests {
         assertEquals("Should return platform status operational", "Operational", aircraftDTOList.get(0).getPlatformStatus());
         assertEquals("Should return tail number G-002", "G-003", aircraftDTOList.get(1).getTailNumber());
     }
-
+/*
     @Test
     public void getAircraftForCeoReturnSuccess() {
         Location location = new Location("London","123 London road",null,"LL12 2LL","England");
@@ -300,4 +300,6 @@ public class AircraftServiceTests {
         assertEquals("Aircraft 1 should have 2 parts: ",2,costsList.get(0).getParts().size());
 
     }
+
+ */
 }
