@@ -3,6 +3,7 @@ package com.uas.api.repositories;
 import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.enums.PartStatus;
+import com.uas.api.repositories.projections.PartFailureTimeProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,12 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
      */
     Optional<Part> findPartBypartNumber(long partNumber);
 
+    /**
+     * Gets a list of the parts and their failure times.
+     * @return the list of parts.
+     */
+    @Query(value = "SELECT PartTypeID, TypicalFailureTime FROM Parts", nativeQuery = true)
+    List<PartFailureTimeProjection> findAllProjectedBy();
 
     /**
      *  Finds all parts associated with an aircraft.

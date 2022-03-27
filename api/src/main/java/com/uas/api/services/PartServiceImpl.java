@@ -4,7 +4,7 @@ import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.*;
 import com.uas.api.repositories.*;
-import com.uas.api.repositories.projections.PartTypeFailureTimeProjection;
+import com.uas.api.repositories.projections.PartFailureTimeProjection;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -249,8 +249,8 @@ public class PartServiceImpl implements PartService {
     @Override
     public List<PartTypeFailureTimeDTO> getFailureTime() {
         List<PartTypeFailureTimeDTO> failureTime = new ArrayList<>();
-        List<PartTypeFailureTimeProjection> fts = partTypeRepository.findAllProjectedBy();
-        for (PartTypeFailureTimeProjection part:fts) {
+        List<PartFailureTimeProjection> fts = partRepository.findAllProjectedBy();
+        for (PartFailureTimeProjection part:fts) {
             failureTime.add(new PartTypeFailureTimeDTO(part.getPartType(), part.getTypicalFailureTime()));
         }
         return failureTime;

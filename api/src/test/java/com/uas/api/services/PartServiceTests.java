@@ -2,12 +2,14 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
 import com.uas.api.models.dtos.PartStockLevelDTO;
+import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
 import com.uas.api.models.entities.*;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
+import com.uas.api.repositories.projections.PartFailureTimeProjection;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.projection.ProjectionFactory;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.test.util.AssertionErrors;
 
 import java.math.BigDecimal;
@@ -141,23 +145,24 @@ public class PartServiceTests {
         assertTrue(partStock.get(0).getPartStockLevelDTOs().size() > 0);
         assertTrue(partStock.get(1).getPartStockLevelDTOs().size() > 0);
     }
-//    @Test
-//    public void whenFailureTimeIsRequestedForAllPartsThenItShouldReturnAValidResponse() {
-//        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
-//        PartType mockPartType = new PartType(1L, PartName.WING_A); // BigDecimal.valueOf(100), 40L, 550L
-//        PartTypeFailureTimeProjection partTypeProjection = factory.createProjection(PartTypeFailureTimeProjection.class);
-//        partTypeProjection.setPartType(mockPartType.getPartName().getName());
-//        partTypeProjection.setTypicalFailureTime(mockPartType.getTypicalFailureTime());
-//        List<PartTypeFailureTimeProjection> queryResults = new ArrayList<>();
-//        queryResults.add(partTypeProjection);
-//
-//        when(partTypeRepository.findAllProjectedBy()).thenReturn(queryResults);
-//
-//        List<PartTypeFailureTimeDTO> results = partService.getFailureTime();
-//        Assertions.assertTrue(results.size() > 0);
-//        Assertions.assertEquals(550L, results.get(0).getFailureTime());
-//        Assertions.assertEquals(PartName.WING_A.getName(), results.get(0).getPartType());
-//    }
+    @Test
+    public void whenFailureTimeIsRequestedForAllPartsThenItShouldReturnAValidResponse() {
+        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
+        PartType mockPartType = new PartType(1L, PartName.WING_A);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(100), 40L, 550L);
+        PartFailureTimeProjection partTypeProjection = factory.createProjection(PartFailureTimeProjection.class);
+        partTypeProjection.setPartType(mockPartType.getPartName().getName());
+        partTypeProjection.setTypicalFailureTime(mockPart.getTypicalFailureTime());
+        List<PartFailureTimeProjection> queryResults = new ArrayList<>();
+        queryResults.add(partTypeProjection);
+
+        when(partRepository.findAllProjectedBy()).thenReturn(queryResults);
+
+        List<PartTypeFailureTimeDTO> results = partService.getFailureTime();
+        Assertions.assertTrue(results.size() > 0);
+        Assertions.assertEquals(550L, results.get(0).getFailureTime());
+        Assertions.assertEquals(PartName.WING_A.getName(), results.get(0).getPartType());
+    }
 
 //    @Test
 //    public void whenLocationIsValidThenShouldReturnStockLevelsForLocation() throws NotFoundException {
