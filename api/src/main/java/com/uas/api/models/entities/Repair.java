@@ -28,7 +28,7 @@ public class Repair {
      * Part number.
      */
     @ManyToOne
-    @JoinColumn(name = "aircraftPartID", referencedColumnName = "AircraftPartID")
+    @JoinColumn(name = "AircraftPartID", referencedColumnName = "AircraftPartID")
     private AircraftPart aircraftPart;
 
     /**

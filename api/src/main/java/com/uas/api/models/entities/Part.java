@@ -1,11 +1,10 @@
 package com.uas.api.models.entities;
 
-import com.uas.api.models.entities.enums.PartStatus;
 import lombok.*;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -19,34 +18,40 @@ public class Part {
      * Part number id.
      */
     @Id
-    @Column(name = "PartNumber")
+    @Column(name = "partid")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partNumber;
     /**
      * Part Type ID.
      */
-    @ManyToOne
-    @JoinColumn(name = "PartID")
+    @OneToOne
+    @JoinColumn(name = "parttypeid", referencedColumnName = "parttypeid")
     private PartType partType;
+
+    /**
+     * Part Name
+     */
+    @Column(name = "partname")
+    private String partName;
     /**
      * Manufacture date.
      */
-    @Column(name = "Manufacture")
+    @Column(name = "manufacture")
     private LocalDateTime manufacture;
     /**
      * Cost.
      */
-    @Column(name = "Price")
+    @Column(name = "price")
     private BigDecimal price;
     /**
      * Weight.
      */
-    @Column(name = "Weight")
+    @Column(name = "weight")
     private Long weight;
     /**
      * Failure time.
      */
-    @Column(name = "TypicalFailureTime")
+    @Column(name = "typicalfailuretime")
     private Long typicalFailureTime;
 
     /**
@@ -67,16 +72,18 @@ public class Part {
      * @param weight Weight of the part.
      * @param typicalFailureTime Typical failure time of the part.
      */
-    public Part(final PartType partType, final BigDecimal price, final long weight, final long typicalFailureTime) {
+    public Part(final PartType partType, final String partName, final BigDecimal price, final long weight, final long typicalFailureTime) {
         this.partType = partType;
+        this.partName = partName;
         this.price = price;
         this.weight = weight;
         this.typicalFailureTime = typicalFailureTime;
     }
 
 
-    public Part(PartType partType, LocalDateTime manufacture, BigDecimal price, long weight, long typicalFailureTime) {
+    public Part(PartType partType, final String partName, LocalDateTime manufacture, BigDecimal price, long weight, long typicalFailureTime) {
         this.partType = partType;
+        this.partName = partName;
         this.manufacture = manufacture;
         this.price = price;
         this.weight = weight;

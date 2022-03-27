@@ -26,7 +26,7 @@ public class StockToOrders {
      * Part type id.
      */
     @ManyToOne
-    @JoinColumn(name = "PartID", referencedColumnName = "PartID")
+    @JoinColumn(name = "parttypeid", referencedColumnName = "parttypeid")
     private PartType partID;
     /**
      * Quantity of part.

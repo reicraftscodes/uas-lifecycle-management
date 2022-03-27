@@ -8,6 +8,7 @@ import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.UserRepository;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,13 +84,6 @@ public class AircraftServiceImpl implements AircraftService {
         this.userRepository = userRepository;
     }
 
-    /**
-     * Used to save an aircraft to the database.
-     * @param aircraft The aircraft entity to be saved.
-     */
-    public void addAircraft(final Aircraft aircraft) {
-        aircraftRepository.save(aircraft);
-    }
 
     /**
      * Takes the post request body and adds an aircraft from this.
@@ -97,6 +91,7 @@ public class AircraftServiceImpl implements AircraftService {
      * @return Returns a string which is null if the aircraft is successfully added but if there is an error this string is used so
      * it can be returned in the response body.
      */
+    //TODO1: Refactor this and create exceptions.
     @Override
     public String addAircraftFromJson(final AircraftAddNewDTO requestData) {
         //Stores error messages and tracks if any errors have occured.
@@ -352,7 +347,7 @@ public class AircraftServiceImpl implements AircraftService {
      */
     public Integer calculateTotalRepairs(final String tailNumber) {
 
-        Integer totalRepairs = repairRepository.findAllByPart_Aircraft_TailNumber(tailNumber).size();
+        Integer totalRepairs = repairRepository.findAllByAircraftPart_Aircraft_TailNumber(tailNumber).size();
 
         return totalRepairs;
     }
@@ -363,21 +358,18 @@ public class AircraftServiceImpl implements AircraftService {
     @Override
     public Integer getNumberOfAircraftWithPartsNeedingRepair() {
         //Get all parts which are awaiting repair.
-        List<Part> parts = partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR);
+        List<AircraftPart> aircraftParts = aircraftPartRepository.findAircraftPartsByPartStatus(PartStatus.AWAITING_REPAIR);
         List<Aircraft> aircraftList = new ArrayList<>();
-        for (Part part : parts
+        for (AircraftPart aircraftPart : aircraftParts) {
 
-        ) {
-            AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
             if (aircraftList.contains(aircraftPart.getAircraft())) {
                 continue;
             } else {
                 aircraftList.add(aircraftPart.getAircraft());
             }
         }
-        return aircraftList.size();
+            return aircraftList.size();
     }
-
 
     /**
      * Gets a list of all aircrafts in the db.
@@ -475,18 +467,19 @@ public class AircraftServiceImpl implements AircraftService {
             aircraftDTO.setPartCost(totalPartCost);
             aircraftDTO.setTotalCost(totalPartCost + totalRepairCost);
 
-            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft);
+            List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft(aircraft);
 
             List<PartCostsDTO> partsForAircraft = new ArrayList<>();
-            for (Part part : parts) {
+            for (AircraftPart aircraftPart : parts) {
                 PartCostsDTO aircraftPartDTO = new PartCostsDTO();
-                AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
 
-                aircraftPartDTO.setPartName(part.getPartType().getPartName().getName());
-                aircraftPartDTO.setPartCost(part.getPrice().doubleValue());
+                aircraftPartDTO.setPartName(aircraftPart.getPart().getPartType().getPartName().getName());
+                aircraftPartDTO.setPartCost(aircraftPart.getPart().getPrice().doubleValue());
                 aircraftPartDTO.setPartStatus(aircraftPart.getPartStatus().getLabel());
 
-                List<Repair> repairs = repairRepository.findAllByPart(part);
+                //repairRepository.findAllByPart(part);
+                List<Repair> repairs = repairRepository.findAllByAircraftPart(aircraftPart);
+
                 List<PartRepairDTO> totalRepairs = new ArrayList<>();
                 for (Repair repair : repairs) {
                     PartRepairDTO repairDTO = new PartRepairDTO();
@@ -525,6 +518,27 @@ public class AircraftServiceImpl implements AircraftService {
             ceoAircraftCostsOverviewDTOS.add(ceoAircraftCostsOverviewDTO);
         }
         return ceoAircraftCostsOverviewDTOS;
+    }
+
+    /**
+     * Creates another aircraft dto but with less information to reduce request time.
+     * @return returns list of aircraft costs and repair costs dto.
+     */
+    @Override
+    public AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(final String aircraftId) throws NotFoundException {
+        Optional<Aircraft> aircraft = aircraftRepository.findById(aircraftId);
+        if (aircraft.isEmpty()) {
+            throw new NotFoundException("Aircraft not found.");
+        } else {
+            double totalPartCost = getTotalPartCostForSpecificAircraft(aircraft.get());
+            double totalRepairCost = getTotalRepairCostForSpecificAircraft(aircraft.get());
+            AircraftCostsOverviewDTO ceoAircraftCostsOverviewDTO = new AircraftCostsOverviewDTO();
+            ceoAircraftCostsOverviewDTO.setTailNumber(aircraft.get().getTailNumber());
+            ceoAircraftCostsOverviewDTO.setRepairCost(totalRepairCost);
+            ceoAircraftCostsOverviewDTO.setPartCost(totalPartCost);
+            ceoAircraftCostsOverviewDTO.setTotalCost(totalRepairCost + totalPartCost);
+            return ceoAircraftCostsOverviewDTO;
+        }
     }
 
     /**
@@ -584,16 +598,16 @@ public class AircraftServiceImpl implements AircraftService {
         if (aircraft.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aircraft not found!");
         } else {
-            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+            List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft(aircraft.get());
 
             List<List<String>> partsReturn = new ArrayList<>();
-            for (Part part : parts) {
-                AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPartNumber());
+            for (AircraftPart part : parts) {
+                AircraftPart aircraftPart = aircraftPartRepository.findAircraftPartByPart_PartNumber(part.getPart().getPartNumber());
                 //creates a list of part number, type, and status to return.
                 List<String> partInformation = new ArrayList<>();
 
-                partInformation.add(part.getPartNumber().toString());
-                partInformation.add(part.getPartType().getPartName().getName());
+                partInformation.add(part.getPart().getPartNumber().toString());
+                partInformation.add(part.getPart().getPartType().getPartName().getName());
                 partInformation.add(aircraftPart.getPartStatus().getLabel());
 
                 partsReturn.add(partInformation);
@@ -622,16 +636,17 @@ public class AircraftServiceImpl implements AircraftService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("New part not found!");
         }
 
-        List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
+        List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft(aircraft.get());
 
-        for (Part part : parts) {
-            if (part.getPartType() == newPart.get().getPartType()) {
-                partRepository.save(part);
+        for (AircraftPart part : parts) {
+            if (part.getPart().getPartType() == newPart.get().getPartType()) {
+                aircraftPartRepository.save(part);
             }
         }
         AircraftPart aircraftPart = new AircraftPart(aircraft.get(), newPart.get(), PartStatus.OPERATIONAL, (double) 0L);
         partRepository.save(newPart.get());
         aircraftPartRepository.save(aircraftPart);
+
 
         return ResponseEntity.ok("");
     }

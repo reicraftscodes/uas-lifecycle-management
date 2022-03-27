@@ -1,12 +1,10 @@
 package com.uas.api.controller;
 
-import com.uas.api.models.dtos.LocationStockLevelsDTO;
-import com.uas.api.models.dtos.PartRepairsDTO;
-import com.uas.api.models.dtos.PartStockLevelDTO;
-import com.uas.api.models.dtos.PartTypeFailureTimeDTO;
+import com.uas.api.models.dtos.*;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -52,14 +49,9 @@ public class PartsController {
      * @return returns a response entity of success or an error with the error message.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    ResponseEntity<?> addPart(@RequestBody final HashMap<String, String> requestData) {
-        String response = partService.addPartFromJSON(requestData);
-
-        if (response.equals("")) {
-            return ResponseEntity.ok("{\"response\":\"Success\"}");
-        } else {
-            return ResponseEntity.badRequest().body("{\"response\":\"" + response + "\"}");
-        }
+    ResponseEntity<?> addPart(@RequestBody final AddPartDTO requestData) throws NotFoundException {
+        partService.addPartFromJSON(requestData);
+        return new ResponseEntity<>("{\"response\":\"Success\"}", HttpStatus.OK);
     }
 
     /**
@@ -67,7 +59,7 @@ public class PartsController {
      * @return list of parts with low stock & response entity.
      */
     @GetMapping("/low-stock")
-    public ResponseEntity<List<PartStockLevelDTO>> getPartsAtLowStock() {
+    public ResponseEntity<List<PartStockLevelDTO>> getPartsAtLowStock() throws NotFoundException {
         List<PartStockLevelDTO> partLowStockLevelDTOs = partService.getPartsAtLowStock();
         return ResponseEntity.ok(partLowStockLevelDTOs);
     }
@@ -80,12 +72,8 @@ public class PartsController {
     public ResponseEntity<?> requestMoreStock(@RequestBody final MoreStockRequest moreStockRequest) {
         LocalDateTime localDateTime = LocalDateTime.now();
         LOGGER.info("Request for more stock made at: " + localDateTime + " by user: user");
-        boolean confirmed = stockControlService.addMoreStock(moreStockRequest);
-        if (confirmed) {
-            return new ResponseEntity<>(null, HttpStatus.OK);
-        } else {
-            return ResponseEntity.badRequest().body("Failed to save stock request!");
-        }
+        stockControlService.addMoreStock(moreStockRequest);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     /**
@@ -93,7 +81,7 @@ public class PartsController {
      * @return list of parts stock levels at all locations & response entity.
      */
     @GetMapping("/stock")
-    public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() {
+    public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() throws Exception {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
         return ResponseEntity.ok(locationStockLevelsDTOs);
     }
@@ -103,7 +91,7 @@ public class PartsController {
      * @return list of parts stock levels at location & response entity.
      */
     @GetMapping("/location/stock")
-    public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @RequestParam("location") String location) {
+    public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @RequestParam("location") String location) throws NotFoundException {
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
         return ResponseEntity.ok(partStockLevelDTOs);
     }
@@ -123,7 +111,7 @@ public class PartsController {
      * @return list containing the most common failing parts and their cost.
      */
     @GetMapping("/most-failing/{topN}")
-    public ResponseEntity<List<PartRepairsDTO>> getPartsMostFailing(@PathVariable("topN") final int topN) {
+    public ResponseEntity<List<PartRepairsDTO>> getPartsMostFailing(@PathVariable("topN") final int topN) throws NotFoundException {
         List<PartRepairsDTO> partRepairsDTOs = partService.getMostCommonFailingParts(topN);
         return ResponseEntity.ok(partRepairsDTOs);
     }

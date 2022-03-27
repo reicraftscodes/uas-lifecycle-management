@@ -55,21 +55,14 @@ public class StockControlServiceImpl implements StockControlService {
     /**
      * Add more stock when requested.
      * @param moreStockRequest request body from controller.
-     * @return true or false for success.
+     * @return stock order.
      */
-    public boolean addMoreStock(final MoreStockRequest moreStockRequest) {
-        Location orderLocation = null;
+    public StockReceipt addMoreStock(final MoreStockRequest moreStockRequest) {
+        StockReceipt reciept = null;
         ArrayList<Long> partTypes = moreStockRequest.getPartTypes();
         ArrayList<Integer> quantities = moreStockRequest.getQuantities();
-        Optional<Location> orderLocationOpt = locationRepository.findLocationByLocationName(moreStockRequest.getLocation());
-        if (orderLocationOpt.isPresent()) {
-            orderLocation = orderLocationOpt.get();
-        } else {
-            throw new IllegalArgumentException("Location does not exist!");
-        }
-        if (partTypes.size() != quantities.size()) {
-            throw new IndexOutOfBoundsException("Missing quantity for part type in order!");
-        }
+        Location orderLocation = checkLocation(moreStockRequest.getLocation());
+        checkPartTypesAndQuantities(partTypes, quantities);
         LocalDateTime orderTime = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Timestamp ts = Timestamp.valueOf(orderTime.format(dtf));
@@ -77,11 +70,54 @@ public class StockControlServiceImpl implements StockControlService {
         ordersRepository.save(newOrder);
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);
-            PartType partType = partTypeRepository.findPartTypeById(part);
+            Optional<PartType> partType = partTypeRepository.findPartTypeById(part);
             int quantity = quantities.get(i);
-            StockToOrders newStockToOrder = new StockToOrders(newOrder, partType, quantity);
+            StockToOrders newStockToOrder = new StockToOrders(newOrder, partType.get(), quantity);
             stockToOrdersRepository.save(newStockToOrder);
         }
-        return true;
+        reciept = new StockReceipt(String.valueOf(newOrder.getTotalCost()));
+        return reciept;
+
+    }
+
+    /**
+     * Checks that the location is valid.
+     * @param location
+     * @return the location if it is valid.
+     */
+    private Location checkLocation(final String location) {
+        Location orderLocation = null;
+        Optional<Location> orderLocationOpt = locationRepository.findLocationByLocationName(location);
+        if (orderLocationOpt.isPresent()) {
+            orderLocation = orderLocationOpt.get();
+            return orderLocation;
+        } else {
+            throw new IllegalArgumentException("Location does not exist!");
+        }
+    }
+
+    /**
+     * Checks part types and quantities are the same length.
+     * @param partTypes
+     * @param quantities
+     */
+    private void checkPartTypesAndQuantities(final ArrayList<Long> partTypes, final ArrayList<Integer> quantities) {
+        if (partTypes.size() != quantities.size()) {
+            throw new IndexOutOfBoundsException("Missing quantity for part type in order!");
+        }
+    }
+    static class StockReceipt {
+        /**
+         * The cost of the order.
+         */
+        private final String cost;
+
+        StockReceipt(final String cost) {
+            this.cost = cost;
+        }
+
+        public String getCost() {
+            return cost;
+        }
     }
 }
