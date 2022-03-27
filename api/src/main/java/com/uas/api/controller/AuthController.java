@@ -62,7 +62,7 @@ public class AuthController {
      * If you run it multiple times, it generates multiple tokens which are similar to a browser refresh.
      * @return getJwtReponse
      */
-    @PostMapping("/getJwtInfo")
+    @GetMapping("/getJwtInfo")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_CTO', 'ROLE_USER_LOGISTIC', 'ROLE_USER_CEO', 'ROLE_USER_COO') ")
     public ResponseEntity<JwtResponse> getJwtTokenInfo() {
         return authService.getJwtResponse();
