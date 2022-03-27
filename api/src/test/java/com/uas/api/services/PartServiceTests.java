@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.LocationStockLevelsDTO;
+import com.uas.api.models.dtos.PartStockLevelDTO;
 import com.uas.api.models.entities.*;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
@@ -24,7 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class PartServiceTests {
@@ -41,45 +44,57 @@ public class PartServiceTests {
     private RepairRepository repairRepository;
     @Mock
     private AircraftPartRepository aircraftPartRepository;
+    @Mock
+    private StockRepository stockRepository;
     @MockBean
     @InjectMocks
     private PartServiceImpl partService;
 
-//    @Test
-//    public void givenGetLowStockPartsReturn22Parts() throws NotFoundException {
-//        List<Location> locations = new ArrayList<>();
-//        Location locationCardiff = new Location();
-//        locationCardiff.setLocationName("Cardiff");
-//        Location locationBristol = new Location();
-//        locationBristol.setLocationName("Bristol");
-//        locations.add(locationCardiff);
-//        locations.add(locationBristol);
-//
-//        when(locationRepository.findAll()).thenReturn(locations);
-//        when(partRepository.countAllByLocation_LocationNameAndPartType_PartName(any(), any())).thenReturn(30);
-//
-//        List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
-//
-//        assertEquals("Should return 22 parts", 22, partStockLevelDTOs.size());
-//    }
-//
-//    @Test
-//    public void givenGetLowStockPartsReturn0Parts() throws NotFoundException {
-//        List<Location> locations = new ArrayList<>();
-//        Location locationCardiff = new Location();
-//        locationCardiff.setLocationName("Cardiff");
-//        Location locationBristol = new Location();
-//        locationBristol.setLocationName("Bristol");
-//        locations.add(locationCardiff);
-//        locations.add(locationBristol);
-//
-//        when(locationRepository.findAll()).thenReturn(locations);
-//        when(partRepository.countAllByLocation_LocationNameAndPartType_PartName(any(), any())).thenReturn(41);
-//
-//        List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
-//
-//        assertEquals("Should return 0 parts", 0, partStockLevelDTOs.size());
-//    }
+    @Test
+    public void givenGetLowStockPartsReturn22Parts() throws NotFoundException {
+        List<Location> locations = new ArrayList<>();
+        Location locationCardiff = new Location();
+        locationCardiff.setLocationName("Cardiff");
+        Location locationBristol = new Location();
+        locationBristol.setLocationName("Bristol");
+        locations.add(locationCardiff);
+        locations.add(locationBristol);
+        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        List<Part> parts = new ArrayList<>();
+        parts.add(mockPart);
+
+        when(locationRepository.findAll()).thenReturn(locations);
+        when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(30);
+
+        List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
+
+        assertEquals("Should return 2 parts", 2, partStockLevelDTOs.size());
+    }
+
+    @Test
+    public void givenGetLowStockPartsReturn0Parts() throws NotFoundException {
+        List<Location> locations = new ArrayList<>();
+        Location locationCardiff = new Location();
+        locationCardiff.setLocationName("Cardiff");
+        Location locationBristol = new Location();
+        locationBristol.setLocationName("Bristol");
+        locations.add(locationCardiff);
+        locations.add(locationBristol);
+        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        List<Part> parts = new ArrayList<>();
+        parts.add(mockPart);
+
+        when(locationRepository.findAll()).thenReturn(locations);
+        when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(41);
+
+        List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
+
+        assertEquals("Should return 0 parts", 0, partStockLevelDTOs.size());
+    }
     @Test
     public void whenThereAreNoLocationsErrorShouldBeThrownForGetPartsAtLowStock() {
         List<Location> locations = new ArrayList<>();
@@ -112,8 +127,13 @@ public class PartServiceTests {
         locationBristol.setLocationName("Bristol");
         locations.add(locationCardiff);
         locations.add(locationBristol);
-        when(locationRepository.findAll()).thenReturn(locations);
+        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        List<Part> parts = new ArrayList<>();
+        parts.add(mockPart);
 
+        when(locationRepository.findAll()).thenReturn(locations);
+        when(partRepository.findAll()).thenReturn(parts);
         List<LocationStockLevelsDTO> partStock = partService.getPartStockLevelsForAllLocations();
         Assertions.assertEquals(2, partStock.size());
         // Testing to make sure the length is bigger than zero rather than matching specific size,
@@ -124,7 +144,7 @@ public class PartServiceTests {
 //    @Test
 //    public void whenFailureTimeIsRequestedForAllPartsThenItShouldReturnAValidResponse() {
 //        ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
-//        PartType mockPartType = new PartType(1L, PartName.WING_A, BigDecimal.valueOf(100), 40L, 550L);
+//        PartType mockPartType = new PartType(1L, PartName.WING_A); // BigDecimal.valueOf(100), 40L, 550L
 //        PartTypeFailureTimeProjection partTypeProjection = factory.createProjection(PartTypeFailureTimeProjection.class);
 //        partTypeProjection.setPartType(mockPartType.getPartName().getName());
 //        partTypeProjection.setTypicalFailureTime(mockPartType.getTypicalFailureTime());
