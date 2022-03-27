@@ -10,9 +10,9 @@ public class AddPartDTO {
      */
     private final Long partType;
     /**
-     * The aircraft tail number.
+     * The part name
      */
-    private final String tailNumber;
+    private final String partName;
     /**
      * The location name.
      */
@@ -21,8 +21,6 @@ public class AddPartDTO {
      * The manufacture date as a string.
      */
     private final String manufacture;
-    /**
-     * The status of the part as a string.
-     */
-    private final String partStatus;
+    private final double price;
+    private final long weight;
 }

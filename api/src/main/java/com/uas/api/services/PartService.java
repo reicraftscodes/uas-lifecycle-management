@@ -1,7 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.Part;
+import com.uas.api.models.entities.AircraftPart;
 import javassist.NotFoundException;
 
 import java.util.List;
@@ -50,7 +50,12 @@ public interface PartService {
      * @param parts The list of parts to update.
      * @param flyTime The flight time to be added to the parts flight time.
      */
-    void updatePartFlyTime(List<Part> parts, int flyTime);
+    void updatePartFlyTime(List<AircraftPart> parts, int flyTime);
+
+    /**
+     * Update all flight hours.
+     */
+    void updateAllFlightHours(LogFlightDTO request) throws NotFoundException;
 
     /**
      * Gets all availble parts for a specific part type.
