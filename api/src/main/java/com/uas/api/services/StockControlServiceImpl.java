@@ -53,21 +53,27 @@ public class StockControlServiceImpl implements StockControlService {
      */
     public StockReceipt addMoreStock(final MoreStockRequest moreStockRequest) {
         StockReceipt reciept = null;
-        ArrayList<Long> partTypes = moreStockRequest.getPartTypes();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        double totalCost = 0;
+
+        ArrayList<Long> partTypes = moreStockRequest.getPartIDs();
         ArrayList<Integer> quantities = moreStockRequest.getQuantities();
         Location orderLocation = checkLocation(moreStockRequest.getLocation());
-        checkPartTypesAndQuantities(partTypes, quantities);
         LocalDateTime orderTime = LocalDateTime.now();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         Timestamp ts = Timestamp.valueOf(orderTime.format(dtf));
+
+        checkPartTypesAndQuantities(partTypes, quantities);
+
         Orders newOrder = new Orders(orderLocation,moreStockRequest.getSupplierEmail(), moreStockRequest.getCost(), ts);
         ordersRepository.save(newOrder);
+
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);
             Optional<Part> partType = partRepository.findPartBypartNumber(part);
             int quantity = quantities.get(i);
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType.get(), quantity);
             stockToOrdersRepository.save(newStockToOrder);
+            totalCost += partType.get().getPrice().doubleValue() * quantity;
         }
         reciept = new StockReceipt(String.valueOf(newOrder.getTotalCost()));
         return reciept;

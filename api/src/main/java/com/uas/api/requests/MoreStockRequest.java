@@ -25,7 +25,7 @@ public class MoreStockRequest {
     /**
      * All the part types.
      */
-    private ArrayList<Long> partTypes;
+    private ArrayList<Long> partIDs;
     /**
      * Quantities for part types.
      */
