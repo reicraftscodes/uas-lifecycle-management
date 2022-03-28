@@ -75,7 +75,10 @@ public class StockControlServiceImpl implements StockControlService {
             stockToOrdersRepository.save(newStockToOrder);
             totalCost += partType.get().getPrice().doubleValue() * quantity;
         }
-        reciept = new StockReceipt(String.valueOf(newOrder.getTotalCost()));
+        newOrder.setTotalCost(totalCost);
+        ordersRepository.save(newOrder);
+
+        reciept = new StockReceipt(String.valueOf(totalCost));
         return reciept;
 
     }

@@ -2,12 +2,14 @@ package com.uas.api.models.entities;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity(name = "Orders")
 @Getter
+@Setter
 @NoArgsConstructor
 public class Orders {
     /**

@@ -19,10 +19,6 @@ public class MoreStockRequest {
      */
     private String supplierEmail;
     /**
-     * Cost of order.
-     */
-    private double cost;
-    /**
      * All the part types.
      */
     private ArrayList<Long> partIDs;
