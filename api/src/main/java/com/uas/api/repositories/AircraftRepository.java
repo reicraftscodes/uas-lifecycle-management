@@ -14,7 +14,7 @@ public interface AircraftRepository extends JpaRepository<Aircraft, String> {
      * @param tailNumber The tailnumber of the aircraft that the cost is being calculated for.
      * @return returns a double of the total cost.
      */
-    @Query(value = "SELECT SUM(price) FROM parts WHERE partid = ANY(SELECT partid FROM AircraftPart WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
+    @Query(value = "SELECT SUM(price) FROM parts WHERE PartID = ANY(SELECT PartID FROM AircraftPart WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
     Double getTotalPartCostofAircraft(@Param("tailNumber") String tailNumber);
 
 
@@ -22,7 +22,7 @@ public interface AircraftRepository extends JpaRepository<Aircraft, String> {
      * Uses SQL query to get the total part cost of all aircraft.
      * @return returns the total cost.
      */
-    @Query(value = "SELECT SUM(price) FROM parts WHERE partid = ANY(SELECT partid FROM AircraftPart WHERE AircraftTailNumber IS NOT NULL)", nativeQuery = true)
+    @Query(value = "SELECT SUM(price) FROM parts WHERE PartID = ANY(SELECT PartID FROM AircraftPart WHERE AircraftTailNumber IS NOT NULL)", nativeQuery = true)
     Double getTotalPartCostofAllAircraft();
 
     /**

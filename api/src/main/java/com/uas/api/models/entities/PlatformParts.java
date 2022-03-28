@@ -29,10 +29,10 @@ public class PlatformParts {
     private Platform platform;
 
     /**
-     * parttypeid.
+     * PartTypeID.
      */
     @OneToOne
-    @JoinColumn(name = "parttypeid", referencedColumnName = "parttypeid")
+    @JoinColumn(name = "PartTypeID", referencedColumnName = "PartTypeID")
     private PartType part;
 
 }

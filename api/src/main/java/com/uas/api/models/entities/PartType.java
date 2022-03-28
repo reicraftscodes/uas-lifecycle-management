@@ -18,12 +18,12 @@ public class PartType {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "parttypeid")
+    @Column(name = "PartTypeID")
     private Long id;
     /**
      * Part name.
      */
-    @Column(name = "parttype")
+    @Column(name = "PartTypeName")
     private PartName partName;
 
 

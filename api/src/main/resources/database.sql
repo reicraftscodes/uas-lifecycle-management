@@ -31,22 +31,23 @@ CREATE TABLE Aircraft (
 #Parts types for each Platform_Are stored here. Parts for platform 1 and platform 2 have the same name but due to the size and design differences between a convential drone and
 # a quadcopter its likely they are different so a platform type is stored here aswell as the part types provided.
 CREATE TABLE PartTypes (
-	parttypeid int NOT NULL AUTO_INCREMENT,
+	PartTypeID int NOT NULL AUTO_INCREMENT,
     PartTypeName SET("Wing A","Wing B","Fuselage","Tail","Propeller","Motor","Communications Radio","Payload Electo Optical","Payload Infra-Red","Gimble","Quad Arm") NOT NULL,
-    PRIMARY KEY (parttypeid)
+    PRIMARY KEY (PartTypeID)
 );
 
 #specific parts are stored in this table. If they are linked to an aircraft a tailnumber can be used as a foreign key. Failure time isnt required as the part may not have failed yet.
 CREATE TABLE Parts (
-	partid int NOT NULL AUTO_INCREMENT,
-	parttypeid int NOT NULL,
+	PartID int NOT NULL AUTO_INCREMENT,
+	PartTypeID int NOT NULL,
+    PartName TEXT NOT NULL,
     Manufacture DATETIME NOT NULL,
 	Price decimal(10,2) NOT NULL,
     Weight int NOT NULL,
     TypicalFailureTime int NOT NULL,
-    PRIMARY KEY (partid),
-    UNIQUE (partid),
-    FOREIGN KEY (parttypeid) REFERENCES PartTypes(parttypeid)
+    PRIMARY KEY (PartID),
+    UNIQUE (PartID),
+    FOREIGN KEY (PartTypeID) REFERENCES PartTypes(PartTypeID)
 );
 
 CREATE TABLE Platforms (
@@ -58,21 +59,21 @@ CREATE TABLE Platforms (
 CREATE TABLE PlatformParts (
 	PlatformPartID int NOT NULL AUTO_INCREMENT,
     PlatformID int NOT NULL,
-    parttypeid int NOT NULL,
+    PartTypeID int NOT NULL,
     PRIMARY KEY(PlatformPartId),
     FOREIGN KEY (PlatformID) REFERENCES Platforms(PlatformID),
-    FOREIGN KEY (parttypeid) REFERENCES PartTypes(parttypeid)
+    FOREIGN KEY (PartTypeID) REFERENCES PartTypes(PartTypeID)
 );
 
 CREATE TABLE AircraftPart (
 	AircraftPartID int NOT NULL AUTO_INCREMENT,
     AircraftTailNumber varchar(255) NOT NULL,
-    partid INT (11),
+    PartID INT (11),
 	PartStatus SET("Operational","Awaiting Repair","Being Repaired","Beyond Repair") NOT NULL,
     FlightHours INT (11),
     PRIMARY KEY(AircraftPartId),
     FOREIGN KEY (AircraftTailNumber) REFERENCES Aircraft(TailNumber),
-    FOREIGN KEY (partid) REFERENCES Parts(partid)
+    FOREIGN KEY (PartID) REFERENCES Parts(PartID)
 );
 
 #unsure on exact design for repairs table as client never mentioned it but it stores the part number as a foreign key so the number of repairs and their costs can be looked up
@@ -87,11 +88,11 @@ CREATE TABLE Repairs (
 
 CREATE TABLE Stock (
 	StockID int NOT NULL AUTO_INCREMENT,
-    partid int NOT NULL,
+    PartID int NOT NULL,
     StockQuantity INT (11),
 	LocationName varchar(255) NOT NULL,
     PRIMARY KEY(StockID),
-    FOREIGN KEY (partid) REFERENCES Parts(partid),
+    FOREIGN KEY (PartID) REFERENCES Parts(PartID),
     FOREIGN KEY (LocationName) REFERENCES Aircraft(LocationName)
 );
 
@@ -109,11 +110,11 @@ CREATE TABLE Orders (
 CREATE TABLE StockToOrders (
 	StockToOrderID INT NOT NULL AUTO_INCREMENT,
 	OrderID INT NOT NULL,
-    parttypeid INT NOT NULL,
+    PartID INT NOT NULL,
     Quantity INT NOT NULL,
     PRIMARY KEY(StockToOrderID),
     FOREIGN KEY(OrderID) REFERENCES Orders(OrderID),
-    FOREIGN KEY(parttypeid) REFERENCES parttypes(parttypeid)
+    FOREIGN KEY(PartID) REFERENCES parts(PartID)
 );
 
 CREATE TABLE ROLES(
@@ -194,48 +195,24 @@ INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType, Fly
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType, FlyingHours) VALUES ("G-019","Dublin","Operational","Platform A", 240);
 INSERT INTO Aircraft (TailNumber, LocationName, PlatformStatus,PlatformType, FlyingHours) VALUES ("G-020","Dublin","Operational","Platform B", 150);
 
-#parts that have been assigned to aircrafts
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("1","2022-02-09 00:00:00","200","50000","600");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("2","2022-02-09 00:00:00","250","55000","600");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("3","2022-02-09 00:00:00","4000","100000","1000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("4","2022-02-09 00:00:00","2000","30000","1250");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","899.99","1000","250");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","400","5500","1200");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","1000","600","5000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("8","2022-02-09 00:00:00","1000","600","5000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("9","2022-02-09 00:00:00","1000","600","4000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("11","2022-02-09 00:00:00","700","600","4000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("10","2022-02-09 00:00:00","250.00","3000","600");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("3","2022-02-09 00:00:00","250.00","3000","1500");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("4","2022-02-09 00:00:00","150.00","2500","1200");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","150.00","2200","4000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","300.00","3000","600");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","3000","5000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("8","2022-02-09 00:00:00","475.00","4000","800");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("9","2022-02-09 00:00:00","250.00","1000","600");
+# Example parts.
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("1","Boeing Wing A", "2022-02-09 00:00:00","200","50000","600");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("2","Boeing Wing B","2022-02-09 00:00:00","250","55000","600");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("3","Boeing Fuselage","2022-02-09 00:00:00","4000","100000","1000");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("4","Boeing Tail","2022-02-09 00:00:00","2000","30000","1250");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","Boeing Propeller","2022-02-09 00:00:00","899.99","1000","250");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","Boeing Motor","2022-02-09 00:00:00","400","5500","1200");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","Boeing Communications Radio","2022-02-09 00:00:00","1000","600","5000");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("8","Boeing Payload Electo Optical","2022-02-09 00:00:00","1000","600","5000");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("9","Boeing Payload Infra-Red","2022-02-09 00:00:00","1000","600","4000");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("11","Boeing Gimble","2022-02-09 00:00:00","700","600","4000");
+INSERT INTO Parts (PartTypeID, PartName, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("10","Boeing Quad Arm","2022-02-09 00:00:00","250.00","3000","600");
 
-
-
-#examples data for parts that haven't been assigned to aircraft yet
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","3000","5000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","2750","3000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","1222","4000");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("5","2022-02-09 00:00:00","900.00","900","600");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","3000","700");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","800","800");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","700","450");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("6","2022-02-09 00:00:00","900.00","600","700");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","2200","1200");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","2500","1300");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","4000","2574");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","3000","2668");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","2000","767");
-INSERT INTO Parts (parttypeid, Manufacture,Price,Weight,TypicalFailureTime) VALUES ("7","2022-02-09 00:00:00","900.00","1000","566");
-
-INSERT INTO Stock (partid, StockQuantity, LocationName) VALUES ("1", "10","Cardiff");
-INSERT INTO Stock (partid, StockQuantity, LocationName) VALUES ("1", "10","London");
-INSERT INTO Stock (partid, StockQuantity, LocationName) VALUES ("2", "1","London");
-INSERT INTO Stock (partid, StockQuantity, LocationName) VALUES ("3", "55","London");
+#examples data for parts that haven't been assigned to aircraft yet (stock)
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("1", "10","Cardiff");
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("1", "10","London");
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("2", "1","London");
+INSERT INTO Stock (PartID, StockQuantity, LocationName) VALUES ("3", "55","London");
 
 INSERT INTO Platforms (PlatformType) VALUES ("Platform A");
 INSERT INTO Platforms (PlatformType) VALUES ("Platform B");
@@ -247,10 +224,10 @@ INSERT INTO PlatformParts (PlatformID, PartTypeID) VALUES ("2", "2");
 INSERT INTO PlatformParts (PlatformID, PartTypeID) VALUES ("2", "3");
 INSERT INTO PlatformParts (PlatformID, PartTypeID) VALUES ("1", "4");
 
-INSERT INTO AircraftPart (AircraftTailNumber, partid, PartStatus, FlightHours) VALUES ("G-001", "1", "Operational", 0);
-INSERT INTO AircraftPart (AircraftTailNumber, partid, PartStatus, FlightHours) VALUES ("G-001", "2", "Operational", 0);
-INSERT INTO AircraftPart (AircraftTailNumber, partid, PartStatus, FlightHours) VALUES ("G-001", "3", "Operational", 0);
-INSERT INTO AircraftPart (AircraftTailNumber, partid, PartStatus, FlightHours) VALUES ("G-001", "4", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "1", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "2", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "3", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "4", "Operational", 0);
 
 #Only a small number of repair examples as I am unsure if the table will change
 INSERT INTO Repairs (AircraftPartID, cost) VALUES ("1","200");

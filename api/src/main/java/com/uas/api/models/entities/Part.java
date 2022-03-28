@@ -11,27 +11,27 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Entity
+@Entity(name = "Parts")
 @Table(name = "Parts")
 public class Part {
     /**
      * Part number id.
      */
     @Id
-    @Column(name = "partid")
+    @Column(name = "PartID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long partNumber;
     /**
      * Part Type ID.
      */
     @OneToOne
-    @JoinColumn(name = "parttypeid", referencedColumnName = "parttypeid")
+    @JoinColumn(name = "PartTypeID", referencedColumnName = "PartTypeID")
     private PartType partType;
 
     /**
      * Part Name.
      */
-    @Column(name = "partname")
+    @Column(name = "PartName")
     private String partName;
     /**
      * Manufacture date.
@@ -51,7 +51,7 @@ public class Part {
     /**
      * Failure time.
      */
-    @Column(name = "typicalfailuretime")
+    @Column(name = "TypicalFailureTime")
     private Long typicalFailureTime;
 
     /**
