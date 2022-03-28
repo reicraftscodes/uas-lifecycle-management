@@ -1,6 +1,7 @@
 .gradle
 #build/
 #!build/reports
+*.json
 build/classes
 build/generated
 build/jacoco
@@ -46,7 +47,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-###Ignore invoices###
-/api/src/main/resources/invoices/**
-/api/src/main/resources/invoices/

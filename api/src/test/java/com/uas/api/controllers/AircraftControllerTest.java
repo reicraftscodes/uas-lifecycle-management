@@ -2,14 +2,12 @@ package com.uas.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.AircraftController;
-import com.uas.api.models.dtos.*;
+import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.auth.User;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.enums.*;
-import com.uas.api.repositories.AircraftRepository;
-import com.uas.api.repositories.LocationRepository;
+import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.*;
+import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
@@ -22,7 +20,6 @@ import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
 import javassist.NotFoundException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,22 +33,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -91,6 +84,8 @@ public class AircraftControllerTest {
     @MockBean
     private UserRepository userRepository;
 
+    @MockBean
+    private AircraftPartRepository aircraftPartRepository;
 
     @MockBean
     private RoleRepository roleRepository;
@@ -206,18 +201,15 @@ public class AircraftControllerTest {
     @WithMockUser(value = "user")
     @Test
     public void updateFlightHoursNoAircraft() throws Exception {
-        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
-        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",12);
-
-        Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-5678",12);
+        doThrow(new NotFoundException("Aircraft not found!")).when(partService).updateAllFlightHours(any(LogFlightDTO.class));
         String json = objectMapper.writeValueAsString(logFlightDTO);
 
         mockMvc.perform(post("/aircraft/log-flight")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("response: Aircraft not found!"));
+                .andExpect(content().string("{\"message\":\"Aircraft not found!\",\"status\":\"BAD_REQUEST\"}"));
     }
 
     @WithMockUser(value = "user")
@@ -228,14 +220,14 @@ public class AircraftControllerTest {
         LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",-12);
 
         when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
-        Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
+        doThrow(new InvalidDTOAttributeException("Fly time value cannot be negative!")).when(partService).updateAllFlightHours(any(LogFlightDTO.class));
         String json = objectMapper.writeValueAsString(logFlightDTO);
 
         mockMvc.perform(post("/aircraft/log-flight")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("response: Fly time value cannot be negative!"));
+                .andExpect(content().string("{\"message\":\"Fly time value cannot be negative!\",\"status\":\"BAD_REQUEST\"}"));
     }
 
 
@@ -418,25 +410,26 @@ public class AircraftControllerTest {
         assertEquals("", response);
     }
 
+
     @WithMockUser(value = "user")
     @Test
     public void getAircraftPartsSuccess() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
+        PartType partType = new PartType(Long.parseLong("1"),PartName.WING_A);
+        Part part = new Part(partType, "Gimble3000", BigDecimal.valueOf(200), Long.parseLong("50000"),Long.parseLong("600"));
 
-        PartType partType = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-        Part part = new Part(partType,aircraft,location,PartStatus.OPERATIONAL);
-        List<Part> parts = new ArrayList<>();
-        parts.add(part);
+        AircraftPart aircraftPart = new AircraftPart(aircraft, part, PartStatus.OPERATIONAL, Double.valueOf(0));
+        List<AircraftPart> aircraftParts = new ArrayList<>();
+        aircraftParts.add(aircraftPart);
 
         AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
         aircraftPartsDTO.setStatus(aircraft.getPlatformStatus().getLabel());
 
-
         String json = "G-001";
 
         when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraft));
-        when(partRepository.findAllPartsByAircraft(any())).thenReturn(parts);
+        when(aircraftPartRepository.findAircraftPartsByAircraft(any())).thenReturn(aircraftParts);
 
         mockMvc.perform(post("/aircraft/aircraft-parts-status")
                         .content(json).characterEncoding("utf-8")
@@ -445,16 +438,17 @@ public class AircraftControllerTest {
 
     }
 
+
     @WithMockUser(value = "user")
     @Test
     public void updateAircraftPartSuccess() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 
-        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B, BigDecimal.valueOf(200),Long.parseLong("50000"),Long.parseLong("600"));
-        Part currentPart = new Part(partType1,aircraft,location,PartStatus.OPERATIONAL);
-        Part newPart = new Part(partType2,aircraft,location,PartStatus.OPERATIONAL);
+        PartType partType1 = new PartType(Long.parseLong("1"),PartName.WING_A);
+        PartType partType2 = new PartType(Long.parseLong("2"),PartName.WING_B);
+        Part currentPart = new Part(partType1, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        Part newPart = new Part(partType2,"Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
 
         UpdateAircraftPartDTO aircraftPartDTO = new UpdateAircraftPartDTO();
         aircraftPartDTO.setTailNumber("G-001");
@@ -470,6 +464,7 @@ public class AircraftControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
 
     @WithMockUser(value = "user")
     @Test
