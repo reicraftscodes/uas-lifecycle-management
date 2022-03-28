@@ -320,10 +320,13 @@ public class PartServiceImpl implements PartService {
      * @param request The DTO.
      */
     @Override
-    public void updateAllFlightHours(final LogFlightDTO request) throws NotFoundException {
+    public void updateAllFlightHours(final LogFlightDTO request) throws NotFoundException, InvalidDTOAttributeException {
         Optional<Aircraft> aircraft = aircraftRepository.findById(request.getAircraft());
         if (aircraft.isEmpty()) {
             throw new NotFoundException("Aircraft not found!");
+        }
+        if (request.getFlyTime() < 0) {
+            throw new InvalidDTOAttributeException("Fly time cannot be negative!");
         }
         List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft(aircraft.get());
         updatePartFlyTime(parts, request.getFlyTime());

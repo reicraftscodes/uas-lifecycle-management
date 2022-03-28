@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.AircraftPart;
 import javassist.NotFoundException;
@@ -56,7 +57,7 @@ public interface PartService {
      * Update all flight hours.
      * @param request The DTO with request to update all flight hours.
      */
-    void updateAllFlightHours(LogFlightDTO request) throws NotFoundException;
+    void updateAllFlightHours(LogFlightDTO request) throws NotFoundException, InvalidDTOAttributeException;
 
     /**
      * Gets all availble parts for a specific part type.

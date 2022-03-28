@@ -2,6 +2,7 @@ package com.uas.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.AircraftController;
+import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.auth.User;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.*;
@@ -200,18 +201,15 @@ public class AircraftControllerTest {
     @WithMockUser(value = "user")
     @Test
     public void updateFlightHoursNoAircraft() throws Exception {
-        Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
-        Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
-        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",12);
-
-        Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
+        LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-5678",12);
+        doThrow(new NotFoundException("Aircraft not found!")).when(partService).updateAllFlightHours(any(LogFlightDTO.class));
         String json = objectMapper.writeValueAsString(logFlightDTO);
 
         mockMvc.perform(post("/aircraft/log-flight")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("response: Aircraft not found!"));
+                .andExpect(content().string("{\"message\":\"Aircraft not found!\",\"status\":\"BAD_REQUEST\"}"));
     }
 
     @WithMockUser(value = "user")
@@ -222,14 +220,14 @@ public class AircraftControllerTest {
         LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",-12);
 
         when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
-        Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
+        doThrow(new InvalidDTOAttributeException("Fly time value cannot be negative!")).when(partService).updateAllFlightHours(any(LogFlightDTO.class));
         String json = objectMapper.writeValueAsString(logFlightDTO);
 
         mockMvc.perform(post("/aircraft/log-flight")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("response: Fly time value cannot be negative!"));
+                .andExpect(content().string("{\"message\":\"Fly time value cannot be negative!\",\"status\":\"BAD_REQUEST\"}"));
     }
 
 
