@@ -57,17 +57,13 @@ public class AuthController {
 
     /**
      * A post mapping that allows a user to view jwt info.
-     * This only gets JWT info, that's if only the user is logged in.
-     * It can be used to refresh tokens for only logged users.
-     * If you run it multiple times, it generates multiple tokens which are similar to a browser refresh.
-     * @return getJwtReponse
+     * @return getJwtReponse in return.
      */
     @GetMapping("/getJwtInfo")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER_CTO', 'ROLE_USER_LOGISTIC', 'ROLE_USER_CEO', 'ROLE_USER_COO') ")
+    @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
     public ResponseEntity<JwtResponse> getJwtTokenInfo() {
         return authService.getJwtResponse();
     }
-
 
     /**
      * A post mapping that allows a user to view user information.
