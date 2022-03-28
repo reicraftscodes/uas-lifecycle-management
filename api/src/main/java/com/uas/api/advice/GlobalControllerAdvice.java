@@ -77,6 +77,12 @@ public class GlobalControllerAdvice {
     public ErrorResponse handleNotFoundException(final NotFoundException notFoundException) {
         return new ErrorResponse(notFoundException.getMessage(), HttpStatus.BAD_REQUEST.name());
     }
+
+    /**
+     * This error occurs when an attribute in a DTO is incorrect, i.e. a negative fly time value.
+     * @param invalidDTOAttributeException
+     * @return an error response with the message thrown and a bad request status.
+     */
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidDtoException(final InvalidDTOAttributeException invalidDTOAttributeException) {
