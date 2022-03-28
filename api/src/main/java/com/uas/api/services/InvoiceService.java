@@ -23,4 +23,6 @@ public interface InvoiceService {
      * @return returns true for success and false for error.
      */
     boolean emailInvoice(String invoicePath, String recipientAddress);
+
+
 }

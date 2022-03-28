@@ -65,6 +65,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             totalCost += order.getPartID().getPrice().doubleValue() * order.getQuantity();
         }
 
+
         invoiceDTO.setPartOrders(totalOrder);
         invoiceDTO.setTotalCost(totalCost);
 
@@ -88,7 +89,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             document.open();
 
             //adds the sncmsuk logo and sets its position
-            Image img = Image.getInstance("src/main/resources/img/logo.png");
+            Image img = Image.getInstance("src/main/resources/img/SNCMSUKlogo.png");
             img.scaleAbsolute(160, 50);
             img.setAbsolutePosition(10, 782);
             document.add(img);
