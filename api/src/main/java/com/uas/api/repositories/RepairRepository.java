@@ -17,7 +17,7 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      * @param limit the top number of repairs requested.
      * @return map of objects containing the part number, their repair count and their total cost.
      */
-     @Query(value = "SELECT partid as partNumber, COUNT(partid) as repairCount, SUM(cost) as totalCost FROM Repairs group by partid order by repairCount DESC LIMIT :limit", nativeQuery = true)
+     @Query(value = "SELECT AircraftPartID as partNumber, COUNT(AircraftPartID) as repairCount, SUM(cost) as totalCost FROM Repairs group by AircraftPartID order by repairCount DESC LIMIT :limit", nativeQuery = true)
      List<Map<Object, Object>> findPartsWithMostRepairsAndTheirCostWithLimit(@Param("limit") int limit);
     /**
      * Find all parts by aircraft and platform type?
@@ -39,7 +39,7 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      * @return returns the total cost of repairs.
      */
 
-    @Query(value = "SELECT sum(cost) FROM Repairs WHERE partid= ANY (SELECT partid FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
+    @Query(value = "SELECT sum(cost) FROM Repairs WHERE AircraftPartID = ANY (SELECT AircraftPartID FROM aircraftpart WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
     Double findTotalRepairCostForAircraft(@Param("tailNumber") String tailNumber);
 
     /**
@@ -47,7 +47,7 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      * @return the total cost of repairs for all aircraft.
      */
 
-    @Query(value = "SELECT sum(cost) FROM Repairs WHERE partid= ANY (SELECT partid FROM parts)", nativeQuery = true)
+    @Query(value = "SELECT sum(cost) FROM Repairs WHERE AircraftPartID = ANY (SELECT PartID FROM parts)", nativeQuery = true)
     Double findTotalRepairCostForAllAircraft();
 
 
@@ -56,7 +56,7 @@ public interface RepairRepository extends JpaRepository<Repair, Long> {
      * @param tailNumber the tail number of the aircraft.
      * @return the aircraft repair count.
      */
-    @Query(value = "SELECT COUNT(RepairID) FROM Repairs WHERE partid IN (SELECT partid FROM parts WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
+    @Query(value = "SELECT COUNT(RepairID) FROM Repairs WHERE AircraftPartID IN (SELECT AircraftPartID FROM aircraftpart WHERE AircraftTailNumber=:tailNumber)", nativeQuery = true)
     Integer findRepairsCountForAircraft(@Param("tailNumber") String tailNumber);
 
 }

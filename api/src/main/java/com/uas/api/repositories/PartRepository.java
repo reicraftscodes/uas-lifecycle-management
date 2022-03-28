@@ -33,7 +33,7 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
      * @param partID the part type being searched for.
      * @return returns a list of part numbers that are available.
      */
-    @Query(value = "SELECT partid FROM parts WHERE AircraftTailNumber IS NULL AND partID=:partID", nativeQuery = true)
+    @Query(value = "SELECT PartID FROM parts WHERE AircraftTailNumber IS NULL AND partID=:partID", nativeQuery = true)
     List<String> findAllAvailbleByType(@Param("partID") long partID);
 
 //    /**

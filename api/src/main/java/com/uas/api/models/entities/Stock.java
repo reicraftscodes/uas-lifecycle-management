@@ -24,10 +24,10 @@ public class Stock {
     private Long id;
 
     /**
-     * parttypeid.
+     * PartTypeID.
      */
     @ManyToOne
-    @JoinColumn(name = "partid", referencedColumnName = "partid")
+    @JoinColumn(name = "PartID", referencedColumnName = "PartID")
     private Part part;
 
     /**
