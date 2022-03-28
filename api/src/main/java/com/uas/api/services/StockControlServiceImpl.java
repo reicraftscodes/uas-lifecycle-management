@@ -1,13 +1,7 @@
 package com.uas.api.services;
 
-import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.Orders;
-import com.uas.api.models.entities.PartType;
-import com.uas.api.models.entities.StockToOrders;
-import com.uas.api.repositories.LocationRepository;
-import com.uas.api.repositories.OrdersRepository;
-import com.uas.api.repositories.PartTypeRepository;
-import com.uas.api.repositories.StockToOrdersRepository;
+import com.uas.api.models.entities.*;
+import com.uas.api.repositories.*;
 import com.uas.api.requests.MoreStockRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +25,7 @@ public class StockControlServiceImpl implements StockControlService {
     /**
      * Repository for communication between api and part type table.
      */
-    private final PartTypeRepository partTypeRepository;
+    private final PartRepository partRepository;
     /**
      * Repository for communication between api and stock to order table.
      */
@@ -41,14 +35,14 @@ public class StockControlServiceImpl implements StockControlService {
      * Constructor.
      * @param locationRepository required.
      * @param ordersRepository required.
-     * @param partTypeRepository required.
+     * @param partRepository required.
      * @param stockToOrdersRepository required.
      */
     @Autowired
-    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartTypeRepository partTypeRepository, final StockToOrdersRepository stockToOrdersRepository) {
+    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartRepository partRepository, final StockToOrdersRepository stockToOrdersRepository) {
         this.locationRepository = locationRepository;
         this.ordersRepository = ordersRepository;
-        this.partTypeRepository = partTypeRepository;
+        this.partRepository = partRepository;
         this.stockToOrdersRepository = stockToOrdersRepository;
     }
 
@@ -70,7 +64,7 @@ public class StockControlServiceImpl implements StockControlService {
         ordersRepository.save(newOrder);
         for (int i = 0; i < partTypes.size(); i++) {
             long part = partTypes.get(i);
-            Optional<PartType> partType = partTypeRepository.findPartTypeById(part);
+            Optional<Part> partType = partRepository.findPartBypartNumber(part);
             int quantity = quantities.get(i);
             StockToOrders newStockToOrder = new StockToOrders(newOrder, partType.get(), quantity);
             stockToOrdersRepository.save(newStockToOrder);

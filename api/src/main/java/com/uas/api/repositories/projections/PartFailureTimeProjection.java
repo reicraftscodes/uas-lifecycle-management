@@ -1,6 +1,6 @@
 package com.uas.api.repositories.projections;
 
-public interface PartTypeFailureTimeProjection {
+public interface PartFailureTimeProjection {
     /**
      * Gets the part name.
      * @return the part name.
