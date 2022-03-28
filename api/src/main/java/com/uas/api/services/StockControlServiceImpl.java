@@ -64,7 +64,7 @@ public class StockControlServiceImpl implements StockControlService {
 
         checkPartTypesAndQuantities(partTypes, quantities);
 
-        Orders newOrder = new Orders(orderLocation,moreStockRequest.getSupplierEmail(), moreStockRequest.getCost(), ts);
+        Orders newOrder = new Orders(orderLocation,moreStockRequest.getSupplierEmail(), 0, ts);
         ordersRepository.save(newOrder);
 
         for (int i = 0; i < partTypes.size(); i++) {

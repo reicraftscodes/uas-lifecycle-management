@@ -150,11 +150,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                 PdfPCell[] cells = new PdfPCell[4];
 
-                cells[0] = new PdfPCell(new Phrase(order.getPartID().getId().toString()));
+                cells[0] = new PdfPCell(new Phrase(order.getPartID().getPartName()));
                 cells[0].setPadding(5);
                 table.addCell(cells[0]);
 
-                cells[1] = new PdfPCell(new Phrase(order.getPartID().getPartName().getName()));
+                cells[1] = new PdfPCell(new Phrase(order.getPartID().getPartName()));
                 cells[1].setPadding(5);
                 table.addCell(cells[1]);
 
