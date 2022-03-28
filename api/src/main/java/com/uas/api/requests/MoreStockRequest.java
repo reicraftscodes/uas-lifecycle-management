@@ -15,6 +15,10 @@ public class MoreStockRequest {
      */
     private String location;
     /**
+     * The supplier email where the order is being sent.
+     */
+    private String supplierEmail;
+    /**
      * Cost of order.
      */
     private double cost;
