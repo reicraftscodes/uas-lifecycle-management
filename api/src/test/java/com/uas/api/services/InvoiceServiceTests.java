@@ -82,13 +82,13 @@ public class InvoiceServiceTests {
 //        File invoicePDF = new File("src/main/resources/invoices/order_-1.pdf");
 //        boolean exists = invoicePDF.exists();
 //
-//        assertEquals("Filename path is returned","src/main/resources/invoices/order_-1.pdf",result);
+//        assertEquals("Filename path is returned","src/main/resources/invoices/order_git-1.pdf",result);
 //        assertEquals("File is created:",true,exists);
 //
 //        if (exists) {
 //            invoicePDF.delete();
 //        }
-    }
+//    }
 
     @Test
     public void emailInvoiceFailure() {
