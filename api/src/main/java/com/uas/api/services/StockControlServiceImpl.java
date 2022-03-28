@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.InvoiceDTO;
 import com.uas.api.models.entities.*;
 import com.uas.api.repositories.*;
 import com.uas.api.requests.MoreStockRequest;
@@ -10,6 +11,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -30,6 +32,10 @@ public class StockControlServiceImpl implements StockControlService {
      * Repository for communication between api and stock to order table.
      */
     private final StockToOrdersRepository stockToOrdersRepository;
+    /**
+     * Service for generating and sending invoices.
+     */
+    private final InvoiceService invoiceService;
 
     /**
      * Constructor.
@@ -37,13 +43,15 @@ public class StockControlServiceImpl implements StockControlService {
      * @param ordersRepository required.
      * @param partRepository required.
      * @param stockToOrdersRepository required.
+     * @param invoiceService required.
      */
     @Autowired
-    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartRepository partRepository, final StockToOrdersRepository stockToOrdersRepository) {
+    public StockControlServiceImpl(final LocationRepository locationRepository, final OrdersRepository ordersRepository, final PartRepository partRepository, final StockToOrdersRepository stockToOrdersRepository, final InvoiceService invoiceService) {
         this.locationRepository = locationRepository;
         this.ordersRepository = ordersRepository;
         this.partRepository = partRepository;
         this.stockToOrdersRepository = stockToOrdersRepository;
+        this.invoiceService = invoiceService;
     }
 
     /**
@@ -77,6 +85,12 @@ public class StockControlServiceImpl implements StockControlService {
         }
         newOrder.setTotalCost(totalCost);
         ordersRepository.save(newOrder);
+
+        InvoiceDTO invoiceDTO = invoiceService.getInvoiceData(newOrder);
+        String fileLocation = invoiceService.generatePDF(invoiceDTO);
+        if (!Objects.equals(fileLocation, "error")) {
+            invoiceService.emailInvoice(fileLocation,moreStockRequest.getSupplierEmail());
+        }
 
         reciept = new StockReceipt(String.valueOf(totalCost));
         return reciept;
