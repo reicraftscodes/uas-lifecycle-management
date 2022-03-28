@@ -26,14 +26,14 @@ public class AircraftPart {
      * Aircraft Tail Number.
      */
     @ManyToOne
-    @JoinColumn(name = "tailNumber", referencedColumnName = "TailNumber")
+    @JoinColumn(name = "AircraftTailNumber", referencedColumnName = "TailNumber")
     private Aircraft aircraft;
 
     /**
-     * partid.
+     * PartID.
      */
     @ManyToOne
-    @JoinColumn(name = "partid", referencedColumnName = "partid")
+    @JoinColumn(name = "PartID", referencedColumnName = "PartID")
     private Part part;
 
     /**
@@ -46,7 +46,6 @@ public class AircraftPart {
      * FlightHours.
      */
     @Column(name = "FlightHours")
-
     private Double flightHours;
     /**
      *  Constructor for AircraftPart.
