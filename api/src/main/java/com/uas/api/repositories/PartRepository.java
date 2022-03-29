@@ -30,11 +30,11 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
 
     /**
      * Finds all the parts in the db that are not assigned to an aircraft for a specific part type.
-     * @param partID the part type being searched for.
+     * @param partTypeID the part type being searched for.
      * @return returns a list of part numbers that are available.
      */
-    @Query(value = "SELECT PartID FROM parts WHERE AircraftTailNumber IS NULL AND partID=:partID", nativeQuery = true)
-    List<String> findAllAvailbleByType(@Param("partID") long partID);
+    @Query(value = "SELECT PartID FROM parts WHERE PartTypeID = :partTypeID and PartID not in (select PartID from aircraftpart)", nativeQuery = true)
+    List<String> findAllAvailableByType(@Param("partTypeID") long partTypeID);
 
 //    /**
 //     * Finds all the parts in the db that have a specific.

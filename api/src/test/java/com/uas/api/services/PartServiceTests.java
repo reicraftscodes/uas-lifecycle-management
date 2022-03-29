@@ -207,7 +207,7 @@ public class PartServiceTests {
         mockPartTypes.add("19");
         mockPartTypes.add("20");
         mockPartTypes.add("21");
-        when(partRepository.findAllAvailbleByType(5L)).thenReturn(mockPartTypes);
+        when(partRepository.findAllAvailableByType(5L)).thenReturn(mockPartTypes);
         List<String> result = partService.availablePartsForParttype(5L);
         AssertionErrors.assertTrue("Should be bigger than 0", result.size() > 0);
         AssertionErrors.assertTrue("First value should be 19", result.get(0).equals("19"));
@@ -215,7 +215,7 @@ public class PartServiceTests {
     @Test
     public void whenPartTypeAreNotAvailableThenShouldReturnEmptyList() {
         List<String> mockPartTypes = new ArrayList<>();
-        when(partRepository.findAllAvailbleByType(1L)).thenReturn(mockPartTypes);
+        when(partRepository.findAllAvailableByType(1L)).thenReturn(mockPartTypes);
         List<String> result = partService.availablePartsForParttype(1L);
         AssertionErrors.assertTrue("Should be empty", result.isEmpty());
     }
