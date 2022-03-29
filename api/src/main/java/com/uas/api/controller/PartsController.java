@@ -6,6 +6,7 @@ import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
 import javassist.NotFoundException;
+import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,7 +144,7 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-status")
-    public ResponseEntity<?> updatePartStatus(@RequestBody UpdatePartStatusDTO updatePartStatusDTO){
+    public ResponseEntity<?> updatePartStatus(@RequestBody UpdatePartStatusDTO updatePartStatusDTO) {
         String result = partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
         if (result.equals("Success")) {
             return ResponseEntity.ok("");
@@ -158,8 +159,23 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-price")
-    public ResponseEntity<?> updatePartPrice(@RequestBody UpdatePartPriceDTO updatePartPriceDTO){
+    public ResponseEntity<?> updatePartPrice(@RequestBody UpdatePartPriceDTO updatePartPriceDTO) {
         String result = partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());
+        if (result.equals("Success")) {
+            return ResponseEntity.ok("");
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
+    }
+
+    /**
+     * Updates the weight of a given part.
+     * @param updatePartWeightDTO A dto containing the partID and new weight.
+     * @return A response entity with an appropriate body and status depending on the outcome.
+     */
+    @PostMapping("update-part-weight")
+    public ResponseEntity<?> updatePartWeight(@RequestBody UpdatePartWeightDTO updatePartWeightDTO) {
+        String result = partService.updatePartWeight(updatePartWeightDTO.getPartID(),updatePartWeightDTO.getWeight());
         if (result.equals("Success")) {
             return ResponseEntity.ok("");
         } else {
