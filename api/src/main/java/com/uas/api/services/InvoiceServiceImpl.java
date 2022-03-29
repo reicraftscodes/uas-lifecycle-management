@@ -11,13 +11,14 @@ import com.uas.api.repositories.StockToOrdersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
@@ -79,7 +80,8 @@ public class InvoiceServiceImpl implements InvoiceService {
      */
     @Override
     public String generatePDF(final InvoiceDTO invoiceDTO) {
-        String fileName = "src/main/resources/invoices/order_" + invoiceDTO.getOrderID() + ".pdf";
+        new File("invoices").mkdirs();
+        String fileName = "invoices/order_" + invoiceDTO.getOrderID() + ".pdf";
         Document document = new Document();
 
         try {
@@ -89,7 +91,9 @@ public class InvoiceServiceImpl implements InvoiceService {
             document.open();
 
             //adds the sncmsuk logo and sets its position
+            //URL imgURL = ClassLoader.getSystemResource("/resources/SNCMSUKlogo.png");
             Image img = Image.getInstance("src/main/resources/img/SNCMSUKlogo.png");
+
             img.scaleAbsolute(160, 50);
             img.setAbsolutePosition(10, 782);
             document.add(img);
@@ -150,7 +154,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
                 PdfPCell[] cells = new PdfPCell[4];
 
-                cells[0] = new PdfPCell(new Phrase(order.getPartID().getPartName()));
+                cells[0] = new PdfPCell(new Phrase(String.valueOf(order.getPartID().getPartNumber())));
                 cells[0].setPadding(5);
                 table.addCell(cells[0]);
 
