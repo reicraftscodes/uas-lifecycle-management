@@ -3,8 +3,6 @@ package com.uas.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.enums.PlatformStatus;
-import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
@@ -30,7 +28,6 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
