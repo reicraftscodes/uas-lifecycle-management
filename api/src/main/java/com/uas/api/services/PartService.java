@@ -95,5 +95,13 @@ public interface PartService {
      * @param weight The new weight.
      * @return Returns the result of the status update.
      */
-    String updatePartWeight(long partNumber, double weight);
+    String updatePartWeight(long partNumber, long weight);
+
+    /**
+     * Updates the failure time of a specified part in the db.
+     * @param partNumber The partID of the part having its failure time updated.
+     * @param failureTime The new typical failure time.
+     * @return Returns the result of the status update.
+     */
+    String updateFailureTime(long partNumber, long failureTime);
 }

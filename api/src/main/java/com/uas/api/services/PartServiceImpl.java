@@ -446,7 +446,7 @@ public class PartServiceImpl implements PartService {
      * @return Returns the result of the status update.
      */
     @Override
-    public String updatePartWeight(long partNumber, double weight) {
+    public String updatePartWeight(long partNumber, long weight) {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
@@ -454,6 +454,24 @@ public class PartServiceImpl implements PartService {
         }
 
         selectedPart.get().setWeight((long) weight);
+        partRepository.save(selectedPart.get());
+        return "Success";
+    }
+
+    /**
+     * Updates the failure time of a specified part in the db.
+     * @param partNumber The partID of the part having its failure time updated.
+     * @param failureTime The new typical failure time.
+     * @return Returns the result of the status update.
+     */
+    @Override
+    public String updateFailureTime(long partNumber, long failureTime) {
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            return "Part not found!";
+        }
+        
+        selectedPart.get().setTypicalFailureTime(failureTime);
         partRepository.save(selectedPart.get());
         return "Success";
     }
