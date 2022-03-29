@@ -17,6 +17,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import java.io.*;
+import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
@@ -88,9 +89,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
             document.open();
 
-            //adds the sncmsuk logo and sets its position
-            //URL imgURL = ClassLoader.getSystemResource("/resources/SNCMSUKlogo.png");
-            Image img = Image.getInstance("src/main/resources/img/SNCMSUKlogo.png");
+            //adds the sncmsuk logo and sets its position uses image url for so it can be accessed when in jar.
+            URL imgURL = new URL("https://i.imgur.com/HeHRBhL.png");
+            Image img = Image.getInstance(imgURL);
+            //Image img = Image.getInstance("src/main/resources/img/SNCMSUKlogo.png");
 
             img.scaleAbsolute(160, 50);
             img.setAbsolutePosition(10, 782);
