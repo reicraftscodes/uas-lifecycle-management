@@ -3,12 +3,11 @@ package com.uas.api.repositories;
 import com.uas.api.models.entities.AircraftUser;
 import com.uas.api.models.entities.AircraftUserKey;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+
 public interface AircraftUserRepository extends JpaRepository<AircraftUser, AircraftUserKey>  {
 
     /**

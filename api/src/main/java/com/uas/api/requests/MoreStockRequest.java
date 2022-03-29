@@ -15,13 +15,13 @@ public class MoreStockRequest {
      */
     private String location;
     /**
-     * Cost of order.
+     * The supplier email where the order is being sent.
      */
-    private double cost;
+    private String supplierEmail;
     /**
      * All the part types.
      */
-    private ArrayList<Long> partTypes;
+    private ArrayList<Long> partIDs;
     /**
      * Quantities for part types.
      */

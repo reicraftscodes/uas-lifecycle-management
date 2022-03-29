@@ -20,28 +20,28 @@ public class Aircraft {
      * Aircraft ID.
      */
     @Id
-    @Column(name = "TailNumber", unique = true)
+    @Column(name = "tailnumber", unique = true)
     private String tailNumber;
     /**
      * Location.
      */
     @ManyToOne
-    @JoinColumn(name = "LocationName")
+    @JoinColumn(name = "locationname", referencedColumnName = "locationname")
     private Location location;
     /**
      * Status of platform.
      */
-    @Column(name = "PlatformStatus")
+    @Column(name = "platformstatus")
     private PlatformStatus platformStatus;
     /**
      * Type of platform.
      */
-    @Column(name = "PlatformType")
+    @Column(name = "platformtype")
     private PlatformType platformType;
     /**
      * The total flight time in hours.
      */
-    @Column(name = "FlyingHours")
+    @Column(name = "flyinghours")
     private Integer flyTimeHours;
 
 }

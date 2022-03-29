@@ -27,7 +27,7 @@ public class StockToOrders {
      */
     @ManyToOne
     @JoinColumn(name = "PartID", referencedColumnName = "PartID")
-    private PartType partID;
+    private Part partID;
     /**
      * Quantity of part.
      */
@@ -40,7 +40,7 @@ public class StockToOrders {
      * @param partID required.
      * @param quantity required.
      */
-    public StockToOrders(final Orders orderID, final PartType partID, final int quantity) {
+    public StockToOrders(final Orders orderID, final Part partID, final int quantity) {
         this.orderID = orderID;
         this.partID = partID;
         this.quantity = quantity;

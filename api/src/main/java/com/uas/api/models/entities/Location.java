@@ -21,27 +21,27 @@ public class Location {
      * Name of location.
      */
     @Id
-    @Column(name = "LocationName")
+    @Column(name = "locationname")
     private String locationName;
     /**
      * Address line 1.
      */
-    @Column(name = "AddressLine1")
+    @Column(name = "addressline1")
     private String addressLine1;
     /**
      * Address Line 2.
      */
-    @Column(name = "AddressLine2")
+    @Column(name = "addressline2")
     private String addressLine2;
     /**
      * Postcode.
      */
-    @Column(name = "PostCode")
+    @Column(name = "postcode")
     private String postcode;
     /**
      * Country.
      */
-    @Column(name = "Country")
+    @Column(name = "country")
     private String country;
 
 }
