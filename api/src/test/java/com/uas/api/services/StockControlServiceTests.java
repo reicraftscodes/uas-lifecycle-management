@@ -1,5 +1,6 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.InvoiceDTO;
 import com.uas.api.models.entities.Location;
 import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.PartType;
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -30,6 +32,9 @@ public class StockControlServiceTests {
 
     @Mock
     private StockToOrdersRepository stockToOrdersRepository;
+
+    @Mock
+    private InvoiceServiceImpl invoiceService;
 
     @Mock
     private OrdersRepository ordersRepository;
@@ -47,9 +52,9 @@ public class StockControlServiceTests {
         partTypes.add(1L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Fake Cardiff", 40.00, partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Fake Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            when(stockControlService.addMoreStock(newStock)).thenReturn(new StockControlServiceImpl.StockReceipt(String.valueOf(newStock.getCost())));
+            when(stockControlService.addMoreStock(newStock)).thenReturn(new StockControlServiceImpl.StockReceipt(String.valueOf(1000)));
             stockControlService.addMoreStock(newStock);
         });
         Assertions.assertEquals("Location does not exist!", thrown.getMessage());
@@ -62,7 +67,7 @@ public class StockControlServiceTests {
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
         quantities.add(10);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         IndexOutOfBoundsException thrown = Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
@@ -77,7 +82,7 @@ public class StockControlServiceTests {
         partTypes.add(111L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         IndexOutOfBoundsException thrown = Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
@@ -94,12 +99,15 @@ public class StockControlServiceTests {
         partTypes.add(1L);
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", 40.00, partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         when(partRepository.findPartBypartNumber(anyLong())).thenReturn(Optional.of(mockPart));
+        when(invoiceService.getInvoiceData(any())).thenReturn(new InvoiceDTO());
+        when(invoiceService.generatePDF(any())).thenReturn("");
+        when(invoiceService.emailInvoice(any(),any())).thenReturn(true);
         StockControlServiceImpl.StockReceipt receipt = stockControlService.addMoreStock(newStock);
-        Assertions.assertEquals("40.0", receipt.getCost());
+        Assertions.assertEquals("1000.0", receipt.getCost());
     }
 
 }

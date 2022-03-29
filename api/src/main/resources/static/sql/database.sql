@@ -101,6 +101,7 @@ CREATE TABLE Stock (
 CREATE TABLE Orders (
 	OrderID INT NOT NULL AUTO_INCREMENT,
     LocationName VARCHAR(255) NOT NULL,
+    SupplierEmail VARCHAR(255) NOT NULL,
     TotalCost decimal(10,2) NOT NULL,
     OrderDateTime DATETIME NOT NULL,
     PRIMARY KEY(OrderID),
