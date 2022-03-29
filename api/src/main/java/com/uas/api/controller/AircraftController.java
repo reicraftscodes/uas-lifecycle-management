@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/aircraft")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://uastest.herokuapp.com")
 public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
