@@ -13,5 +13,9 @@ public interface StockControlService {
      */
     StockControlServiceImpl.StockReceipt addMoreStock(MoreStockRequest moreStockRequest);
 
+    /**
+     * Get a list of all part stock orders.
+     * @return a list of stock order dtos.
+     */
     List<StockOrderDTO> getAllPreviousStockOrders();
 }

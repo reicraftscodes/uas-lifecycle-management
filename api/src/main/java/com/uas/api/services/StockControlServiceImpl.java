@@ -115,6 +115,10 @@ public class StockControlServiceImpl implements StockControlService {
         }
     }
 
+    /**
+     * Get a list of all part stock orders.
+     * @return a list of stock order dtos.
+     */
     public List<StockOrderDTO> getAllPreviousStockOrders() {
         List<StockOrderDTO> stockOrderDTOs = new ArrayList<>();
         List<StockToOrders> stockToOrders = stockToOrdersRepository.findAll();
