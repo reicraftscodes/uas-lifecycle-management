@@ -67,7 +67,6 @@ public class AircraftServiceTests {
                 new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
                 PlatformStatus.OPERATION,
                 PlatformType.PLATFORM_A,
-                250,
                 250);
     }
 
@@ -390,14 +389,12 @@ public class AircraftServiceTests {
                     new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
                     PlatformStatus.OPERATION,
                     PlatformType.PLATFORM_A,
-                    250,
                     250);
             aircraftTwo = new Aircraft(
                     "G-002",
                     new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
                     PlatformStatus.OPERATION,
                     PlatformType.PLATFORM_A,
-                    300,
                     300);
             aircraft.add(aircraftOne);
             aircraft.add(aircraftTwo);
@@ -423,20 +420,6 @@ public class AircraftServiceTests {
                 aircraftService.getAircraftForCEOReturnMinimisedIdParam("G-001");
             });
             Assertions.assertEquals("Aircraft not found.", thrown.getMessage());
-        }
-        @Test
-        public void whenHoursOperationalForAnAircraftAreUpdatedThenNumberShouldIncrease() {
-            int originalOne = aircraftOne.getHoursOperational();
-            int originalTwo = aircraftTwo.getHoursOperational();
-
-            when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraftOne));
-            when(aircraftRepository.findById("G-002")).thenReturn(Optional.of(aircraftTwo));
-            AircraftHoursOperationalDTO result1 = aircraftService.updateHoursOperational(new AircraftAddHoursOperationalDTO("G-001", 5));
-            assertTrue(result1.getHoursOperational().get(0) > originalOne);
-            assertEquals("Should be 5 bigger", originalOne + 5, result1.getHoursOperational().get(0));
-            AircraftHoursOperationalDTO result2 = aircraftService.updateHoursOperational(new AircraftAddHoursOperationalDTO("G-002", 10));
-            assertTrue(result2.getHoursOperational().get(0) > originalTwo);
-            assertEquals("Should be 10 bigger", originalTwo + 10, result2.getHoursOperational().get(0));
         }
         @Test
         public void whenFlytimeHoursForAnAircraftAreUpdatedThenNumberShouldIncrease() {
@@ -510,9 +493,9 @@ public class AircraftServiceTests {
         }
 
         @Test
-        public void whenHoursOperationalIsRetrievedForAllAircraftThenAListContainingTheHoursOnlyShouldBeReturned() {
+        public void whenFlyTimeHoursIsRetrievedForAllAircraftThenAListContainingTheHoursOnlyShouldBeReturned() {
             when(aircraftRepository.findAll()).thenReturn(aircraft);
-            List<Integer> mockHoursOperational = aircraftService.getHoursOperational();
+            List<Integer> mockHoursOperational = aircraftService.getFlyTimeHours();
 
             assertEquals("List should have size of 2", 2, mockHoursOperational.size());
             assertEquals("Hours operational of aircraft 1 should be 250", 250, mockHoursOperational.get(0));

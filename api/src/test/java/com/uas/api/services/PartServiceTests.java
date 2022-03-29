@@ -230,7 +230,7 @@ public class PartServiceTests {
         public void setUp() {
             mockPartType = new PartType(1L, PartName.WING_A);
             mockLocation = new Location("Cardiff", "", "", "", "");
-            mockAircraft = new Aircraft("G-001", mockLocation, PlatformStatus.OPERATION, PlatformType.PLATFORM_A, 250, 250);
+            mockAircraft =  new Aircraft("G-001", mockLocation, PlatformStatus.OPERATION, PlatformType.PLATFORM_A, 250);
         }
         @Test
         public void invalidPartStatusShouldThrowError() {
