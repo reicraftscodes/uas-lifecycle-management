@@ -5,7 +5,7 @@ public interface PartFailureTimeProjection {
      * Gets the part name.
      * @return the part name.
      */
-    String getPartType();
+    String getPartTypeName();
 
     /**
      * Gets the failure time.
@@ -17,7 +17,7 @@ public interface PartFailureTimeProjection {
      * Sets title required for testing.
      * @param title the title to set.
      */
-    void setPartType(String title);
+    void setPartTypeName(String title);
 
     /**
      * Sets the failure time required for testing.
