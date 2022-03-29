@@ -3,12 +3,18 @@ package com.uas.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
 import com.uas.api.models.dtos.AddPartDTO;
+import com.uas.api.models.dtos.PartDTO;
+import com.uas.api.models.dtos.PartStockDTO;
+import com.uas.api.models.dtos.PlatformStatusDTO;
+import com.uas.api.models.entities.enums.PlatformStatus;
+import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
 import com.uas.api.services.auth.UserDetailsServiceImpl;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,13 +25,20 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = PartsController.class)
@@ -184,6 +197,53 @@ public class PartControllerTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void whenGetAllParts_ReturnList() throws Exception {
+        List<PartDTO> partDTOList = new ArrayList<>();
+
+        partDTOList.add(new PartDTO(
+                1,
+                "Motor",
+                BigDecimal.valueOf(200.00),
+                500,
+                750,
+                Arrays.asList(new PartStockDTO(1, "Cardiff", 10)),
+                Arrays.asList("Platform A")));
+        partDTOList.add(new PartDTO(
+                2,
+                "Motor",
+                BigDecimal.valueOf(250.00),
+                300,
+                650,
+                Arrays.asList(new PartStockDTO(2, "Cardiff", 15)),
+                Arrays.asList("Platform A", "Platform B")));
+        ;
+
+        when(partService.getAllParts()).thenReturn(partDTOList);
+
+        MvcResult mvcResult = mockMvc.perform(get("/parts/all")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].partNumber").value(1))
+                .andExpect(jsonPath("$[0].partType").value("Motor"))
+                .andExpect(jsonPath("$[1].partNumber").value(2))
+                .andExpect(jsonPath("$[1].compatiblePlatforms", hasSize(2)))
+                .andReturn();
+    }
+
+    @Test
+    public void whenGetAllPartsThenThrowError() throws Exception {
+        when(partService.getAllParts()).thenThrow(new NotFoundException("Parts not found."));
+        mockMvc.perform(get("/parts/all")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
 }
