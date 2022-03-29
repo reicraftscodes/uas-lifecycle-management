@@ -151,4 +151,14 @@ public class PartsController {
             return ResponseEntity.badRequest().body(result);
         }
     }
+    
+    @PostMapping("update-part-price")
+    public ResponseEntity<?> updatePartPrice(@RequestBody UpdatePartPriceDTO updatePartPriceDTO){
+        String result = partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());
+        if (result.equals("Success")) {
+            return ResponseEntity.ok("");
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
+    }
 }
