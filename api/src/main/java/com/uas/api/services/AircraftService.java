@@ -42,17 +42,17 @@ public interface AircraftService {
      */
     void updateAircraftFlyTime(Aircraft aircraft, int flyTime);
     /**
-     * Gets the number of hours operational as a list.
+     * Gets the number of flytimehours as a list.
      * @return the list.
      */
-    List<Integer> getHoursOperational();
+    List<Integer> getFlyTimeHours();
 
     /**
      * Updates the number of operational hours.
-     * @param aircraftAddHoursOperationalDTO the aircraft and the hours.
+     * @param aircraftAddFlyTimeHoursDTO the aircraft and the hours.
      * @return the number of hours total.
      */
-    AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
+    AircraftFlyTimeHoursDTO updateFlyTimeHours(AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTO);
     /**
      * Gets a list of platform status dto objects, with useful data.
      * @return the dto list.

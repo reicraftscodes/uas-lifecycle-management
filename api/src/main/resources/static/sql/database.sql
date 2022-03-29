@@ -22,7 +22,6 @@ CREATE TABLE Aircraft (
     PlatformStatus SET("Design","Production","Operational","Repair") NOT NULL,
     PlatformType SET("Platform A","Platform B") NOT NULL,
     FlyingHours INT NOT NULL,
-    HoursOperational int,
     PRIMARY KEY (TailNumber),
     UNIQUE (TailNumber),
     FOREIGN KEY (LocationName) REFERENCES Locations(LocationName)

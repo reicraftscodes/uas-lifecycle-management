@@ -249,10 +249,10 @@ public class AircraftControllerTest {
 
         List<Integer> serviceResponse = new ArrayList<>();
         serviceResponse.add(11);
-        AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO = new AircraftAddHoursOperationalDTO("G-999", 10);
-        AircraftHoursOperationalDTO result = new AircraftHoursOperationalDTO(serviceResponse);
-        when(aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO)).thenReturn(result);
-        String json1 = objectMapper.writeValueAsString(aircraftAddHoursOperationalDTO);
+        AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTO = new AircraftAddFlyTimeHoursDTO("G-999", 10);
+        AircraftFlyTimeHoursDTO result = new AircraftFlyTimeHoursDTO(serviceResponse);
+        when(aircraftService.updateFlyTimeHours(aircraftAddFlyTimeHoursDTO)).thenReturn(result);
+        String json1 = objectMapper.writeValueAsString(aircraftAddFlyTimeHoursDTO);
         MvcResult mockMvcResult = mockMvc.perform(post("/aircraft/time-operational")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
