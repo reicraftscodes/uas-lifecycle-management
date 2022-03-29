@@ -439,6 +439,25 @@ public class PartServiceImpl implements PartService {
         return "Success";
     }
 
+    /**
+     * Updates a specific part weight in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param weight The new weight.
+     * @return Returns the result of the status update.
+     */
+    @Override
+    public String updatePartWeight(long partNumber, double weight) {
+        //Checks that part is present in db.
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            return "Part not found!";
+        }
+
+        selectedPart.get().setWeight((long) weight);
+        partRepository.save(selectedPart.get());
+        return "Success";
+    }
+
 
 
 }

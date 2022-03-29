@@ -88,4 +88,12 @@ public interface PartService {
      * @return Returns the result of the status update.
      */
     String updatePartPrice(long partNumber, double price);
+
+    /**
+     * Updates a specific part weight in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param weight The new weight.
+     * @return Returns the result of the status update.
+     */
+    String updatePartWeight(long partNumber, double weight);
 }
