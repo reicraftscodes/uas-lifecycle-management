@@ -387,6 +387,25 @@ public class PartServiceImpl implements PartService {
         return allPartDTOs;
     }
 
+    @Override
+    public void updatePartStatus(long partNumber, PartStatus partStatus) throws Exception {
+        //Checks that part is present in db.
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            throw new Exception("Part not found!");
+        }
+
+        //Checks if part is assigned to aircraft.
+        if (aircraftPartRepository.findAircraftPartByPart_PartNumber(partNumber) == null) {
+            throw new Exception("Part not assigned to aircraft!");
+        }
+
+
+
+
+
+    }
+
 
 
 }
