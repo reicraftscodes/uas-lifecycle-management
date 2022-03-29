@@ -154,7 +154,7 @@ public class PartServiceTests {
         PartType mockPartType = new PartType(1L, PartName.WING_A);
         Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(100), 40L, 550L);
         PartFailureTimeProjection partTypeProjection = factory.createProjection(PartFailureTimeProjection.class);
-        partTypeProjection.setPartType(mockPartType.getPartName().getName());
+        partTypeProjection.setPartTypeName(mockPartType.getPartName().getName());
         partTypeProjection.setTypicalFailureTime(mockPart.getTypicalFailureTime());
         List<PartFailureTimeProjection> queryResults = new ArrayList<>();
         queryResults.add(partTypeProjection);

@@ -275,7 +275,7 @@ public class PartServiceImpl implements PartService {
         List<PartTypeFailureTimeDTO> failureTime = new ArrayList<>();
         List<PartFailureTimeProjection> fts = partRepository.findAllProjectedBy();
         for (PartFailureTimeProjection part:fts) {
-            failureTime.add(new PartTypeFailureTimeDTO(part.getPartType(), part.getTypicalFailureTime()));
+            failureTime.add(new PartTypeFailureTimeDTO(part.getPartTypeName(), part.getTypicalFailureTime()));
         }
         return failureTime;
     }
