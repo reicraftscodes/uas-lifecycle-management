@@ -1,6 +1,9 @@
 package com.uas.api.services;
 
+import com.uas.api.models.dtos.StockOrderDTO;
 import com.uas.api.requests.MoreStockRequest;
+
+import java.util.List;
 
 public interface StockControlService {
     /**
@@ -9,4 +12,6 @@ public interface StockControlService {
      * @return the stock order.
      */
     StockControlServiceImpl.StockReceipt addMoreStock(MoreStockRequest moreStockRequest);
+
+    List<StockOrderDTO> getAllPreviousStockOrders();
 }
