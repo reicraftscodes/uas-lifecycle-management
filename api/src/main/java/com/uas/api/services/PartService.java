@@ -66,5 +66,5 @@ public interface PartService {
      */
     List<String> availablePartsForParttype(long partType);
 
-
+    List<PartDTO> getAllParts();
 }
