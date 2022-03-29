@@ -350,7 +350,7 @@ public class PartServiceImpl implements PartService {
      * @return returns a list of part numbers.
      */
     public List<String> availablePartsForParttype(final long partType) {
-        return partRepository.findAllAvailbleByType(partType);
+        return partRepository.findAllAvailableByType(partType);
     }
 
     /**
