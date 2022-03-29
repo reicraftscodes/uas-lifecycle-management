@@ -420,6 +420,13 @@ public class PartServiceImpl implements PartService {
         return "Success";
     }
 
+    /**
+     * Updates a specified parts cost in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param price The price it is being updated to.
+     * @return Returns the result of the status update.
+     */
+    @Override
     public String updatePartPrice(long partNumber, double price) {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);

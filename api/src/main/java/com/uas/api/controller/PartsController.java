@@ -151,7 +151,12 @@ public class PartsController {
             return ResponseEntity.badRequest().body(result);
         }
     }
-    
+
+    /**
+     * Updates the price of a given part.
+     * @param updatePartPriceDTO A dto containing the partID and new price.
+     * @return A response entity with an appropriate body and status depending on the outcome.
+     */
     @PostMapping("update-part-price")
     public ResponseEntity<?> updatePartPrice(@RequestBody UpdatePartPriceDTO updatePartPriceDTO){
         String result = partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());

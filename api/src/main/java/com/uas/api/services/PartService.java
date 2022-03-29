@@ -81,5 +81,11 @@ public interface PartService {
      */
     String updatePartStatus(long partNumber, String partStatus);
 
+    /**
+     * Updates a specified parts cost in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param price The price it is being updated to.
+     * @return Returns the result of the status update.
+     */
     String updatePartPrice(long partNumber, double price);
 }
