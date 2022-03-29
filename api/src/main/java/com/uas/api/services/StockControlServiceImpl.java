@@ -72,7 +72,7 @@ public class StockControlServiceImpl implements StockControlService {
 
         checkPartTypesAndQuantities(partTypes, quantities);
 
-        Orders newOrder = new Orders(orderLocation,moreStockRequest.getSupplierEmail(), 0, ts);
+        Orders newOrder = new Orders(orderLocation, moreStockRequest.getSupplierEmail(), 0, ts);
         ordersRepository.save(newOrder);
 
         for (int i = 0; i < partTypes.size(); i++) {
@@ -89,7 +89,7 @@ public class StockControlServiceImpl implements StockControlService {
         InvoiceDTO invoiceDTO = invoiceService.getInvoiceData(newOrder);
         String fileLocation = invoiceService.generatePDF(invoiceDTO);
         if (!Objects.equals(fileLocation, "error")) {
-            invoiceService.emailInvoice(fileLocation,moreStockRequest.getSupplierEmail());
+            invoiceService.emailInvoice(fileLocation, moreStockRequest.getSupplierEmail());
         }
 
         reciept = new StockReceipt(String.valueOf(totalCost));

@@ -38,6 +38,4 @@ public class InvoiceDTO {
      *  The total cost of the whole order.
      */
     private double totalCost;
-
-    
 }
