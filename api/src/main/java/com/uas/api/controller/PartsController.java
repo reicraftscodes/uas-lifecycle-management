@@ -140,7 +140,7 @@ public class PartsController {
     /**
      * Updates the status of a given part.
      * @param updatePartStatusDTO A dto containing partID and a new part status.
-     * @return A response entity with an appropriate body and status depending on the outcome. 
+     * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-status")
     public ResponseEntity<?> updatePartStatus(@RequestBody UpdatePartStatusDTO updatePartStatusDTO){

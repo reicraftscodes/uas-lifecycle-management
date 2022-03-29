@@ -420,6 +420,18 @@ public class PartServiceImpl implements PartService {
         return "Success";
     }
 
+    public String updatePartPrice(long partNumber, double price) {
+        //Checks that part is present in db.
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            return "Part not found!";
+        }
+
+        selectedPart.get().setPrice(BigDecimal.valueOf(price));
+        partRepository.save(selectedPart.get());
+        return "Success";
+    }
+
 
 
 }

@@ -80,4 +80,6 @@ public interface PartService {
      * @return Returns the result of the status update.
      */
     String updatePartStatus(long partNumber, String partStatus);
+
+    String updatePartPrice(long partNumber, double price);
 }
