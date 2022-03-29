@@ -56,6 +56,11 @@ public class PartServiceImpl implements PartService {
      */
     private final StockRepository stockRepository;
 
+    /**
+     * Repository for service for communicating with platform table in the db.
+     */
+    private final PlatformRepository platformRepository;
+
     // This will probably change.
     /**
      * Max stock allowance.
@@ -76,6 +81,7 @@ public class PartServiceImpl implements PartService {
      * @param repairRepository required repair repository.
      * @param aircraftPartRepository required aircraft part repository.
      * @param stockRepository required stock repository.
+     * @param platformRepository required platform repository.
      */
     @Autowired
     public PartServiceImpl(final PartRepository partRepository,
@@ -85,7 +91,8 @@ public class PartServiceImpl implements PartService {
                            final RepairRepository repairRepository,
                            final StockRepository stockRepository,
                            final AircraftRepository aircraftRepository,
-                           final AircraftPartRepository aircraftPartRepository) {
+                           final AircraftPartRepository aircraftPartRepository,
+                           final PlatformRepository platformRepository) {
         this.partRepository = partRepository;
         this.locationRepository = locationRepository;
         this.partTypeRepository = partTypeRepository;
@@ -94,6 +101,7 @@ public class PartServiceImpl implements PartService {
         this.repairRepository = repairRepository;
         this.stockRepository = stockRepository;
         this.aircraftPartRepository = aircraftPartRepository;
+        this.platformRepository = platformRepository;
     }
 
     /**
@@ -345,7 +353,39 @@ public class PartServiceImpl implements PartService {
         return partRepository.findAllAvailbleByType(partType);
     }
 
-
+    /**
+     * Get a list of all parts.
+     * @return a list of part dtos.
+     */
+    @Override
+    public List<PartDTO> getAllParts() throws NotFoundException {
+        List<PartDTO> allPartDTOs = new ArrayList<>();
+        List<Part> allParts = partRepository.findAll();
+        if (allParts.isEmpty()) {
+            throw new NotFoundException("Parts not found!");
+        }
+        for (Part part : allParts) {
+            List<PartStockDTO> stockLocationsDTOs = new ArrayList<>();
+            List<Stock> stockLocations = stockRepository.getAllByPart_PartNumber(part.getPartNumber());
+            for (Stock stock : stockLocations) {
+                stockLocationsDTOs.add(new PartStockDTO(stock.getPart().getPartNumber(), stock.getLocation().getLocationName(), stock.getStockQuantity()));
+            }
+            List<String> platformTypes = new ArrayList<>();
+            List<Platform> platforms = platformRepository.findCompatiblePlatformTypesForPart(part.getPartNumber());
+            for (Platform p : platforms) {
+                platformTypes.add(p.getPlatformType().getName());
+            }
+            allPartDTOs.add(new PartDTO(
+                    part.getPartNumber(),
+                    part.getPartType().getPartName().getName(),
+                    part.getPrice(),
+                    part.getWeight(),
+                    part.getTypicalFailureTime(),
+                    stockLocationsDTOs,
+                    platformTypes));
+        }
+        return allPartDTOs;
+    }
 
 
 
