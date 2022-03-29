@@ -137,10 +137,18 @@ public class PartsController {
         return ResponseEntity.ok(partDTOs);
     }
 
+    /**
+     * Updates the status of a given part.
+     * @param updatePartStatusDTO A dto containing partID and a new part status.
+     * @return A response entity with an appropriate body and status depending on the outcome. 
+     */
     @PostMapping("update-part-status")
     public ResponseEntity<?> updatePartStatus(@RequestBody UpdatePartStatusDTO updatePartStatusDTO){
         String result = partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
-
-        return ResponseEntity.ok(result);
+        if (result.equals("Success")) {
+            return ResponseEntity.ok("");
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
     }
 }
