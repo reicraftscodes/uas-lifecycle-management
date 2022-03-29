@@ -66,5 +66,9 @@ public interface PartService {
      */
     List<String> availablePartsForParttype(long partType);
 
+    /**
+     * Get a list of all parts.
+     * @return a list of part dtos.
+     */
     List<PartDTO> getAllParts();
 }

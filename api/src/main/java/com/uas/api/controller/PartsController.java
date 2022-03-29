@@ -126,6 +126,10 @@ public class PartsController {
         return ResponseEntity.ok(partService.availablePartsForParttype(partType));
     }
 
+    /**
+     * Get all parts.
+     * @return a list of part dtos.
+     */
     @GetMapping("/all")
     public ResponseEntity<List<PartDTO>> getAllParts() {
         List<PartDTO> partDTOs = partService.getAllParts();

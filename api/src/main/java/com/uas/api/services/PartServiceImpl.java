@@ -353,6 +353,10 @@ public class PartServiceImpl implements PartService {
         return partRepository.findAllAvailbleByType(partType);
     }
 
+    /**
+     * Get a list of all parts.
+     * @return a list of part dtos.
+     */
     @Override
     public List<PartDTO> getAllParts() {
         List<PartDTO> allPartDTOs = new ArrayList<>();

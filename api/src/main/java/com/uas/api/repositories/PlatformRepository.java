@@ -9,7 +9,12 @@ import java.util.List;
 
 public interface PlatformRepository extends JpaRepository<Platform, Long> {
 
-    @Query(value="select * from platforms where platformid in (select platformid from PlatformParts where parttypeid = (select parttypeid from parts where partid =:partID))", nativeQuery = true)
+    /**
+     * Get a list of platforms that are compatible with a part.
+     * @param partID the part id/number.
+     * @return a list of compatible platforms.
+     */
+    @Query(value = "select * from platforms where platformid in (select platformid from PlatformParts where parttypeid = (select parttypeid from parts where partid = :partID))", nativeQuery = true)
     List<Platform> findCompatiblePlatformTypesForPart(@Param("partID") long partID);
 
 
