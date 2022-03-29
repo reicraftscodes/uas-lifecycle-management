@@ -131,7 +131,7 @@ public class PartsController {
      * @return a list of part dtos.
      */
     @GetMapping("/all")
-    public ResponseEntity<List<PartDTO>> getAllParts() {
+    public ResponseEntity<List<PartDTO>> getAllParts() throws NotFoundException {
         List<PartDTO> partDTOs = partService.getAllParts();
         return ResponseEntity.ok(partDTOs);
     }

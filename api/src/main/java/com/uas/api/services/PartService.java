@@ -70,5 +70,5 @@ public interface PartService {
      * Get a list of all parts.
      * @return a list of part dtos.
      */
-    List<PartDTO> getAllParts();
+    List<PartDTO> getAllParts() throws NotFoundException;
 }

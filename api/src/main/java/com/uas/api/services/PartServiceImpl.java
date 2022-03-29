@@ -358,9 +358,12 @@ public class PartServiceImpl implements PartService {
      * @return a list of part dtos.
      */
     @Override
-    public List<PartDTO> getAllParts() {
+    public List<PartDTO> getAllParts() throws NotFoundException {
         List<PartDTO> allPartDTOs = new ArrayList<>();
         List<Part> allParts = partRepository.findAll();
+        if (allParts.isEmpty()) {
+            throw new NotFoundException("Parts not found!");
+        }
         for (Part part : allParts) {
             List<PartStockDTO> stockLocationsDTOs = new ArrayList<>();
             List<Stock> stockLocations = stockRepository.getAllByPart_PartNumber(part.getPartNumber());
