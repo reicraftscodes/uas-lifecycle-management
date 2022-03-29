@@ -1,6 +1,7 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.*;
+import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
@@ -134,5 +135,12 @@ public class PartsController {
     public ResponseEntity<List<PartDTO>> getAllParts() throws NotFoundException {
         List<PartDTO> partDTOs = partService.getAllParts();
         return ResponseEntity.ok(partDTOs);
+    }
+
+    @PostMapping("update-part-status")
+    public ResponseEntity<?> updatePartStatus(@RequestBody UpdatePartStatusDTO updatePartStatusDTO){
+        String result = partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
+
+        return ResponseEntity.ok(result);
     }
 }

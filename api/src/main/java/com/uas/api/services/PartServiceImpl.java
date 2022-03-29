@@ -387,23 +387,37 @@ public class PartServiceImpl implements PartService {
         return allPartDTOs;
     }
 
+    /**
+     * Updates a parts status in the aircraft part db table.
+     * @param partNumber The part number of the part.
+     * @param partStatus The status that the part is being updated to.
+     * @return Returns the result of the status update.
+     */
     @Override
-    public void updatePartStatus(long partNumber, PartStatus partStatus) throws Exception {
+    public String updatePartStatus(long partNumber, String partStatus){
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
-            throw new Exception("Part not found!");
+            return "Part not found!";
         }
 
         //Checks if part is assigned to aircraft.
-        if (aircraftPartRepository.findAircraftPartByPart_PartNumber(partNumber) == null) {
-            throw new Exception("Part not assigned to aircraft!");
+        Optional<AircraftPart> aircraftPart = Optional.ofNullable(aircraftPartRepository.findAircraftPartByPart_PartNumber(partNumber));
+        if (aircraftPart.isEmpty()) {
+            return "Part not assigned to aircraft!";
         }
 
+        //Part status from string to enum.
+        PartStatus ps;
+        try {
+            ps = PartStatus.valueOf(partStatus);
+        } catch (Exception e) {
+            return "Invalid part status!";
+        }
 
-
-
-
+        aircraftPart.get().setPartStatus(ps);
+        aircraftPartRepository.save(aircraftPart.get());
+        return "Success";
     }
 
 

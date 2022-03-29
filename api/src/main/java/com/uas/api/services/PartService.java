@@ -73,5 +73,11 @@ public interface PartService {
      */
     List<PartDTO> getAllParts() throws NotFoundException;
 
-    void updatePartStatus(long partNumber, PartStatus partStatus) throws Exception;
+    /**
+     * Updates a parts status in the aircraft part db table.
+     * @param partNumber The part number of the part.
+     * @param partStatus The status that the part is being updated to.
+     * @return Returns the result of the status update.
+     */
+    String updatePartStatus(long partNumber, String partStatus);
 }
