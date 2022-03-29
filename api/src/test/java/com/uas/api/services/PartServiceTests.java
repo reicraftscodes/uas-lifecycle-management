@@ -25,6 +25,7 @@ import org.springframework.test.util.AssertionErrors;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,6 +51,8 @@ public class PartServiceTests {
     private AircraftPartRepository aircraftPartRepository;
     @Mock
     private StockRepository stockRepository;
+    @Mock
+    private PlatformRepository platformRepository;
     @MockBean
     @InjectMocks
     private PartServiceImpl partService;
@@ -407,6 +410,45 @@ public class PartServiceTests {
             partService.getMostCommonFailingParts(2);
         });
         Assertions.assertEquals("No parts and repair costs were found!", thrown.getMessage());
+    }
+
+    @Test
+    public void whenGetAllPartsThenThrowNotFoundException() throws NotFoundException {
+        when(partRepository.findAll()).thenReturn(new ArrayList<>());
+        NotFoundException thrown = Assertions.assertThrows(NotFoundException.class, () -> {
+            partService.getAllParts();
+        });
+        Assertions.assertEquals("Parts not found!", thrown.getMessage());
+    }
+
+    @Test
+    public void whenGetAllParts_ReturnList() throws Exception {
+        List<Part> parts = new ArrayList<>();
+        parts.add(new Part(
+                1L,
+                new PartType(1L, PartName.MOTOR),
+                "Motor",
+                LocalDateTime.now(),
+                BigDecimal.valueOf(200.00),
+                500L,
+                750L));
+        parts.add(new Part(
+                2L,
+                new PartType(1L, PartName.MOTOR),
+                "Motor",
+                LocalDateTime.now(),
+                BigDecimal.valueOf(300.00),
+                400L,
+                650L));
+
+        when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.getAllByPart_PartNumber(anyLong())).thenReturn(new ArrayList<>());
+        when(platformRepository.findCompatiblePlatformTypesForPart(anyLong())).thenReturn(new ArrayList<>());
+
+        Assertions.assertDoesNotThrow(() -> {
+            partService.getAllParts();
+        });
+        Assertions.assertEquals(2, parts.size());
     }
 
 }
