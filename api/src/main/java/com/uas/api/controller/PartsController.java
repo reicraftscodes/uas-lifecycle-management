@@ -182,4 +182,19 @@ public class PartsController {
             return ResponseEntity.badRequest().body(result);
         }
     }
+
+    /**
+     * Update the failure time of a given part.
+     * @param updatePartFailureTimeDTO A dto containing the partID and new failure time.
+     * @return A response entity with an appropriate body and status depending on the outcome.
+     */
+    @PostMapping("update-part-failure-time")
+    public ResponseEntity<?> updateFailureTime(@RequestBody UpdatePartFailureTimeDTO updatePartFailureTimeDTO) {
+        String result = partService.updateFailureTime(updatePartFailureTimeDTO.getPartID(), updatePartFailureTimeDTO.getFailureTime());
+        if (result.equals("Success")) {
+            return ResponseEntity.ok("");
+        } else {
+            return ResponseEntity.badRequest().body(result);
+        }
+    }
 }

@@ -470,7 +470,7 @@ public class PartServiceImpl implements PartService {
         if (selectedPart.isEmpty()) {
             return "Part not found!";
         }
-        
+
         selectedPart.get().setTypicalFailureTime(failureTime);
         partRepository.save(selectedPart.get());
         return "Success";
