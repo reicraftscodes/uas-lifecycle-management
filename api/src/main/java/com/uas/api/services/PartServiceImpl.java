@@ -341,7 +341,7 @@ public class PartServiceImpl implements PartService {
         //updates the aircraft flight hours
         aircraftService.updateAircraftFlyTime(aircraft.get(), request.getFlyTime());
 
-        aircraftService.updateUserAircraftFlyTime(request.getAircraft(), request.getUserId(), request.getFlyTime());
+        aircraftService.updateUserAircraftFlyTime(aircraft.get(), request.getUserId(), request.getFlyTime());
     }
 
     /**

@@ -6,7 +6,6 @@ import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AircraftService {
     /**
@@ -15,13 +14,6 @@ public interface AircraftService {
      * @return returns a string with any errors encountered adding the aircraft.
      */
     String addAircraftFromJson(AircraftAddNewDTO requestData);
-
-    /**
-     * trys to find an aircraft from the database.
-     * @param id The tailnumber id of the aircraft.
-     * @return returns an aircraft object if found.
-     */
-    Optional<Aircraft> findAircraftById(String id);
 
     /** Calculates the total number of repairs for an aircraft.
      * @param tailNumber of the aircraft.
@@ -128,27 +120,27 @@ public interface AircraftService {
      * @param userId The user Id whose personal flight time is being updated.
      * @param flyTime The fly time to be added to the hours field.
      */
-    void updateUserAircraftFlyTime(String tailNumber, long userId, int flyTime);
+    void updateUserAircraftFlyTime(Aircraft tailNumber, long userId, int flyTime) throws NotFoundException;
     /**
      * Updates the given aircrafts' status.
      * @param aircraftStatusDTO A dto with the aircraft being updates and the status it is being changed to.
      * @return a response entity with and message if there was any problems.
      */
-    ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO);
+    ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO) throws NotFoundException;
 
     /**
      * Gets the parts and their status for the aircraft given.
      * @param tailNumber The aircraft that the parts are being searched for.
      * @return Returns a response entity with a body containing the list of parts with their statuses.
      */
-    ResponseEntity<?> getAircraftParts(String tailNumber);
+    ResponseEntity<?> getAircraftParts(String tailNumber) throws NotFoundException;
 
     /**
      * Updates an aircraft with a new part.
      * @param aircraftPartDTO a dto with the part being replaced and the new part number.
      * @return a response entity with and message if there was any problems.
      */
-    ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO);
+    ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO) throws NotFoundException;
 
 
 
