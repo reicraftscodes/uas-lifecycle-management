@@ -1,6 +1,7 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.InvoiceDTO;
+import com.uas.api.models.dtos.StockOrderDTO;
 import com.uas.api.models.entities.*;
 import com.uas.api.repositories.*;
 import com.uas.api.requests.MoreStockRequest;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -111,6 +113,26 @@ public class StockControlServiceImpl implements StockControlService {
         } else {
             throw new IllegalArgumentException("Location does not exist!");
         }
+    }
+
+    /**
+     * Get a list of all part stock orders.
+     * @return a list of stock order dtos.
+     */
+    public List<StockOrderDTO> getAllPreviousStockOrders() {
+        List<StockOrderDTO> stockOrderDTOs = new ArrayList<>();
+        List<StockToOrders> stockToOrders = stockToOrdersRepository.findAll();
+        for (StockToOrders sto : stockToOrders) {
+            StockOrderDTO stockOrderDTO = new StockOrderDTO(
+                            sto.getOrderID().getLocationName().getLocationName(),
+                            sto.getOrderID().getSupplierEmail(),
+                            sto.getOrderID().getTotalCost(),
+                            sto.getOrderID().getOrderDateTime(),
+                            sto.getPartID().getPartType().getPartName().getName(),
+                            sto.getQuantity());
+            stockOrderDTOs.add(stockOrderDTO);
+        }
+        return stockOrderDTOs;
     }
 
     /**

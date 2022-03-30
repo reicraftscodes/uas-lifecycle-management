@@ -237,6 +237,20 @@ INSERT INTO Repairs (AircraftPartID, cost) VALUES ("2","100");
 INSERT INTO Repairs (AircraftPartID, cost) VALUES ("3","50");
 INSERT INTO Repairs (AircraftPartID, cost) VALUES ("4","12");
 
+
+INSERT INTO orders (OrderID, LocationName, SupplierEmail, TotalCost, OrderDateTime) VALUES (1, "Cardiff", "supplierOne@test.com", 2000.00, "2022-01-29 11:17:43");
+INSERT INTO orders (OrderID, LocationName, SupplierEmail, TotalCost, OrderDateTime) VALUES (2, "Cardiff", "supplierTwo@test.com", 3000.00, "2022-02-14 11:17:43");
+INSERT INTO orders (OrderID, LocationName, SupplierEmail, TotalCost, OrderDateTime) VALUES (3, "St Athen", "supplierTwo@test.com", 2800.00, "2022-02-16 11:17:43");
+INSERT INTO orders (OrderID, LocationName, SupplierEmail, TotalCost, OrderDateTime) VALUES (4, "St Athen", "supplierOne@test.com", 1050.00, "2022-02-25 11:17:43");
+INSERT INTO orders (OrderID, LocationName, SupplierEmail, TotalCost, OrderDateTime) VALUES (5, "Cardiff", "supplierThree@test.com", 3150.00, "2022-03-14 11:17:43");
+
+INSERT INTO stocktoorders (StockToOrderID, OrderID, PartID, Quantity) VALUES (1, 1, 1, 20);
+INSERT INTO stocktoorders (StockToOrderID, OrderID, PartID, Quantity) VALUES (2, 2, 5, 15);
+INSERT INTO stocktoorders (StockToOrderID, OrderID, PartID, Quantity) VALUES (3, 3, 2, 35);
+INSERT INTO stocktoorders (StockToOrderID, OrderID, PartID, Quantity) VALUES (4, 4, 6, 10);
+INSERT INTO stocktoorders (StockToOrderID, OrderID, PartID, Quantity) VALUES (5, 5, 7, 20);
+
+
 #USER roles
 INSERT INTO ROLES (roleid, NAME) VALUES ("1", "ROLE_USER_LOGISTIC");
 INSERT INTO ROLES (roleid, NAME) VALUES ("2", "ROLE_USER_CTO");
