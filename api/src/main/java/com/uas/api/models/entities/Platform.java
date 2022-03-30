@@ -1,6 +1,6 @@
 package com.uas.api.models.entities;
 
-import com.uas.api.models.entities.enums.PartName;
+import com.uas.api.models.entities.enums.PlatformType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,21 +10,21 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Entity(name = "parttypes")
-@Table(name = "parttypes")
-public class PartType {
+@Entity
+@Table(name = "Platforms")
+public class Platform {
+
     /**
-     * Id.
+     * PlatformPart id.
      */
     @Id
+    @Column(name = "PlatformID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "PartTypeID")
     private Long id;
     /**
-     * Part name.
+     * PlatformType.
      */
-    @Column(name = "PartTypeName")
-    private PartName partName;
-
+    @Column(name = "PlatformType")
+    private PlatformType platformType;
 
 }

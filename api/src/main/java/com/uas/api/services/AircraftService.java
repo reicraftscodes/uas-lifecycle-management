@@ -2,6 +2,7 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -41,17 +42,17 @@ public interface AircraftService {
      */
     void updateAircraftFlyTime(Aircraft aircraft, int flyTime);
     /**
-     * Gets the number of hours operational as a list.
+     * Gets the number of flytimehours as a list.
      * @return the list.
      */
-    List<Integer> getHoursOperational();
+    List<Integer> getFlyTimeHours();
 
     /**
      * Updates the number of operational hours.
-     * @param aircraftAddHoursOperationalDTO the aircraft and the hours.
+     * @param aircraftAddFlyTimeHoursDTO the aircraft and the hours.
      * @return the number of hours total.
      */
-    AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
+    AircraftFlyTimeHoursDTO updateFlyTimeHours(AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTO);
     /**
      * Gets a list of platform status dto objects, with useful data.
      * @return the dto list.
@@ -114,6 +115,12 @@ public interface AircraftService {
      * @return returns a list of aircraft dtos.
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
+    /**
+     * Method for creating an aircraft DTO with just their repair and parts cost.
+     * @param aircraftId the aircraft id.
+     * @return returns aircraft dto.
+     */
+    AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(String aircraftId) throws NotFoundException;
 
     /**
      * Used to update the user flytime of an aircraft in the database.

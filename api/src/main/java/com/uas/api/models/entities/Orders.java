@@ -1,14 +1,18 @@
 package com.uas.api.models.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity(name = "Orders")
 @Getter
+@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Orders {
     /**
      * Order id.
@@ -24,6 +28,11 @@ public class Orders {
     @JoinColumn(name = "LocationName", referencedColumnName = "LocationName")
     private Location locationName;
     /**
+     * The email address the order is being sent to.
+     */
+    @Column(name = "SupplierEmail")
+    private String supplierEmail;
+    /**
      * Total cost of order.
      */
     @Column(name = "TotalCost")
@@ -36,12 +45,14 @@ public class Orders {
 
     /**
      * Constructor.
-     * @param locationName required.
+     * @param locationName required
+     * @param supplierEmail required.
      * @param totalCost required.
      * @param orderDateTime required.
      */
-    public Orders(final Location locationName, final double totalCost, final Timestamp orderDateTime) {
+    public Orders(final Location locationName, final String supplierEmail, final double totalCost, final Timestamp orderDateTime) {
         this.locationName = locationName;
+        this.supplierEmail = supplierEmail;
         this.totalCost = totalCost;
         this.orderDateTime = orderDateTime;
     }

@@ -1,7 +1,8 @@
 package com.uas.api.services;
 
+import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.Part;
+import com.uas.api.models.entities.AircraftPart;
 import javassist.NotFoundException;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public interface PartService {
      * Adds a part to the db from a json request.
      * @param requestData a hashmap of the json request data.
      */
-    void addPartFromJSON(AddPartDTO requestData);
+    void addPartFromJSON(AddPartDTO requestData) throws NotFoundException;
 
     /**
      * Gets the part name and it's failure time from the part type table using a projection.
@@ -50,7 +51,13 @@ public interface PartService {
      * @param parts The list of parts to update.
      * @param flyTime The flight time to be added to the parts flight time.
      */
-    void updatePartFlyTime(List<Part> parts, int flyTime);
+    void updatePartFlyTime(List<AircraftPart> parts, int flyTime);
+
+    /**
+     * Update all flight hours.
+     * @param request The DTO with request to update all flight hours.
+     */
+    void updateAllFlightHours(LogFlightDTO request) throws NotFoundException, InvalidDTOAttributeException;
 
     /**
      * Gets all availble parts for a specific part type.
@@ -59,5 +66,9 @@ public interface PartService {
      */
     List<String> availablePartsForParttype(long partType);
 
-
+    /**
+     * Get a list of all parts.
+     * @return a list of part dtos.
+     */
+    List<PartDTO> getAllParts() throws NotFoundException;
 }

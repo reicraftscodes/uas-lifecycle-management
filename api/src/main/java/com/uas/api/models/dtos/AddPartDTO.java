@@ -1,18 +1,17 @@
 package com.uas.api.models.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+
 @Getter
-@AllArgsConstructor
 public class AddPartDTO {
     /**
      * The partType id.
      */
     private final Long partType;
     /**
-     * The aircraft tail number.
+     * The part name.
      */
-    private final String tailNumber;
+    private final String partName;
     /**
      * The location name.
      */
@@ -22,7 +21,81 @@ public class AddPartDTO {
      */
     private final String manufacture;
     /**
-     * The status of the part as a string.
+     * The price of part.
+     */
+    private final double price;
+    /**
+     * The weight of part.
+     */
+    private final long weight;
+    /**
+     * The aircraft part is assigned to.
+     */
+    private final String aircraft;
+    /**
+     * The status of the part.
      */
     private final String partStatus;
+
+//    //DTO without aircraft but with manufacture
+//    public AddPartDTO(Long partType, String partName, String locationName, String manufacture, double price, long weight) {
+//        this.partType = partType;
+//        this.partName = partName;
+//        this.locationName = locationName;
+//        this.manufacture = manufacture;
+//        this.price = price;
+//        this.weight = weight;
+//        this.aircraft = null;
+//        this.partStatus = null;
+//    }
+//    //DTO without aircraft and manufacture
+//
+//    public AddPartDTO(Long partType, String partName, String locationName, double price, long weight) {
+//        this.partType = partType;
+//        this.partName = partName;
+//        this.locationName = locationName;
+//        this.price = price;
+//        this.weight = weight;
+//        this.manufacture = null;
+//        this.aircraft = null;
+//        this.partStatus = null;
+//    }
+//
+//    //DTO with aircraft but no manufacture
+//
+//    public AddPartDTO(Long partType, String partName, String locationName, double price, long weight, String aircraft, String partStatus) {
+//        this.partType = partType;
+//        this.partName = partName;
+//        this.locationName = locationName;
+//        this.price = price;
+//        this.weight = weight;
+//        this.aircraft = aircraft;
+//        this.partStatus = partStatus;
+//        this.manufacture = null;
+//    }
+//
+//
+//    //DTO with aircraft and with manufacture
+
+    /**
+     * Constructor for a AddPartDTO.
+     * @param partType Type of part.
+     * @param price Price of the part.
+     * @param weight Weight of the part.
+     * @param partName Name of the part.
+     * @param manufacture Timestamp of part.
+     * @param aircraft Aircraft part assigned to.
+     * @param locationName Location part assigned to.
+     * @param partStatus Status of the part.
+     */
+    public AddPartDTO(final Long partType, final String partName, final String locationName, final String manufacture, final double price, final long weight, final String aircraft, final String partStatus) {
+        this.partType = partType;
+        this.partName = partName;
+        this.locationName = locationName;
+        this.manufacture = manufacture;
+        this.price = price;
+        this.weight = weight;
+        this.aircraft = aircraft;
+        this.partStatus = partStatus;
+    }
 }

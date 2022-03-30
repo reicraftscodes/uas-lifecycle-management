@@ -1,10 +1,8 @@
 package com.uas.api.advice;
 
-import com.uas.api.exceptions.EmailAlreadyExistException;
-import com.uas.api.exceptions.EmailConfirmException;
-import com.uas.api.exceptions.PasswordConfirmException;
-import com.uas.api.exceptions.UserNotFoundException;
+import com.uas.api.exceptions.*;
 import com.uas.api.response.ErrorResponse;
+import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -67,5 +65,27 @@ public class GlobalControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException userNotFoundException) {
         return new ErrorResponse(userNotFoundException.getMessage(), HttpStatus.BAD_REQUEST.name());
+    }
+
+    /**
+     * Error response for NotFoundExceptions.
+     * @param notFoundException this error is thrown when objects cannot be found.
+     * @return an error response with a bad request (400) and the message.
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotFoundException(final NotFoundException notFoundException) {
+        return new ErrorResponse(notFoundException.getMessage(), HttpStatus.BAD_REQUEST.name());
+    }
+
+    /**
+     * This error occurs when an attribute in a DTO is incorrect, i.e. a negative fly time value.
+     * @param invalidDTOAttributeException
+     * @return an error response with the message thrown and a bad request status.
+     */
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidDtoException(final InvalidDTOAttributeException invalidDTOAttributeException) {
+        return new ErrorResponse(invalidDTOAttributeException.getMessage(), HttpStatus.BAD_REQUEST.name());
     }
 }

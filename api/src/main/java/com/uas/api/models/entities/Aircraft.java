@@ -20,49 +20,28 @@ public class Aircraft {
      * Aircraft ID.
      */
     @Id
-    @Column(name = "TailNumber", unique = true)
+    @Column(name = "tailnumber", unique = true)
     private String tailNumber;
     /**
      * Location.
      */
     @ManyToOne
-    @JoinColumn(name = "LocationName")
+    @JoinColumn(name = "locationname", referencedColumnName = "locationname")
     private Location location;
     /**
      * Status of platform.
      */
-    @Column(name = "PlatformStatus")
+    @Column(name = "platformstatus")
     private PlatformStatus platformStatus;
     /**
      * Type of platform.
      */
-    @Column(name = "PlatformType")
+    @Column(name = "platformtype")
     private PlatformType platformType;
     /**
      * The total flight time in hours.
      */
-    @Column(name = "FlyingHours")
+    @Column(name = "flyinghours")
     private Integer flyTimeHours;
 
-    /**
-     * Number of hours operational.
-     */
-    @Column(name = "HoursOperational")
-    private Integer hoursOperational;
-
-    /**
-     * Not quite all args constructor for aircraft.
-     * @param tailNumber
-     * @param location
-     * @param platformStatus
-     * @param platformType
-     * @param flyTimeHours
-     */
-    public Aircraft(final String tailNumber, final Location location, final PlatformStatus platformStatus, final PlatformType platformType, final Integer flyTimeHours) {
-        this.tailNumber = tailNumber;
-        this.location = location;
-        this.platformStatus = platformStatus;
-        this.platformType = platformType;
-        this.flyTimeHours = flyTimeHours;
-    }
 }

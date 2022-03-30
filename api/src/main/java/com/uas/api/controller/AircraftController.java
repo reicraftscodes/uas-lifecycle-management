@@ -1,18 +1,17 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.Part;
 import com.uas.api.repositories.PartRepository;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/aircraft")
@@ -90,51 +89,9 @@ public class AircraftController {
      * @return returns a response with ok for no errors or a bad request with a body with the error message.
      */
     @PostMapping(value = "/log-flight", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> updateFlightHours(@RequestBody final LogFlightDTO request) {
-        // A request body example that a post would have
-        //{
-        //    "userId: 2,
-        //    "aircraft":"G-001",
-        //    "flyTime":12
-        //}
-        String error = null;
-        //Gets the aircraft entity from the post request body
-        Optional<Aircraft> aircraft = aircraftService.findAircraftById(request.getAircraft());
-
-        //checks that an aircraft has been found from the aircraft input and if not sets the error variable.
-        if (aircraft.isPresent()) {
-            //gets all parts associated with the aircraft and stores them in the list.
-            List<Part> parts = partRepository.findAllPartsByAircraft(aircraft.get());
-            //Uses a try and catch statement to check if the user input hours is an integer.
-            try {
-                int hoursInput = request.getFlyTime();
-
-                //checks the user input is positive and if not sets error variable
-                if (hoursInput < 0) {
-                    error = "Fly time value cannot be negative!";
-                } else {
-                    //updates the part flight hours for all parts associated with the aircraft.
-                    partService.updatePartFlyTime(parts, hoursInput);
-                    //updates the aircraft flight hours
-                    aircraftService.updateAircraftFlyTime(aircraft.get(), hoursInput);
-
-                    aircraftService.updateUserAircraftFlyTime(request.getAircraft(), request.getUserId(), request.getFlyTime());
-                }
-            } catch (Exception e) {
-                error = "Unable to update flight time.";
-            }
-        } else {
-            error = "Aircraft not found!";
-        }
-
-        //checks for errors and if no errors then returns and okay response
-        if (error == null) {
-            return ResponseEntity.ok("");
-        } else {
-            //if there are errors then it returns a bad request with a response of the error.
-            return ResponseEntity.badRequest().body("response: " + error);
-        }
-
+    public ResponseEntity<?> updateFlightHours(@RequestBody final LogFlightDTO request) throws NotFoundException {
+        partService.updateAllFlightHours(request);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
     /**
      * Gets a the cumulative total repairs for each platform.
@@ -159,25 +116,25 @@ public class AircraftController {
         return ResponseEntity.ok(aircraftNeedingRepairsDTO);
     }
     /**
-     * Gets the cumulative total repairs for each platform.
-     * @return list of integers which represent the number of repairs done to each platform.
+     * Gets the fly time hours of each platform.
+     * @return list of integers which represent the fly time hours of each platform.
      */
     @GetMapping("/time-operational")
-    public ResponseEntity<AircraftHoursOperationalDTO> getHoursOperational() {
-        List<Integer> hoursOperational = aircraftService.getHoursOperational();
-        AircraftHoursOperationalDTO aircraftTotalRepairsDTO = new AircraftHoursOperationalDTO(hoursOperational);
+    public ResponseEntity<AircraftFlyTimeHoursDTO> getAircraftFlyTimeHours() {
+        List<Integer> flyTimeHours = aircraftService.getFlyTimeHours();
+        AircraftFlyTimeHoursDTO aircraftFlyTimeHoursDTO = new AircraftFlyTimeHoursDTO(flyTimeHours);
 
-        return ResponseEntity.ok(aircraftTotalRepairsDTO);
+        return ResponseEntity.ok(aircraftFlyTimeHoursDTO);
     }
 
     /**
      * Updates the hours operational of an aircraft.
-     * @param aircraftAddHoursOperationalDTO request body.
+     * @param aircraftAddFlyTimeHoursDTOO request body.
      * @return response entity indicating success/failure.
      */
     @PostMapping("/time-operational")
-    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
-        AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
+    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTOO) {
+        AircraftFlyTimeHoursDTO aircraft = aircraftService.updateFlyTimeHours(aircraftAddFlyTimeHoursDTOO);
         return ResponseEntity.ok(aircraft);
     }
     /**
@@ -237,6 +194,15 @@ public class AircraftController {
     @GetMapping("ceo-aircraft-cost")
     public ResponseEntity<?> getStreamlinedRunningCost() {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
+    }
+    /**
+     * Get method that returns the repair cost for a particular aircraft.
+     * @param id the id of the aircraft.
+     * @return returns a response entity with the repair cost dto.
+     */
+    @GetMapping("ceo-aircraft-cost/{id}")
+    public ResponseEntity<?> getStreamlinedRunningCost(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimisedIdParam(id));
     }
 
     /**

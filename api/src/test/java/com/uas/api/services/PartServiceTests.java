@@ -2,16 +2,13 @@ package com.uas.api.services;
 
 import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.Part;
-import com.uas.api.models.entities.PartType;
+import com.uas.api.models.entities.*;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
-import com.uas.api.repositories.projections.PartTypeFailureTimeProjection;
+import com.uas.api.repositories.projections.PartFailureTimeProjection;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,23 +18,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
-import org.springframework.security.core.parameters.P;
 import org.springframework.test.util.AssertionErrors;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class PartServiceTests {
@@ -52,6 +47,12 @@ public class PartServiceTests {
     private PartTypeRepository partTypeRepository;
     @Mock
     private RepairRepository repairRepository;
+    @Mock
+    private AircraftPartRepository aircraftPartRepository;
+    @Mock
+    private StockRepository stockRepository;
+    @Mock
+    private PlatformRepository platformRepository;
     @MockBean
     @InjectMocks
     private PartServiceImpl partService;
@@ -65,13 +66,18 @@ public class PartServiceTests {
         locationBristol.setLocationName("Bristol");
         locations.add(locationCardiff);
         locations.add(locationBristol);
+        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        List<Part> parts = new ArrayList<>();
+        parts.add(mockPart);
 
         when(locationRepository.findAll()).thenReturn(locations);
-        when(partRepository.countAllByLocation_LocationNameAndPartType_PartName(any(), any())).thenReturn(30);
+        when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(30);
 
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
 
-        assertEquals("Should return 22 parts", 22, partStockLevelDTOs.size());
+        assertEquals("Should return 2 parts", 2, partStockLevelDTOs.size());
     }
 
     @Test
@@ -83,9 +89,14 @@ public class PartServiceTests {
         locationBristol.setLocationName("Bristol");
         locations.add(locationCardiff);
         locations.add(locationBristol);
+        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        List<Part> parts = new ArrayList<>();
+        parts.add(mockPart);
 
         when(locationRepository.findAll()).thenReturn(locations);
-        when(partRepository.countAllByLocation_LocationNameAndPartType_PartName(any(), any())).thenReturn(41);
+        when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(41);
 
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
 
@@ -123,8 +134,13 @@ public class PartServiceTests {
         locationBristol.setLocationName("Bristol");
         locations.add(locationCardiff);
         locations.add(locationBristol);
-        when(locationRepository.findAll()).thenReturn(locations);
+        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        List<Part> parts = new ArrayList<>();
+        parts.add(mockPart);
 
+        when(locationRepository.findAll()).thenReturn(locations);
+        when(partRepository.findAll()).thenReturn(parts);
         List<LocationStockLevelsDTO> partStock = partService.getPartStockLevelsForAllLocations();
         Assertions.assertEquals(2, partStock.size());
         // Testing to make sure the length is bigger than zero rather than matching specific size,
@@ -135,14 +151,15 @@ public class PartServiceTests {
     @Test
     public void whenFailureTimeIsRequestedForAllPartsThenItShouldReturnAValidResponse() {
         ProjectionFactory factory = new SpelAwareProxyProjectionFactory();
-        PartType mockPartType = new PartType(1L, PartName.WING_A, BigDecimal.valueOf(100), 40L, 550L);
-        PartTypeFailureTimeProjection partTypeProjection = factory.createProjection(PartTypeFailureTimeProjection.class);
-        partTypeProjection.setPartType(mockPartType.getPartName().getName());
-        partTypeProjection.setTypicalFailureTime(mockPartType.getTypicalFailureTime());
-        List<PartTypeFailureTimeProjection> queryResults = new ArrayList<>();
+        PartType mockPartType = new PartType(1L, PartName.WING_A);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(100), 40L, 550L);
+        PartFailureTimeProjection partTypeProjection = factory.createProjection(PartFailureTimeProjection.class);
+        partTypeProjection.setPartTypeName(mockPartType.getPartName().getName());
+        partTypeProjection.setTypicalFailureTime(mockPart.getTypicalFailureTime());
+        List<PartFailureTimeProjection> queryResults = new ArrayList<>();
         queryResults.add(partTypeProjection);
 
-        when(partTypeRepository.findAllProjectedBy()).thenReturn(queryResults);
+        when(partRepository.findAllProjectedBy()).thenReturn(queryResults);
 
         List<PartTypeFailureTimeDTO> results = partService.getFailureTime();
         Assertions.assertTrue(results.size() > 0);
@@ -153,8 +170,14 @@ public class PartServiceTests {
     @Test
     public void whenLocationIsValidThenShouldReturnStockLevelsForLocation() throws NotFoundException {
         Location mockLocation = new Location("Cardiff", "", "", "", "");
+        PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
+        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        List<Part> parts = new ArrayList<>();
+        parts.add(mockPart);
+
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
-        when(partRepository.countAllByLocation_LocationNameAndPartType_PartName(any(), any())).thenReturn(41);
+        when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(41);
         Assertions.assertDoesNotThrow(() -> partService.getPartStockLevelsAtLocation("Cardiff"));
         List<PartStockLevelDTO> stocks = partService.getPartStockLevelsAtLocation("Cardiff");
         assertTrue(stocks.size() > 0);
@@ -184,7 +207,7 @@ public class PartServiceTests {
         mockPartTypes.add("19");
         mockPartTypes.add("20");
         mockPartTypes.add("21");
-        when(partRepository.findAllAvailbleByType(5L)).thenReturn(mockPartTypes);
+        when(partRepository.findAllAvailableByType(5L)).thenReturn(mockPartTypes);
         List<String> result = partService.availablePartsForParttype(5L);
         AssertionErrors.assertTrue("Should be bigger than 0", result.size() > 0);
         AssertionErrors.assertTrue("First value should be 19", result.get(0).equals("19"));
@@ -192,7 +215,7 @@ public class PartServiceTests {
     @Test
     public void whenPartTypeAreNotAvailableThenShouldReturnEmptyList() {
         List<String> mockPartTypes = new ArrayList<>();
-        when(partRepository.findAllAvailbleByType(1L)).thenReturn(mockPartTypes);
+        when(partRepository.findAllAvailableByType(1L)).thenReturn(mockPartTypes);
         List<String> result = partService.availablePartsForParttype(1L);
         AssertionErrors.assertTrue("Should be empty", result.isEmpty());
     }
@@ -205,15 +228,15 @@ public class PartServiceTests {
 
         @BeforeEach
         public void setUp() {
-            mockPartType = new PartType(1L, PartName.WING_A, BigDecimal.valueOf(100), 40L, 550L);
+            mockPartType = new PartType(1L, PartName.WING_A);
             mockLocation = new Location("Cardiff", "", "", "", "");
-            mockAircraft = new Aircraft("G-001", mockLocation, PlatformStatus.OPERATION, PlatformType.PLATFORM_A, 250, 250);
+            mockAircraft =  new Aircraft("G-001", mockLocation, PlatformStatus.OPERATION, PlatformType.PLATFORM_A, 250);
         }
         @Test
         public void invalidPartStatusShouldThrowError() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "", "2022-02-20 11:00:00", "NOT_VALID");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "G-001", "NOT_VALID");
             when(partTypeRepository.findPartTypeById(addPartDTO.getPartType())).thenReturn(Optional.of(mockPartType));
-            when(aircraftRepository.findById(addPartDTO.getTailNumber())).thenReturn(Optional.of(mockAircraft));
+            when(aircraftRepository.findById(addPartDTO.getAircraft())).thenReturn(Optional.of(mockAircraft));
             when(locationRepository.findLocationByLocationName(addPartDTO.getLocationName())).thenReturn(Optional.of(mockLocation));
 
             InvalidDTOAttributeException thrown = Assertions.assertThrows(InvalidDTOAttributeException.class, () -> {
@@ -225,7 +248,7 @@ public class PartServiceTests {
 
         @Test
         public void emptyLocationShouldThrowError() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "", "2022-02-20 11:00:00", "OPERATIONAL");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock part Name", "", "2022-02-20 11:00:00", 1000.0, 750L, "G-001", "OPERATIONAL");
             when(partTypeRepository.findPartTypeById(anyLong())).thenReturn(Optional.of(mockPartType));
             when(aircraftRepository.findById(mockAircraft.getTailNumber())).thenReturn(Optional.of(mockAircraft));
             when(locationRepository.findLocationByLocationName("")).thenReturn(Optional.empty());
@@ -238,9 +261,9 @@ public class PartServiceTests {
 
         @Test
         public void invalidPartTypeShouldThrowError() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "", "2022-02-20 11:00:00", "OPERATIONAL");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "G-001","OPERATIONAL");
             when(partTypeRepository.findPartTypeById(addPartDTO.getPartType())).thenReturn(Optional.empty());
-            when(aircraftRepository.findById(addPartDTO.getTailNumber())).thenReturn(Optional.of(mockAircraft));
+            when(aircraftRepository.findById(addPartDTO.getAircraft())).thenReturn(Optional.of(mockAircraft));
             when(locationRepository.findLocationByLocationName(addPartDTO.getLocationName())).thenReturn(Optional.of(mockLocation));
 
             InvalidDTOAttributeException thrown = Assertions.assertThrows(InvalidDTOAttributeException.class, () -> {
@@ -251,9 +274,9 @@ public class PartServiceTests {
 
         @Test
         public void invalidDateFormatShouldThrowError() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "", "date", "OPERATIONAL");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing B", "Mock Location", "date", 1000.0, 750L, "G-001","OPERATIONAL");
             when(partTypeRepository.findPartTypeById(addPartDTO.getPartType())).thenReturn(Optional.of(mockPartType));
-            when(aircraftRepository.findById(addPartDTO.getTailNumber())).thenReturn(Optional.of(mockAircraft));
+            when(aircraftRepository.findById(addPartDTO.getAircraft())).thenReturn(Optional.of(mockAircraft));
             when(locationRepository.findLocationByLocationName(addPartDTO.getLocationName())).thenReturn(Optional.of(mockLocation));
 
             InvalidDTOAttributeException thrown = Assertions.assertThrows(InvalidDTOAttributeException.class, () -> {
@@ -264,9 +287,9 @@ public class PartServiceTests {
 
         @Test
         public void whenValidAddPartThenNoErrorsThrown() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "", "2022-02-20 11:00:00", "OPERATIONAL");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "G-001", "OPERATIONAL");
             when(partTypeRepository.findPartTypeById(addPartDTO.getPartType())).thenReturn(Optional.of(mockPartType));
-            when(aircraftRepository.findById(addPartDTO.getTailNumber())).thenReturn(Optional.of(mockAircraft));
+            when(aircraftRepository.findById(addPartDTO.getAircraft())).thenReturn(Optional.of(mockAircraft));
             when(locationRepository.findLocationByLocationName(addPartDTO.getLocationName())).thenReturn(Optional.of(mockLocation));
 
             Assertions.assertDoesNotThrow(() -> partService.addPartFromJSON(addPartDTO));
@@ -274,9 +297,8 @@ public class PartServiceTests {
         }
         @Test
         public void whenValidAddPartWithoutAircraftNoErrorsThrown() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "", "Dublin", "2022-02-20 11:00:00", "OPERATIONAL");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "", "");
             when(partTypeRepository.findPartTypeById(addPartDTO.getPartType())).thenReturn(Optional.of(mockPartType));
-            when(aircraftRepository.findById(addPartDTO.getTailNumber())).thenReturn(Optional.empty());
             when(locationRepository.findLocationByLocationName(addPartDTO.getLocationName())).thenReturn(Optional.of(mockLocation));
 
             Assertions.assertDoesNotThrow(() -> partService.addPartFromJSON(addPartDTO));
@@ -284,9 +306,9 @@ public class PartServiceTests {
         }
         @Test
         public void whenValidAddPartWithoutManufactureThenNoErrorsThrown() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "G-001", "Dublin", "", "OPERATIONAL");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "", 1000.0, 750L, "G-001", "OPERATIONAL");
             when(partTypeRepository.findPartTypeById(addPartDTO.getPartType())).thenReturn(Optional.of(mockPartType));
-            when(aircraftRepository.findById(addPartDTO.getTailNumber())).thenReturn(Optional.of(mockAircraft));
+            when(aircraftRepository.findById(addPartDTO.getAircraft())).thenReturn(Optional.of(mockAircraft));
             when(locationRepository.findLocationByLocationName(addPartDTO.getLocationName())).thenReturn(Optional.of(mockLocation));
 
             Assertions.assertDoesNotThrow(() -> partService.addPartFromJSON(addPartDTO));
@@ -294,9 +316,8 @@ public class PartServiceTests {
         }
         @Test
         public void whenValidAddPartWithoutManufactureAndWithoutAircraftThenNoErrorsThrown() {
-            AddPartDTO addPartDTO = new AddPartDTO(1L, "", "Dublin", "", "OPERATIONAL");
+            AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "", 1000.0, 750L, "", "");
             when(partTypeRepository.findPartTypeById(addPartDTO.getPartType())).thenReturn(Optional.of(mockPartType));
-            when(aircraftRepository.findById(addPartDTO.getTailNumber())).thenReturn(Optional.empty());
             when(locationRepository.findLocationByLocationName(addPartDTO.getLocationName())).thenReturn(Optional.of(mockLocation));
 
             Assertions.assertDoesNotThrow(() -> partService.addPartFromJSON(addPartDTO));
@@ -305,20 +326,21 @@ public class PartServiceTests {
 
         @Test
         public void whenValidUpdateFlyTimeThenShouldNotThrowError() {
-            List<Part> mockParts = new ArrayList<>();
-            Part mockPart = new Part(mockPartType, mockAircraft, mockLocation, PartStatus.OPERATIONAL);
-            mockParts.add(mockPart);
+            List<AircraftPart> mockParts = new ArrayList<>();
+            Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+            AircraftPart mockAircraftPart = new AircraftPart(1L, mockAircraft, mockPart, PartStatus.OPERATIONAL, Double.valueOf(0));
+            mockParts.add(mockAircraftPart);
             Assertions.assertDoesNotThrow(() -> partService.updatePartFlyTime(mockParts, 10));
-            Assertions.assertEquals(10, mockPart.getFlyTimeHours());
+            Assertions.assertEquals(10, mockAircraftPart.getFlightHours());
         }
         @Test
         public void whenValidUpdateFlyTimeWithPreviousHoursThenShouldNotThrowError() {
-            List<Part> mockParts = new ArrayList<>();
-            Part mockPart = new Part(mockPartType, mockAircraft, mockLocation, PartStatus.OPERATIONAL);
-            mockPart.setFlyTimeHours(10);
-            mockParts.add(mockPart);
+            List<AircraftPart> mockParts = new ArrayList<>();
+            Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+            AircraftPart mockAircraftPart = new AircraftPart(1L, mockAircraft, mockPart, PartStatus.OPERATIONAL, Double.valueOf(10));
+            mockParts.add(mockAircraftPart);
             Assertions.assertDoesNotThrow(() -> partService.updatePartFlyTime(mockParts, 10));
-            Assertions.assertEquals(20, mockPart.getFlyTimeHours());
+            Assertions.assertEquals(20, mockAircraftPart.getFlightHours());
         }
 
     }
@@ -388,6 +410,45 @@ public class PartServiceTests {
             partService.getMostCommonFailingParts(2);
         });
         Assertions.assertEquals("No parts and repair costs were found!", thrown.getMessage());
+    }
+
+    @Test
+    public void whenGetAllPartsThenThrowNotFoundException() throws NotFoundException {
+        when(partRepository.findAll()).thenReturn(new ArrayList<>());
+        NotFoundException thrown = Assertions.assertThrows(NotFoundException.class, () -> {
+            partService.getAllParts();
+        });
+        Assertions.assertEquals("Parts not found!", thrown.getMessage());
+    }
+
+    @Test
+    public void whenGetAllParts_ReturnList() throws Exception {
+        List<Part> parts = new ArrayList<>();
+        parts.add(new Part(
+                1L,
+                new PartType(1L, PartName.MOTOR),
+                "Motor",
+                LocalDateTime.now(),
+                BigDecimal.valueOf(200.00),
+                500L,
+                750L));
+        parts.add(new Part(
+                2L,
+                new PartType(1L, PartName.MOTOR),
+                "Motor",
+                LocalDateTime.now(),
+                BigDecimal.valueOf(300.00),
+                400L,
+                650L));
+
+        when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.getAllByPart_PartNumber(anyLong())).thenReturn(new ArrayList<>());
+        when(platformRepository.findCompatiblePlatformTypesForPart(anyLong())).thenReturn(new ArrayList<>());
+
+        Assertions.assertDoesNotThrow(() -> {
+            partService.getAllParts();
+        });
+        Assertions.assertEquals(2, parts.size());
     }
 
 }

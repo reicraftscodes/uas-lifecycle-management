@@ -7,11 +7,9 @@ import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
-import com.uas.api.repositories.AircraftRepository;
-import com.uas.api.repositories.AircraftUserRepository;
-import com.uas.api.repositories.PartRepository;
-import com.uas.api.repositories.RepairRepository;
+import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.UserRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -47,6 +45,9 @@ public class AircraftServiceTests {
     private AircraftRepository aircraftRepository;
 
     @Mock
+    private AircraftPartRepository aircraftPartRepository;
+
+    @Mock
     private RepairRepository repairRepository;
 
     @Mock
@@ -66,30 +67,33 @@ public class AircraftServiceTests {
                 new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
                 PlatformStatus.OPERATION,
                 PlatformType.PLATFORM_A,
-                250,
                 250);
     }
-
 
 
     @Test
     public void whenPartsNeedingRepairThenListShouldNotBeEmpty() {
         Location location = new Location("London","123 London road",null,"LL12 2LL","England");
 
-        List<Aircraft> aircrafts = new ArrayList<>();
-        Aircraft aircraft1 = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
-        Aircraft aircraft2 = new Aircraft("G-002",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_B,0);
-        aircrafts.add(aircraft1);
-        aircrafts.add(aircraft2);
+        Aircraft aircraft = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
+        Aircraft aircraft1 = new Aircraft("G-002",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_B,0);
 
-        PartType partType = new PartType(1L, PartName.WING_A,BigDecimal.valueOf(100),1000L,500L);
+
+        PartType partType = new PartType(1L, PartName.WING_A);
         LocalDateTime ldc = LocalDateTime.now();
 
-        List<Part> parts = new ArrayList<>();
-        parts.add(new Part(1L,partType,aircraft1,location, ldc, PartStatus.AWAITING_REPAIR,0));
-        parts.add(new Part(2L,partType,aircraft1,location, ldc, PartStatus.AWAITING_REPAIR,0));
+        List<AircraftPart> aircraftParts = new ArrayList<>();
 
-        when(partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(parts);
+        Part part = new Part(partType, PartName.WING_A.getName(), BigDecimal.valueOf(100),1000L,500L);
+        Part part1 = new Part(partType, PartName.WING_A.getName(), BigDecimal.valueOf(100),1000L,500L);
+
+        AircraftPart aircraftPart = new AircraftPart(aircraft, part, PartStatus.AWAITING_REPAIR, Double.valueOf(0));
+        AircraftPart aircraftPart1 = new AircraftPart(aircraft1, part1, PartStatus.AWAITING_REPAIR, Double.valueOf(0));
+
+        aircraftParts.add(aircraftPart);
+        aircraftParts.add(aircraftPart1);
+
+        when(aircraftPartRepository.findAircraftPartsByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(aircraftParts);
 
         Assertions.assertDoesNotThrow(() -> {
             aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
@@ -99,13 +103,13 @@ public class AircraftServiceTests {
     }
     @Test
     public void whenNoPartsNeedRepairThenListShouldBeEmpty() {
-        when(partRepository.findAllByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(new ArrayList<>());
+        when(aircraftPartRepository.findAircraftPartsByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(new ArrayList<>());
         Assertions.assertDoesNotThrow(() -> {
            aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
         });
         int total = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
         Assertions.assertEquals(0, total);
-    }
+}
     @Test
     public void givenGetAllAircraftForUser_ThenReturn2AircraftDTOs() {
         User user = new User();
@@ -192,7 +196,7 @@ public class AircraftServiceTests {
         String tailNumber = "G-001";
 
         User user = new User("tim12", "logisticOne@snc.ac.uk", "ExamplePassword72-", "Tim", "Cormack", null, "logisticOne@snc.ac.uk");
-//        Aircraft aircraft = new Aircraft(tailNumber, location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
+        Aircraft aircraft = new Aircraft(tailNumber, location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
         AircraftUserKey aircraftUserKey = new AircraftUserKey(1L, "G-001");
         AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user, aircraftOne, 0L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -312,28 +316,32 @@ public class AircraftServiceTests {
         Location location = new Location("London","123 London road",null,"LL12 2LL","England");
 
         List<Aircraft> aircrafts = new ArrayList<>();
-        Aircraft aircraft1 = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
-        Aircraft aircraft2 = new Aircraft("G-002",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_B,0);
+        Aircraft aircraft = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
+        Aircraft aircraft1 = new Aircraft("G-002",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_B,0);
+        aircrafts.add(aircraft);
         aircrafts.add(aircraft1);
-        aircrafts.add(aircraft2);
 
-        PartType partType = new PartType(1L, PartName.WING_A,BigDecimal.valueOf(100),1000L,500L);
-        LocalDateTime ldc = LocalDateTime.now();
+        PartType partType = new PartType(1L, PartName.WING_A);
 
-        List<Part> parts = new ArrayList<>();
-        parts.add(new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0));
-        parts.add(new Part(2L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0));
+        Part part = new Part(partType, PartName.MOTOR.getName(), BigDecimal.valueOf(100),1000L,500L);
+        Part part1 =  new Part(partType, PartName.WING_A.getName(), BigDecimal.valueOf(100),1000L,500L);
+
+        AircraftPart aircraftPart = new AircraftPart(aircraft, part, PartStatus.OPERATIONAL, Double.valueOf(0));
+        AircraftPart aircraftPart1 = new AircraftPart(aircraft1, part1, PartStatus.OPERATIONAL, Double.valueOf(0));
+        List<AircraftPart> aircraftParts = new ArrayList<>();
+        aircraftParts.add(aircraftPart);
+        aircraftParts.add(aircraftPart1);
 
         List<Repair> repairs = new ArrayList<>();
-        repairs.add(new Repair(1L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0),BigDecimal.valueOf(1000)));
-        repairs.add(new Repair(2L,new Part(1L,partType,aircraft1,location, ldc, PartStatus.OPERATIONAL,0),BigDecimal.valueOf(1000)));
+        repairs.add(new Repair(1L,aircraftPart, BigDecimal.valueOf(100)));
+        repairs.add(new Repair(2L,aircraftPart1, BigDecimal.valueOf(100)));
 
         when(aircraftRepository.findAll()).thenReturn(aircrafts);
         when(aircraftRepository.getTotalPartCostofAircraft(anyString())).thenReturn(1000.0);
 
-        when(partRepository.findAllPartsByAircraft(any())).thenReturn(parts);
+        when(aircraftPartRepository.findAircraftPartsByAircraft(any())).thenReturn(aircraftParts);
 
-        when(repairRepository.findAllByPart(any())).thenReturn(repairs);
+        when(repairRepository.findAllByAircraftPart(any())).thenReturn(repairs);
         when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(1234.0);
 
         List<AircraftCostsDetailDTO> costsList = aircraftService.getAircraftForCEOReturn();
@@ -346,7 +354,8 @@ public class AircraftServiceTests {
         assertEquals("Aircraft 1 should have totalcost of 2234: ",2234.0,costsList.get(0).getTotalCost());
         assertEquals("Aircraft 1 should have 2 parts: ",2,costsList.get(0).getParts().size());
 
-    }
+}
+
     @Test
     public void whenAircraftIsSearchedForAndItExistsThenShouldReturnAircraft() {
         when(aircraftRepository.findById(anyString())).thenReturn(Optional.of(aircraftOne));
@@ -359,7 +368,7 @@ public class AircraftServiceTests {
     @Test
     public void whenNumRepairsIsCheckedForAircraftShouldReturnInt() {
         List<Repair> mockRepairs = new ArrayList<>();
-        when(repairRepository.findAllByPart_Aircraft_TailNumber("G-001")).thenReturn(mockRepairs);
+        when(repairRepository.findAllByAircraftPart_Aircraft_TailNumber("G-001")).thenReturn(mockRepairs);
         assertEquals("Should have total repairs as 0", aircraftService.calculateTotalRepairs("G-001"), 0);
     }
 
@@ -380,14 +389,12 @@ public class AircraftServiceTests {
                     new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
                     PlatformStatus.OPERATION,
                     PlatformType.PLATFORM_A,
-                    250,
                     250);
             aircraftTwo = new Aircraft(
                     "G-002",
                     new Location("St Athen", "address line 1", "address line 2", "CF000AA","Wales"),
                     PlatformStatus.OPERATION,
                     PlatformType.PLATFORM_A,
-                    300,
                     300);
             aircraft.add(aircraftOne);
             aircraft.add(aircraftTwo);
@@ -400,18 +407,19 @@ public class AircraftServiceTests {
             });
         }
         @Test
-        public void whenHoursOperationalForAnAircraftAreUpdatedThenNumberShouldIncrease() {
-            int originalOne = aircraftOne.getHoursOperational();
-            int originalTwo = aircraftTwo.getHoursOperational();
-
-            when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraftOne));
-            when(aircraftRepository.findById("G-002")).thenReturn(Optional.of(aircraftTwo));
-            AircraftHoursOperationalDTO result1 = aircraftService.updateHoursOperational(new AircraftAddHoursOperationalDTO("G-001", 5));
-            assertTrue(result1.getHoursOperational().get(0) > originalOne);
-            assertEquals("Should be 5 bigger", originalOne + 5, result1.getHoursOperational().get(0));
-            AircraftHoursOperationalDTO result2 = aircraftService.updateHoursOperational(new AircraftAddHoursOperationalDTO("G-002", 10));
-            assertTrue(result2.getHoursOperational().get(0) > originalTwo);
-            assertEquals("Should be 10 bigger", originalTwo + 10, result2.getHoursOperational().get(0));
+        public void whenAircraftExistsAndRepairInfoIsFetchedThenShouldReturnWithoutError() {
+            when(aircraftRepository.findById(anyString())).thenReturn(Optional.of(aircraftOne));
+            Assertions.assertDoesNotThrow(() -> {
+               aircraftService.getAircraftForCEOReturnMinimisedIdParam("G-001");
+            });
+        }
+        @Test
+        public void whenAircraftDoesNotExistAndRepairInfoIsFetchedThenShouldReturnError() {
+            when(aircraftRepository.findById(anyString())).thenReturn(Optional.empty());
+            NotFoundException thrown = Assertions.assertThrows(NotFoundException.class, () -> {
+                aircraftService.getAircraftForCEOReturnMinimisedIdParam("G-001");
+            });
+            Assertions.assertEquals("Aircraft not found.", thrown.getMessage());
         }
         @Test
         public void whenFlytimeHoursForAnAircraftAreUpdatedThenNumberShouldIncrease() {
@@ -485,9 +493,9 @@ public class AircraftServiceTests {
         }
 
         @Test
-        public void whenHoursOperationalIsRetrievedForAllAircraftThenAListContainingTheHoursOnlyShouldBeReturned() {
+        public void whenFlyTimeHoursIsRetrievedForAllAircraftThenAListContainingTheHoursOnlyShouldBeReturned() {
             when(aircraftRepository.findAll()).thenReturn(aircraft);
-            List<Integer> mockHoursOperational = aircraftService.getHoursOperational();
+            List<Integer> mockHoursOperational = aircraftService.getFlyTimeHours();
 
             assertEquals("List should have size of 2", 2, mockHoursOperational.size());
             assertEquals("Hours operational of aircraft 1 should be 250", 250, mockHoursOperational.get(0));
@@ -533,7 +541,6 @@ public class AircraftServiceTests {
             Assertions.assertEquals(400.0, totalRepairCost);
         }
     }
-
 
 
 }

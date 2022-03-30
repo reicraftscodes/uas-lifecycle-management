@@ -49,7 +49,7 @@ public class PartsController {
      * @return returns a response entity of success or an error with the error message.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    ResponseEntity<?> addPart(@RequestBody final AddPartDTO requestData) {
+    ResponseEntity<?> addPart(@RequestBody final AddPartDTO requestData) throws NotFoundException {
         partService.addPartFromJSON(requestData);
         return new ResponseEntity<>("{\"response\":\"Success\"}", HttpStatus.OK);
     }
@@ -124,5 +124,25 @@ public class PartsController {
     @PostMapping("/get-by-type")
     public ResponseEntity<?> getPartsAvailableByParttype(@RequestBody final long partType) {
         return ResponseEntity.ok(partService.availablePartsForParttype(partType));
+    }
+
+    /**
+     * Get all parts.
+     * @return a list of part dtos.
+     */
+    @GetMapping("/all")
+    public ResponseEntity<List<PartDTO>> getAllParts() throws NotFoundException {
+        List<PartDTO> partDTOs = partService.getAllParts();
+        return ResponseEntity.ok(partDTOs);
+    }
+
+    /**
+     * Get all part stock orders.
+     * @return a list of stock order dtos.
+     */
+    @GetMapping("/stock-order/all")
+    public ResponseEntity<List<StockOrderDTO>> getAllStockOrders() throws NotFoundException {
+        List<StockOrderDTO> stockOrderDTOs = stockControlService.getAllPreviousStockOrders();
+        return ResponseEntity.ok(stockOrderDTOs);
     }
 }
