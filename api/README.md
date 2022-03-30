@@ -107,6 +107,8 @@ Admin | HEHE | HEHE
 - Project Lombok
 - GSON
 - JWT Token
+- ITextPDF
+- Java Mail
 # Framework Diagrams - C4 Model
 ## Context
 ![](api/structure_diagrams/structurizr-72910-context.png)
@@ -194,12 +196,31 @@ JSON names are case sensitive and must be written as shown:
     #### Error Responses and Meaning:
     ### Request Body:
 ## POST - /log-flight
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/log-flight (DEV)<br>
+uastest.herokuapp.com/aircraft/add (UAT)<br>
+uasprod.herokuapp.com/aircraft/add (PROD)<br>
+### What it does:
+This method is logs flight hours for an aircraft flight and updates the flight time of the aircraft and the parts associated with that aircraft and the pilot. <br>
+### Responses:
+#### Successful:
+A 200 response should return on a successful request.<br>
+#### Error Responses and Meaning:
+If an invalid user is selected to be piloting the aircraft, then a 400 error for bad request will occur with the body: <br>
+`{
+    "message": "Aircraft user does not exist!",
+    "status": "BAD_REQUEST"
+}`<br>
+If the aircraft is not found, then a 400 error for a bad request will occur with the body: <br>
+`{
+    "message": "Aircraft not found!",
+    "status": "BAD_REQUEST"
+}`<br>
+### Request Body:
+Takes a json request body: `{"userId":1,"aircraft":"G-001","flyTime":10}`<br>
+-The `userId` is the ID of the user who was piloting the aircraft.<br>
+-The `aircraft` is the tail number of the aircraft that was being pilotted.<br>
+-The `flyTime` is the amount of time it was pilotted. <br>
 ## GET - /total-repairs/{tail-number}
     ### Mapping Information:
     ### What it does:
