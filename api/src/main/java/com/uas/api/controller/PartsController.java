@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -49,6 +50,7 @@ public class PartsController {
      * @return returns a response entity of success or an error with the error message.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     ResponseEntity<?> addPart(@RequestBody final AddPartDTO requestData) throws NotFoundException {
         partService.addPartFromJSON(requestData);
         return new ResponseEntity<>("{\"response\":\"Success\"}", HttpStatus.OK);
@@ -59,6 +61,7 @@ public class PartsController {
      * @return list of parts with low stock & response entity.
      */
     @GetMapping("/low-stock")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<PartStockLevelDTO>> getPartsAtLowStock() throws NotFoundException {
         List<PartStockLevelDTO> partLowStockLevelDTOs = partService.getPartsAtLowStock();
         return ResponseEntity.ok(partLowStockLevelDTOs);
@@ -69,6 +72,7 @@ public class PartsController {
      * @return response entity with response.
      */
     @PostMapping("/stockrequest")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<?> requestMoreStock(@RequestBody final MoreStockRequest moreStockRequest) {
         LocalDateTime localDateTime = LocalDateTime.now();
         LOGGER.info("Request for more stock made at: " + localDateTime + " by user: user");
@@ -81,6 +85,7 @@ public class PartsController {
      * @return list of parts stock levels at all locations & response entity.
      */
     @GetMapping("/stock")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() throws Exception {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
         return ResponseEntity.ok(locationStockLevelsDTOs);
@@ -91,6 +96,7 @@ public class PartsController {
      * @return list of parts stock levels at location & response entity.
      */
     @GetMapping("/location/stock")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @RequestParam("location") String location) throws NotFoundException {
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
         return ResponseEntity.ok(partStockLevelDTOs);
@@ -100,6 +106,7 @@ public class PartsController {
      * @return list containing part names and failure times.
      */
     @GetMapping("/failuretime")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CTO')")
     public ResponseEntity<?> getFailureTime() {
         List<PartTypeFailureTimeDTO> failureTimes = partService.getFailureTime();
         return ResponseEntity.ok(failureTimes);
@@ -111,6 +118,7 @@ public class PartsController {
      * @return list containing the most common failing parts and their cost.
      */
     @GetMapping("/most-failing/{topN}")
+    @PreAuthorize("hasRole('ROLE_USER_CTO')")
     public ResponseEntity<List<PartRepairsDTO>> getPartsMostFailing(@PathVariable("topN") final int topN) throws NotFoundException {
         List<PartRepairsDTO> partRepairsDTOs = partService.getMostCommonFailingParts(topN);
         return ResponseEntity.ok(partRepairsDTOs);
@@ -122,6 +130,7 @@ public class PartsController {
      * @return returns a response entity with ok response and a body with a list of part numbers or an error response with an error message.
      */
     @PostMapping("/get-by-type")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<?> getPartsAvailableByParttype(@RequestBody final long partType) {
         return ResponseEntity.ok(partService.availablePartsForParttype(partType));
     }
@@ -131,6 +140,7 @@ public class PartsController {
      * @return a list of part dtos.
      */
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<PartDTO>> getAllParts() throws NotFoundException {
         List<PartDTO> partDTOs = partService.getAllParts();
         return ResponseEntity.ok(partDTOs);

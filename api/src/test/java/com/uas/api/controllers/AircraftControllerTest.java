@@ -102,7 +102,7 @@ public class AircraftControllerTest {
     @MockBean
     private PasswordEncoder passwordEncoder;
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void AddAircraftWithCorrectJSON() throws Exception {
         Location location = new Location();
@@ -118,6 +118,7 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$.response").value("Success"));
     }
     @Test
+    @WithMockUser(roles = "USER_CEO")
     public void RequestAircraftRepairTotals() throws Exception {
         List<Integer> results = new ArrayList<>();
         results.add(6);
@@ -140,6 +141,7 @@ public class AircraftControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER_LOGISTIC")
     public void RequestAircraftNeedingRepair() throws Exception {
 
         when(aircraftService.getNumberOfAircraftWithPartsNeedingRepair()).thenReturn(4);
@@ -152,7 +154,7 @@ public class AircraftControllerTest {
 
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllUserAircraft_Return2Aircraft() throws Exception {
         List<AircraftUserDTO> userAircraftDTOs = new ArrayList<>();
@@ -181,7 +183,7 @@ public class AircraftControllerTest {
         verifyNoMoreInteractions(this.userService);
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER")
     @Test
     public void updateFlightHours() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
@@ -198,7 +200,7 @@ public class AircraftControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER")
     @Test
     public void updateFlightHoursNoAircraft() throws Exception {
         LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-5678",12);
@@ -212,7 +214,7 @@ public class AircraftControllerTest {
                 .andExpect(content().string("{\"message\":\"Aircraft not found!\",\"status\":\"BAD_REQUEST\"}"));
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER")
     @Test
     public void updateFlightHoursInvalidTime() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
@@ -232,7 +234,7 @@ public class AircraftControllerTest {
 
 
     //This test needs looking at for the return.
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER")
     @Test
     public void UpdateAircraftOperatingHours() throws Exception {
         Location location = new Location();
@@ -264,7 +266,7 @@ public class AircraftControllerTest {
         assertEquals("", response);
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_CEO")
     @Test
     public void viewCEOFullAircraftCosts() throws Exception {
         List<AircraftCostsOverviewDTO> ceoAircraftCostsOverviewDTOList = new ArrayList<>();
@@ -288,7 +290,7 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$[0].partCost").value(1002.0))
                 .andExpect(jsonPath("$[0].totalCost").value(2003.0));
     }
-
+    @WithMockUser(roles = "USER_CEO")
     @Test
     public void viewCEOFullAircraftCostsWithAircraftId() throws Exception {
        AircraftCostsOverviewDTO ceoAircraftCostsOverviewDTO = new AircraftCostsOverviewDTO("G-001",1001.0,1002.0,2003.0);
@@ -309,6 +311,7 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$.partCost").value(1002.0))
                 .andExpect(jsonPath("$.totalCost").value(2003.0));
     }
+    @WithMockUser(roles = "USER_CEO")
     @Test
     public void fullAircraftCostsWithAircraftThrowError() throws Exception {
         when(aircraftService.getAircraftForCEOReturnMinimisedIdParam(anyString())).thenThrow(new NotFoundException("Aircraft not found."));
@@ -318,7 +321,7 @@ public class AircraftControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_CTO")
     @Test
     public void GetPlatformStatus() throws Exception {
         List<PlatformStatusDTO> platformStatusDTOList = new ArrayList<>();
@@ -359,7 +362,7 @@ public class AircraftControllerTest {
                 .andReturn();
     }
 
-    @WithMockUser("user")
+    @WithMockUser(roles = "USER_CEO")
     @Test
     public void whenIRequestThePlatformStatusForAndroidIShouldRecieveA200FullResponse() throws Exception {
         List<PlatformStatusAndroidDTO> mockOperational = new ArrayList<>();
@@ -384,7 +387,7 @@ public class AircraftControllerTest {
     }
 
     //This test needs looking at for the return.
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void AssignUserToAircraft() throws Exception {
         Location location = new Location();
@@ -411,7 +414,7 @@ public class AircraftControllerTest {
     }
 
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void getAircraftPartsSuccess() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
@@ -439,7 +442,7 @@ public class AircraftControllerTest {
     }
 
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void updateAircraftPartSuccess() throws Exception {
         Location location = new Location("St Athen","99 Street name",null,"CF620AA","Wales");
@@ -466,7 +469,7 @@ public class AircraftControllerTest {
     }
 
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_CEO")
     @Test
     public void whenFilterPlatforms_Return2PlatformDTOs() throws Exception {
         List<PlatformStatusDTO> platformStatusDTOs = new ArrayList<>();
@@ -514,7 +517,7 @@ public class AircraftControllerTest {
     }
 
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenFilterAircraft_Return2AircraftDTOs() throws Exception {
         List<AircraftDTO> aircraftDTOs = new ArrayList<>();
@@ -554,7 +557,7 @@ public class AircraftControllerTest {
         verifyNoMoreInteractions(this.aircraftService);
     }
 
-    @WithMockUser(value="user")
+    @WithMockUser(roles = "USER_CEO")
     @Test
     public void getOverallRunningCostSuccess() throws Exception {
         PartRepairDTO partRepairDTO = new PartRepairDTO(1,"Wing A",200);
@@ -614,25 +617,25 @@ public class AircraftControllerTest {
                 .andExpect(jsonPath("$.aircraft[1].parts[0].repairs[0].cost").value(200));
 
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void getAllAircraft() throws Exception {
         mockMvc.perform(get("/aircraft/all"))
                 .andExpect(status().isOk());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void getTimeOperational() throws Exception {
         mockMvc.perform(get("/aircraft/time-operational"))
                 .andExpect(status().isOk());
     }
-
+    @WithMockUser(roles = "USER_CEO")
     @Test
     public void getCeoAircraftCostFull() throws Exception {
         mockMvc.perform(get("/aircraft/ceo-aircraft-cost-full"))
                 .andExpect(status().isOk());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void updateAircraftStatus() throws Exception {
         UpdateAircraftStatusDTO mockAircraftStatus = new UpdateAircraftStatusDTO("M-009", "OPERATIONAL");
