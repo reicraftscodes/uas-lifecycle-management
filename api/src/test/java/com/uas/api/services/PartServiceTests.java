@@ -10,6 +10,7 @@ import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.projections.PartFailureTimeProjection;
 import javassist.NotFoundException;
+import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -25,6 +26,8 @@ import org.springframework.test.util.AssertionErrors;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -450,5 +453,98 @@ public class PartServiceTests {
         });
         Assertions.assertEquals(2, parts.size());
     }
+
+    @Test
+    public void setPartStatusSuccess(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        PartType partType = new PartType(1l,PartName.WING_A);
+        Location location = new Location("London","123 London road",null,"LL12 2LL","England");
+        Aircraft aircraft = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
+
+        Part part = new Part(1l, partType, "part name", localDateTime, BigDecimal.valueOf(1000),500l,1500l );
+        AircraftPart aircraftPart = new AircraftPart(1l,aircraft,part,PartStatus.OPERATIONAL,0.0);
+
+        when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
+        when(aircraftPartRepository.findAircraftPartByPart_PartNumber(1l)).thenReturn(aircraftPart);
+
+        String result = partService.updatePartStatus(1l,"OPERATIONAL");
+        assertEquals("Success from update","Success",result);
+    }
+
+    @Test
+    public void setPartStatusInvalidStatus(){
+        LocalDateTime localDateTime = LocalDateTime.now();
+        PartType partType = new PartType(1l,PartName.WING_A);
+        Location location = new Location("London","123 London road",null,"LL12 2LL","England");
+        Aircraft aircraft = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
+
+        Part part = new Part(1l, partType, "part name", localDateTime, BigDecimal.valueOf(1000),500l,1500l );
+        AircraftPart aircraftPart = new AircraftPart(1l,aircraft,part,PartStatus.OPERATIONAL,0.0);
+
+        when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
+        when(aircraftPartRepository.findAircraftPartByPart_PartNumber(1l)).thenReturn(aircraftPart);
+
+        String result = partService.updatePartStatus(1l,"invalid");
+        assertEquals("invalid part result expected","Invalid part status!",result);
+    }
+
+    @Test
+    public void setPartPriceSuccess() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        PartType partType = new PartType(1l,PartName.WING_A);
+        Part part = new Part(1l, partType, "part name", localDateTime, BigDecimal.valueOf(1000),500l,1500l );
+
+        when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
+
+        String result = partService.updatePartPrice(1l,1200.0);
+        assertEquals("Success in updating part price","Success",result);
+    }
+
+    @Test
+    public void setPartWeightSuccess() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        PartType partType = new PartType(1l,PartName.WING_A);
+        Part part = new Part(1l, partType, "part name", localDateTime, BigDecimal.valueOf(1000),500l,1500l );
+
+        when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
+
+        String result = partService.updatePartWeight(1l,200);
+        assertEquals("Success in updating part weight","Success",result);
+    }
+
+    @Test
+    public void setPartFailureTimeSuccess() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        PartType partType = new PartType(1l,PartName.WING_A);
+        Part part = new Part(1l, partType, "part name", localDateTime, BigDecimal.valueOf(1000),500l,1500l );
+
+        when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
+
+        String result = partService.updateFailureTime(1l,500);
+        assertEquals("Success in updating part weight","Success",result);
+    }
+
+    @Test
+    public void getPartInfoSuccess() throws Exception {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        PartType partType = new PartType(1l,PartName.WING_A);
+        Location location = new Location("London","123 London road",null,"LL12 2LL","England");
+        Aircraft aircraft = new Aircraft("G-001",location,PlatformStatus.DESIGN,PlatformType.PLATFORM_A,0);
+
+        Part part = new Part(1l, partType, "part name", localDateTime, BigDecimal.valueOf(1000),500l,1500l );
+        AircraftPart aircraftPart = new AircraftPart(1l,aircraft,part,PartStatus.OPERATIONAL,0.0);
+
+        when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
+        when(aircraftPartRepository.findAircraftPartByPart_PartNumber(1l)).thenReturn(aircraftPart);
+
+        PartInfoDTO partInfoDTO = partService.getPartInfo(1l);
+        assertEquals("partID",1l,partInfoDTO.getPartID());
+        assertEquals("failure time",1500l,partInfoDTO.getFailureTime());
+        assertEquals("weight",500l,partInfoDTO.getWeight());
+        assertEquals("price",BigDecimal.valueOf(1000),partInfoDTO.getPrice());
+        assertEquals("status","Operational",partInfoDTO.getStatus());
+    }
+
+
 
 }
