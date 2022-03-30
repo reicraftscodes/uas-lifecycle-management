@@ -15,13 +15,6 @@ public interface AircraftService {
      */
     String addAircraftFromJson(AircraftAddNewDTO requestData);
 
-//    /**
-//     * trys to find an aircraft from the database.
-//     * @param id The tailnumber id of the aircraft.
-//     * @return returns an aircraft object if found.
-//     */
-//    Optional<Aircraft> findAircraftById(String id);
-
     /** Calculates the total number of repairs for an aircraft.
      * @param tailNumber of the aircraft.
      * @return the number of repairs for a specific aircraft.
