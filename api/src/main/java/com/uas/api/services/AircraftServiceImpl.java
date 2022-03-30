@@ -9,7 +9,6 @@ import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.UserRepository;
 import javassist.NotFoundException;
-import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -664,6 +663,12 @@ public class AircraftServiceImpl implements AircraftService {
         return aircraftUserDTO;
     }
 
+    /**
+     * Get aircraft by tail number.
+     * @param tailNumber the aircraft tail number
+     * @return the aircraft dto
+     * @throws NotFoundException
+     */
     public AircraftDTO getAircraft(final String tailNumber) throws NotFoundException {
         Optional<Aircraft> aircraftOpt = aircraftRepository.findById(tailNumber);
         if (!aircraftOpt.isPresent()) {
