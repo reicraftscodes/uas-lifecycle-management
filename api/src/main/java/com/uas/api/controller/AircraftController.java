@@ -221,8 +221,8 @@ public class AircraftController {
      * @param tailNumber The tailnumber of the aircraft the parts are being searched for.
      * @return A response entity with the aircraft parts if ok or an error message if something went wrong.
      */
-    @PostMapping(value = "aircraft-parts-status", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> getAircraftParts(@RequestBody final String tailNumber) {
+    @GetMapping(value = "aircraft-parts-status/{id}", produces = "application/json")
+    public ResponseEntity<?> getAircraftParts(@PathVariable("id") final String tailNumber) throws NotFoundException {
         return aircraftService.getAircraftParts(tailNumber);
     }
 
@@ -232,7 +232,7 @@ public class AircraftController {
      * @return returns a response entity with an ok response or an error response with what the error was.
      */
     @PostMapping("update-aircraft-status")
-    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) {
+    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) throws NotFoundException {
         return aircraftService.updateAircraftStatus(aircraftStatusDTO);
     }
 
@@ -242,7 +242,7 @@ public class AircraftController {
      * @return returns a response entity with either ok response or an error response with what the error was.
      */
     @PostMapping("update-aircraft-part")
-    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) {
+    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) throws NotFoundException {
         return aircraftService.updateAircraftPart(aircraftPartDTO);
     }
 

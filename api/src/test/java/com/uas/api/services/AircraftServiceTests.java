@@ -170,13 +170,16 @@ public class AircraftServiceTests {
     }
 
     @Test
-    public void givenLogFlightHoursThenUpdateAircraftUser() throws IllegalArgumentException{
+    public void givenLogFlightHoursThenUpdateAircraftUser() throws NotFoundException {
         AircraftUser aircraftUser = new AircraftUser();
+        Location location = new Location();
+        location.setLocationName("London");
+        Aircraft aircraft = new Aircraft("M-005",location , PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
         aircraftUser.setUserFlyingHours(20L);
-        when(aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(any(), anyLong())).thenReturn(Optional.of(aircraftUser));
+        when(aircraftUserRepository.findByAircraftAndUserId(any(), anyLong())).thenReturn(Optional.of(aircraftUser));
         when(aircraftUserRepository.save(any())).thenReturn(aircraftUser);
 
-        aircraftService.updateUserAircraftFlyTime("G-001", 2, 5);
+        aircraftService.updateUserAircraftFlyTime(aircraft, 2, 5);
 
         assertEquals("Aircraft user should have 25 flight hours!", 25L, aircraftUser.getUserFlyingHours());
     }
@@ -184,9 +187,12 @@ public class AircraftServiceTests {
     @Test
     public void givenLogFlightHoursThenThrowIllegalArgumentException() {
         AircraftUser aircraftUser = new AircraftUser();
-        when(aircraftUserRepository.findByAircraft_TailNumberAndUser_Id(any(), anyLong())).thenThrow(IllegalArgumentException.class);
+        Location location = new Location();
+        location.setLocationName("London");
+        Aircraft aircraft = new Aircraft("M-005",location , PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
+        when(aircraftUserRepository.findByAircraftAndUserId(any(Aircraft.class), anyLong())).thenThrow(IllegalArgumentException.class);
 
-        assertThrows(IllegalArgumentException.class, () -> aircraftService.updateUserAircraftFlyTime("G-001", 2, 5));
+        assertThrows(IllegalArgumentException.class, () -> aircraftService.updateUserAircraftFlyTime(aircraft, 2, 5));
     }
 
     @Test
@@ -360,8 +366,8 @@ public class AircraftServiceTests {
     public void whenAircraftIsSearchedForAndItExistsThenShouldReturnAircraft() {
         when(aircraftRepository.findById(anyString())).thenReturn(Optional.of(aircraftOne));
 
-        Optional<Aircraft> result = aircraftService.findAircraftById("G-001");
-        assertEquals("Should return the aircraft", !result.isEmpty(), !result.isEmpty());
+        Optional<Aircraft> result = aircraftRepository.findById("G-001");
+        assertEquals("Should return the aircraft", result.isPresent(), result.isPresent());
         assertEquals("Should return tailnumber G-001", "G-001", result.get().getTailNumber());
     }
 
