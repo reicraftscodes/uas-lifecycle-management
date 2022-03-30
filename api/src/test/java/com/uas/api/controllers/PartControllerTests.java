@@ -2,7 +2,10 @@ package com.uas.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
-import com.uas.api.models.dtos.*;
+import com.uas.api.models.dtos.AddPartDTO;
+import com.uas.api.models.dtos.PartDTO;
+import com.uas.api.models.dtos.PartStockDTO;
+import com.uas.api.models.dtos.StockOrderDTO;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
@@ -33,7 +36,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = PartsController.class)
@@ -182,13 +184,9 @@ public class PartControllerTests {
     }
     @Test
     public void whenAPartTypeIsCheckedForBeingUnassignedThenAListOfAvailablePartsShouldBeReturned() throws Exception {
-        long id = 1;
-        String json = objectMapper.writeValueAsString(id);
-
-        mockMvc.perform(post("/parts/get-by-type")
+        mockMvc.perform(get("/parts/get-by-type/{id}", "1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
