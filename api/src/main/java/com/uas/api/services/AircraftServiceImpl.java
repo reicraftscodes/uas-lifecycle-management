@@ -633,6 +633,11 @@ public class AircraftServiceImpl implements AircraftService {
                 aircraftPartRepository.save(part);
             }
         }
+        Optional<AircraftPart> existanceCheck = Optional.ofNullable(aircraftPartRepository.findAircraftPartByPart_PartNumber(newPart.get().getPartNumber()));
+        if (existanceCheck.isPresent()) {
+            return ResponseEntity.badRequest().body("Part already assigned to aircraft");
+        }
+
         AircraftPart aircraftPart = new AircraftPart(aircraft.get(), newPart.get(), PartStatus.OPERATIONAL, (double) 0L);
         partRepository.save(newPart.get());
         aircraftPartRepository.save(aircraftPart);
