@@ -1,9 +1,8 @@
 package com.uas.api.services;
 
 import com.uas.api.models.dtos.InvoiceDTO;
-import com.uas.api.models.entities.Location;
-import com.uas.api.models.entities.Part;
-import com.uas.api.models.entities.PartType;
+import com.uas.api.models.dtos.StockOrderDTO;
+import com.uas.api.models.entities.*;
 import com.uas.api.models.entities.enums.PartName;
 import com.uas.api.repositories.*;
 import com.uas.api.requests.MoreStockRequest;
@@ -18,7 +17,9 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -108,6 +109,34 @@ public class StockControlServiceTests {
         when(invoiceService.emailInvoice(any(),any())).thenReturn(true);
         StockControlServiceImpl.StockReceipt receipt = stockControlService.addMoreStock(newStock);
         Assertions.assertEquals("1000.0", receipt.getCost());
+    }
+
+    @Test
+    public void whenGetAllPartStockOrdersThenReturnList() {
+        List<StockToOrders> stockToOrders = new ArrayList<>();
+        Location mockLocation = new Location();
+        mockLocation.setLocationName("Cardiff");
+
+        Part mockPart = new Part();
+        mockPart.setPartType(new PartType(1L, PartName.MOTOR));
+        stockToOrders.add(new StockToOrders(
+                new Orders(1, mockLocation, "supplierOne@test.com", 2000.00, Timestamp.valueOf("2022-01-29 11:17:43")),
+                mockPart,
+                15));
+
+        stockToOrders.add(new StockToOrders(
+                new Orders(2, mockLocation, "supplierTwo@test.com", 2000.00, Timestamp.valueOf("2022-01-29 11:17:43")),
+                mockPart,
+                30));
+
+        when(stockToOrdersRepository.findAll()).thenReturn(stockToOrders);
+        List<StockOrderDTO> stockOrderDTOList = stockControlService.getAllPreviousStockOrders();
+
+        Assertions.assertEquals(2, stockOrderDTOList.size());
+        Assertions.assertEquals("supplierOne@test.com", stockOrderDTOList.get(0).getSupplierEmail());
+        Assertions.assertEquals("supplierTwo@test.com", stockOrderDTOList.get(1).getSupplierEmail());
+        Assertions.assertEquals(15, stockOrderDTOList.get(0).getQuantity());
+        Assertions.assertEquals(30, stockOrderDTOList.get(1).getQuantity());
     }
 
 }

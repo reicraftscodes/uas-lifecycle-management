@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/parts")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://uastest.herokuapp.com")
 public class PartsController {
     /**
      * Logger.
@@ -209,5 +209,15 @@ public class PartsController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    /**
+     * Get all part stock orders.
+     * @return a list of stock order dtos.
+     */
+    @GetMapping("/stock-order/all")
+    public ResponseEntity<List<StockOrderDTO>> getAllStockOrders() throws NotFoundException {
+        List<StockOrderDTO> stockOrderDTOs = stockControlService.getAllPreviousStockOrders();
+        return ResponseEntity.ok(stockOrderDTOs);
     }
 }

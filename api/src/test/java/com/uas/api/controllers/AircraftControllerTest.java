@@ -410,7 +410,6 @@ public class AircraftControllerTest {
         assertEquals("", response);
     }
 
-
     @WithMockUser(value = "user")
     @Test
     public void getAircraftPartsSuccess() throws Exception {
@@ -426,6 +425,7 @@ public class AircraftControllerTest {
         AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
         aircraftPartsDTO.setStatus(aircraft.getPlatformStatus().getLabel());
 
+
         String json = "G-001";
 
         when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraft));
@@ -437,7 +437,6 @@ public class AircraftControllerTest {
                         .andExpect(status().isOk());
 
     }
-
 
     @WithMockUser(value = "user")
     @Test
@@ -464,7 +463,6 @@ public class AircraftControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-
 
     @WithMockUser(value = "user")
     @Test
