@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/parts")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://uastest.herokuapp.com")
 public class PartsController {
     /**
      * Logger.
