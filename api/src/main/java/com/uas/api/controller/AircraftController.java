@@ -267,4 +267,9 @@ public class AircraftController {
         return ResponseEntity.ok(aircraftDTOList);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<AircraftDTO> getAircraft(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraft(id));
+    }
+
 }

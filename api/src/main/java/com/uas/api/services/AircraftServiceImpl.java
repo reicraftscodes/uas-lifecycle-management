@@ -9,6 +9,7 @@ import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.auth.UserRepository;
 import javassist.NotFoundException;
+import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -661,6 +662,21 @@ public class AircraftServiceImpl implements AircraftService {
         AircraftUser savedAircraftUser = aircraftUserRepository.save(aircraftUser);
         AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(aircraft.getTailNumber(), aircraft.getLocation().getLocationName(), aircraft.getPlatformStatus().getLabel(), aircraft.getPlatformType().getName(), savedAircraftUser.getUserFlyingHours(), aircraft.getFlyTimeHours());
         return aircraftUserDTO;
+    }
+
+    public AircraftDTO getAircraft(final String tailNumber) throws NotFoundException {
+        Optional<Aircraft> aircraftOpt = aircraftRepository.findById(tailNumber);
+        if (!aircraftOpt.isPresent()) {
+            throw new NotFoundException("Aircraft not found!");
+        } else {
+            Aircraft aircraft = aircraftOpt.get();
+            return new AircraftDTO(
+                    aircraft.getTailNumber(),
+                    aircraft.getLocation().getLocationName(),
+                    aircraft.getPlatformStatus().getLabel(),
+                    aircraft.getPlatformType().getName(),
+                    aircraft.getFlyTimeHours());
+        }
     }
 }
 
