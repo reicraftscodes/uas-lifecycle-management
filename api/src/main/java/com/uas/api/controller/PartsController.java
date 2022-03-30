@@ -135,4 +135,14 @@ public class PartsController {
         List<PartDTO> partDTOs = partService.getAllParts();
         return ResponseEntity.ok(partDTOs);
     }
+
+    /**
+     * Get all part stock orders.
+     * @return a list of stock order dtos.
+     */
+    @GetMapping("/stock-order/all")
+    public ResponseEntity<List<StockOrderDTO>> getAllStockOrders() throws NotFoundException {
+        List<StockOrderDTO> stockOrderDTOs = stockControlService.getAllPreviousStockOrders();
+        return ResponseEntity.ok(stockOrderDTOs);
+    }
 }
