@@ -104,4 +104,12 @@ public interface PartService {
      * @return Returns the result of the status update.
      */
     String updateFailureTime(long partNumber, long failureTime);
+
+    /**
+     * Gets the basic part information of a specific part.
+     * @param partNumber The partID of the part being searched for.
+     * @return A partInfoDTO.
+     * @throws Exception Throws an exception if the part is not found.
+     */
+    PartInfoDTO getPartInfo(long partNumber) throws Exception;
 }

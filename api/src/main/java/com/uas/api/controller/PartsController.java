@@ -1,6 +1,7 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.*;
+import com.uas.api.models.entities.Part;
 import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
@@ -195,6 +196,21 @@ public class PartsController {
             return ResponseEntity.ok("");
         } else {
             return ResponseEntity.badRequest().body(result);
+        }
+    }
+
+    /**
+     * Gets the information on a given part.
+     * @param partNumber The partID of the part being searched for.
+     * @return returns a PartInfoDTO of part infomation.
+     */
+    @PostMapping("get-part")
+    public ResponseEntity<?> getPart(@RequestBody long partNumber) {
+        try {
+            PartInfoDTO partInfo = partService.getPartInfo(partNumber);
+            return ResponseEntity.ok(partInfo);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
