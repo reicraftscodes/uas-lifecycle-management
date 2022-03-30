@@ -152,17 +152,6 @@ public class AircraftServiceImpl implements AircraftService {
         return errorMessage;
     }
 
-    /**
-     * Optional finds aircraft from the db by the tailnumber id.
-     * @param id The tailnumber id.
-     * @return returns an aircraft.
-     */
-//    @Override
-//    public Optional<Aircraft> findAircraftById(final String id) {
-//
-//        return ();
-//
-//    }
 
     /**
      * For each aircraft saved in the DB, get the hours operational and add it to the list.
