@@ -15,21 +15,21 @@ public class PartInfoDTO {
     /**
      * The partID of the searched part.
      */
-    long partID;
+    private long partID;
     /**
      *  The price of the searched part.
      */
-    BigDecimal price;
+    private BigDecimal price;
     /**
      * The weight of the searched part.
      */
-    long weight;
+    private long weight;
     /**
      * The failure time of the searched part.
      */
-    long failureTime;
+    private long failureTime;
     /**
      * The status of the searched part.
      */
-    String status;
+    private String status;
 }

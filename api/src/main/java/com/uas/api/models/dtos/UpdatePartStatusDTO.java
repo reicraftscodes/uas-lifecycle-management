@@ -11,9 +11,9 @@ public class UpdatePartStatusDTO {
     /**
      * The partID of the part being updated.
      */
-    long partID;
+    private long partID;
     /**
      * The status that the part is being updated to.
      */
-    String partStatus;
+    private String partStatus;
 }

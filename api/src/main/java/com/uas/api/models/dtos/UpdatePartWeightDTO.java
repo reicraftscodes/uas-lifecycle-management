@@ -9,9 +9,9 @@ public class UpdatePartWeightDTO {
     /**
      * The partID of the part being updated.
      */
-    long partID;
+    private long partID;
     /**
      * The new weight being set.
      */
-    long weight;
+    private long weight;
 }

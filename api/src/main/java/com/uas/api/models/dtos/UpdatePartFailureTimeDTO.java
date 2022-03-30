@@ -9,9 +9,9 @@ public class UpdatePartFailureTimeDTO {
     /**
      * The partID of the part being updated.
      */
-    long partID;
+    private long partID;
     /**
      * The new failure time value.
      */
-    long failureTime;
+    private long failureTime;
 }

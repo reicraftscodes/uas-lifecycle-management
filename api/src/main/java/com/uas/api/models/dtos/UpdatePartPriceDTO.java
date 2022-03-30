@@ -9,9 +9,9 @@ public class UpdatePartPriceDTO {
     /**
      * The partID of the part being updated.
      */
-    long partID;
+    private long partID;
     /**
      * The new price of the part.
      */
-    double price;
+    private double price;
 }

@@ -1,13 +1,10 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.Part;
-import com.uas.api.models.entities.enums.PartStatus;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
 import javassist.NotFoundException;
-import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +142,7 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-status")
-    public ResponseEntity<?> updatePartStatus(@RequestBody UpdatePartStatusDTO updatePartStatusDTO) {
+    public ResponseEntity<?> updatePartStatus(@RequestBody final UpdatePartStatusDTO updatePartStatusDTO) {
         String result = partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
         if (result.equals("Success")) {
             return ResponseEntity.ok("");
@@ -160,7 +157,7 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-price")
-    public ResponseEntity<?> updatePartPrice(@RequestBody UpdatePartPriceDTO updatePartPriceDTO) {
+    public ResponseEntity<?> updatePartPrice(@RequestBody final UpdatePartPriceDTO updatePartPriceDTO) {
         String result = partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());
         if (result.equals("Success")) {
             return ResponseEntity.ok("");
@@ -175,8 +172,8 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-weight")
-    public ResponseEntity<?> updatePartWeight(@RequestBody UpdatePartWeightDTO updatePartWeightDTO) {
-        String result = partService.updatePartWeight(updatePartWeightDTO.getPartID(),updatePartWeightDTO.getWeight());
+    public ResponseEntity<?> updatePartWeight(@RequestBody final UpdatePartWeightDTO updatePartWeightDTO) {
+        String result = partService.updatePartWeight(updatePartWeightDTO.getPartID(), updatePartWeightDTO.getWeight());
         if (result.equals("Success")) {
             return ResponseEntity.ok("");
         } else {
@@ -190,7 +187,7 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-failure-time")
-    public ResponseEntity<?> updateFailureTime(@RequestBody UpdatePartFailureTimeDTO updatePartFailureTimeDTO) {
+    public ResponseEntity<?> updateFailureTime(@RequestBody final UpdatePartFailureTimeDTO updatePartFailureTimeDTO) {
         String result = partService.updateFailureTime(updatePartFailureTimeDTO.getPartID(), updatePartFailureTimeDTO.getFailureTime());
         if (result.equals("Success")) {
             return ResponseEntity.ok("");
@@ -205,7 +202,7 @@ public class PartsController {
      * @return returns a PartInfoDTO of part infomation.
      */
     @PostMapping("get-part")
-    public ResponseEntity<?> getPart(@RequestBody long partNumber) {
+    public ResponseEntity<?> getPart(@RequestBody final long partNumber) {
         try {
             PartInfoDTO partInfo = partService.getPartInfo(partNumber);
             return ResponseEntity.ok(partInfo);

@@ -3,7 +3,6 @@ package com.uas.api.services;
 import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.AircraftPart;
-import com.uas.api.models.entities.enums.PartStatus;
 import javassist.NotFoundException;
 
 import java.util.List;

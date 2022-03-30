@@ -394,7 +394,7 @@ public class PartServiceImpl implements PartService {
      * @return Returns the result of the status update.
      */
     @Override
-    public String updatePartStatus(long partNumber, String partStatus){
+    public String updatePartStatus(final long partNumber, final String partStatus) {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
@@ -427,7 +427,7 @@ public class PartServiceImpl implements PartService {
      * @return Returns the result of the status update.
      */
     @Override
-    public String updatePartPrice(long partNumber, double price) {
+    public String updatePartPrice(final long partNumber, final double price) {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
@@ -446,7 +446,7 @@ public class PartServiceImpl implements PartService {
      * @return Returns the result of the status update.
      */
     @Override
-    public String updatePartWeight(long partNumber, long weight) {
+    public String updatePartWeight(final long partNumber, final long weight) {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
@@ -465,7 +465,7 @@ public class PartServiceImpl implements PartService {
      * @return Returns the result of the status update.
      */
     @Override
-    public String updateFailureTime(long partNumber, long failureTime) {
+    public String updateFailureTime(final long partNumber, final long failureTime) {
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
             return "Part not found!";
@@ -483,7 +483,7 @@ public class PartServiceImpl implements PartService {
      * @throws Exception Throws an exception if the part is not found.
      */
     @Override
-    public PartInfoDTO getPartInfo(long partNumber) throws Exception {
+    public PartInfoDTO getPartInfo(final long partNumber) throws Exception {
         PartInfoDTO partInfo = new PartInfoDTO();
 
         Optional<Part> part = partRepository.findPartBypartNumber(partNumber);
@@ -508,7 +508,4 @@ public class PartServiceImpl implements PartService {
 
         return partInfo;
     }
-
-
-
 }
