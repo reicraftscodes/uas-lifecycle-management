@@ -109,6 +109,8 @@ Admin | HEHE | HEHE
 - JWT Token
 - ITextPDF
 - Java Mail
+# Email configuration
+By default the API is setup with the email address `sncmsuktestemail@gmail.com` for sending emails in this prototype. This can be changes to your own email in the InvoiceServiceImpl file in the emailInvoice method by changing the PasswordAuthentication username and password fields to your own email and the password to that email. 
 # Framework Diagrams - C4 Model
 ## Context
 ![](api/structure_diagrams/structurizr-72910-context.png)
@@ -328,27 +330,61 @@ Example of JSON body:
 `{"userID":"2", "tailNumber":"G-004"}`
 
 -Both the userID and tailNumber must reference pre-existing entities in the database.
-## POST - /aircraft-parts-status
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+## GET - /aircraft-parts-status/{id}
+### Mapping Information:
+localhost:8080/aircraft/aircraft-parts-status/{id} (DEV) <br>
+uastest.herokuapp.com/aircraft/aircraft-parts-status/{id} (UAT) <br>
+uasprod.herokuapp.com/aircraft/aircraft-parts-status/{id} (PROD) <br>
+### What it does:
+A GET method that returns the parts and their status for a specific given aircraft.
+### Responses:
+#### Successful:
+200 Response for a successful request with a json body containing the aircraft status and a list of parts with their part number, part type, and part status.
+#### Error Responses and Meaning:
+Not found exception can be returned if the given aircraft isn't present in the database.<br>
+### Request Body:
+Path variable {id} for the aircraft tail number of the aircraft the parts are being searched for.
 ## POST - /update-aircraft-status
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/update-aircraft-status (DEV) <br>
+uastest.herokuapp.com/aircraft/update-aircraft-status (UAT) <br>
+uasprod.herokuapp.com/aircraft/update-aircraft-status (PROD) <br>
+### What it does:
+It is used to update the status of a given aircraft in the database.
+### Responses:
+#### Successful:
+If it is successful it will return a 200 response. 
+#### Error Responses and Meaning:
+If the aircraft status is invalid it will return a 400 response with the body: <br>
+`{
+    "message": "Invalid aircraft status!",
+    "status": "BAD_REQUEST"
+}` <br>
+If the aircraft cannot be found it will return a 400 response with the body: <br>
+`{
+    "message": "Aircraft not found!",
+    "status": "BAD_REQUEST"
+}`
+### Request Body:
+Takes a request body with the tail number and status. The status can be any one of these 4 and is case sensitive:<br>
+`OPERATION` `PRODUCTION` `DESIGN` `REPAIR`<br>
+`{"tailNumber":"G-001","status":"OPERATION"}`
 ## POST - /update-aircraft-part
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/update-aircraft-part (DEV) <br>
+uastest.herokuapp.com/aircraft/update-aircraft-part (UAT) <br>
+uasprod.herokuapp.com/aircraft/update-aircraft-part (PROD) <br>
+### What it does:
+A post mapping that updates the part of a specified aircraft to a new specified part. If the aircraft already has a part of the same time assigned to it then it will unassign that part before assigning the given new part.
+### Responses:
+#### Successful:
+If successful it will respond with a status 200.
+#### Error Responses and Meaning:
+if the part is already assigned to an aircraft then it will respond with a 400 status error with the error body of: <br>
+`Part already assigned to aircraft` <br>
+### Request Body:
+Takes a request body with the aircraft tailnumber and the new partID. <br>
+`{"tailNumber":"G-002","newPartNumber":16}`
 ## GET - /all
     ### Mapping Information:
     ### What it does:
@@ -502,12 +538,19 @@ If the request is unsuccessful the response will show an error for bad request a
     #### Error Responses and Meaning:
     ### Request Body:
 ## POST - /stockrequest
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/parts/stockrequest (DEV)
+uastest.herokuapp.com/parts/stockrequest (UAT)
+uasprod.herokuapp.com/parts/stockrequest (PROD)
+### What it does:
+Post request for ordering more stock. It adds the stock order to the database and generates a pdf invoice which is sent to the given part supplier email address.
+### Responses:
+#### Successful:
+Returns a 200 status response with no body. 
+#### Error Responses and Meaning:
+It could return errors for a location that isn't present in the database, or if the partID and quantities arrays are not the same size.
+### Request Body:
+`{"location":"Cardiff","supplierEmail":"replace@withsupplier.email","partIDs":[1,2],"quantities":[2,2]}`
 ## GET - /stock
     ### Mapping Information:
     ### What it does:
@@ -536,13 +579,20 @@ If the request is unsuccessful the response will show an error for bad request a
     #### Successful:
     #### Error Responses and Meaning:
     ### Request Body:
-## POST - /get-by-type
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+## GET - /get-by-type/{id}
+### Mapping Information:
+localhost:8080/parts/get-by-type/{id} (DEV)
+uastest.herokuapp.com/parts/get-by-type/{id} (UAT)
+uasprod.herokuapp.com/parts/get-by-type/{id} (PROD)
+### What it does:
+Gets all parts for a specific part type that are not assigned to an aircraft. It is used to display available parts on the front end for a user to choose to assign to an aircraft.
+### Responses:
+#### Successful:
+A 200 response with an array of partIDs for parts that are available of that type.
+#### Error Responses and Meaning:
+Could return an error if the API cannot communicate with the database. 
+### Request Body:
+Takes a path variable for the part type ID.
 # Testing
 ## Unit
 ## Performance
