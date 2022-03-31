@@ -61,7 +61,7 @@ public class PartsController {
      * @return list of parts with low stock & response entity.
      */
     @GetMapping("/low-stock")
-    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_COO')")
     public ResponseEntity<List<PartStockLevelDTO>> getPartsAtLowStock() throws NotFoundException {
         List<PartStockLevelDTO> partLowStockLevelDTOs = partService.getPartsAtLowStock();
         return ResponseEntity.ok(partLowStockLevelDTOs);
@@ -85,7 +85,7 @@ public class PartsController {
      * @return list of parts stock levels at all locations & response entity.
      */
     @GetMapping("/stock")
-    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_COO')")
     public ResponseEntity<List<LocationStockLevelsDTO>> getPartsStockAtAllLocations() throws Exception {
         List<LocationStockLevelsDTO> locationStockLevelsDTOs = partService.getPartStockLevelsForAllLocations();
         return ResponseEntity.ok(locationStockLevelsDTOs);
@@ -96,7 +96,7 @@ public class PartsController {
      * @return list of parts stock levels at location & response entity.
      */
     @GetMapping("/location/stock")
-    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_COO')")
     public ResponseEntity<List<PartStockLevelDTO>> getPartsStockLevelsAtLocation(final @RequestParam("location") String location) throws NotFoundException {
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartStockLevelsAtLocation(location);
         return ResponseEntity.ok(partStockLevelDTOs);
