@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/parts")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://uastest.herokuapp.com")
 public class PartsController {
     /**
      * Logger.
@@ -129,9 +129,9 @@ public class PartsController {
      * @param partType The type of part being searched for.
      * @return returns a response entity with ok response and a body with a list of part numbers or an error response with an error message.
      */
-    @PostMapping("/get-by-type")
+    @GetMapping("/get-by-type/{id}")
     @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> getPartsAvailableByParttype(@RequestBody final long partType) {
+    public ResponseEntity<?> getPartsAvailableByParttype(@PathVariable("id") final long partType) {
         return ResponseEntity.ok(partService.availablePartsForParttype(partType));
     }
 
@@ -144,5 +144,15 @@ public class PartsController {
     public ResponseEntity<List<PartDTO>> getAllParts() throws NotFoundException {
         List<PartDTO> partDTOs = partService.getAllParts();
         return ResponseEntity.ok(partDTOs);
+    }
+
+    /**
+     * Get all part stock orders.
+     * @return a list of stock order dtos.
+     */
+    @GetMapping("/stock-order/all")
+    public ResponseEntity<List<StockOrderDTO>> getAllStockOrders() throws NotFoundException {
+        List<StockOrderDTO> stockOrderDTOs = stockControlService.getAllPreviousStockOrders();
+        return ResponseEntity.ok(stockOrderDTOs);
     }
 }

@@ -33,7 +33,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -190,7 +189,7 @@ public class AircraftControllerTest {
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
         LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",12);
 
-        when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
+        when(aircraftRepository.findById(anyString())).thenReturn(java.util.Optional.of(aircraft));
         Mockito.doNothing().when(aircraftService).updateAircraftFlyTime(aircraft, logFlightDTO.getFlyTime());
         String json = objectMapper.writeValueAsString(logFlightDTO);
 
@@ -221,7 +220,7 @@ public class AircraftControllerTest {
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
         LogFlightDTO logFlightDTO = new LogFlightDTO(2, "G-001",-12);
 
-        when(aircraftService.findAircraftById(anyString())).thenReturn(java.util.Optional.of(aircraft));
+        when(aircraftRepository.findById(anyString())).thenReturn(java.util.Optional.of(aircraft));
         doThrow(new InvalidDTOAttributeException("Fly time value cannot be negative!")).when(partService).updateAllFlightHours(any(LogFlightDTO.class));
         String json = objectMapper.writeValueAsString(logFlightDTO);
 
@@ -429,13 +428,11 @@ public class AircraftControllerTest {
         AircraftPartsDTO aircraftPartsDTO = new AircraftPartsDTO();
         aircraftPartsDTO.setStatus(aircraft.getPlatformStatus().getLabel());
 
-        String json = "G-001";
 
         when(aircraftRepository.findById("G-001")).thenReturn(Optional.of(aircraft));
         when(aircraftPartRepository.findAircraftPartsByAircraft(any())).thenReturn(aircraftParts);
 
-        mockMvc.perform(post("/aircraft/aircraft-parts-status")
-                        .content(json).characterEncoding("utf-8")
+        mockMvc.perform(get("/aircraft/aircraft-parts-status/{id}", "G-001")
                         .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().isOk());
 

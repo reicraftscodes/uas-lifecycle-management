@@ -5,9 +5,7 @@ import com.uas.api.controller.PartsController;
 import com.uas.api.models.dtos.AddPartDTO;
 import com.uas.api.models.dtos.PartDTO;
 import com.uas.api.models.dtos.PartStockDTO;
-import com.uas.api.models.dtos.PlatformStatusDTO;
-import com.uas.api.models.entities.enums.PlatformStatus;
-import com.uas.api.models.entities.enums.PlatformType;
+import com.uas.api.models.dtos.StockOrderDTO;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
@@ -26,19 +24,18 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = PartsController.class)
@@ -191,13 +188,9 @@ public class PartControllerTests {
     @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenAPartTypeIsCheckedForBeingUnassignedThenAListOfAvailablePartsShouldBeReturned() throws Exception {
-        long id = 1;
-        String json = objectMapper.writeValueAsString(id);
-
-        mockMvc.perform(post("/parts/get-by-type")
+        mockMvc.perform(get("/parts/get-by-type/{id}", "1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -248,6 +241,29 @@ public class PartControllerTests {
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    @WithMockUser(value = "user")
+    @Test
+    public void whenGetAllPartStockOrders_ReturnList() throws Exception {
+        List<StockOrderDTO> stockOrderDTOList = new ArrayList<>();
+
+        stockOrderDTOList.add(new StockOrderDTO("Cardiff", "supplierOne@test.com", 2000.00, Timestamp.valueOf("2022-01-29 11:17:43"), "Wing A", 20));
+        stockOrderDTOList.add(new StockOrderDTO("St Athen", "supplierTwo@test.com", 3000.00, Timestamp.valueOf("2022-01-29 11:17:43"), "Wing A", 20));
+
+        when(stockControlService.getAllPreviousStockOrders()).thenReturn(stockOrderDTOList);
+
+        MvcResult mvcResult = mockMvc.perform(get("/parts/stock-order/all")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].locationName").value("Cardiff"))
+                .andExpect(jsonPath("$[0].supplierEmail").value("supplierOne@test.com"))
+                .andExpect(jsonPath("$[1].locationName").value("St Athen"))
+                .andExpect(jsonPath("$[1].supplierEmail").value("supplierTwo@test.com"))
+                .andReturn();
     }
 
 }

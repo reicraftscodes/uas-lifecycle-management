@@ -496,7 +496,7 @@ If the request is unsuccessful the response will show an error for bad request a
     #### Error Responses and Meaning:
     ### Request Body:
 
-## GET - /all
+## GET - /parts/all
 ### Mapping Information: 
 localhost:8080/parts/all (DEV)<br>
 uastest.herokuapp.com/parts/all (UAT)<br>
@@ -535,6 +535,29 @@ A 200 OK Response should return JSON in the following format upon a successful r
 A 400 Bad Request Response will be returned with the JSON in the following formats:
 
 `{"response": "Parts not found!"}`
+
+#### Request Body
+No Request Body is needed for this mapping.
+
+
+## GET - /parts/stock-order/all
+### Mapping Information:
+localhost:8080/parts/stock-order/all (DEV)<br>
+uastest.herokuapp.com/parts/stock-order/all (UAT)<br>
+uasprod.herokuapp.com/parts/stock-order/all (PROD)<br>
+
+### What it does:
+This mapping allows the logged in user to retrieve all previous part stock orders.
+### Responses:
+#### Successful:
+A 200 OK Response should return JSON in the following format upon a successful request:<br>
+`[{"locationName": "Cardiff",`<br>
+`"supplierEmail": "supplierOne@test.com",`<br>
+`"totalCost": 2000.0,`<br>
+`"orderDateTime": "2022-01-29T11:17:43.000+00:00",`<br>
+`"partName": "Wing A",`<br>
+`"quantity": 20
+}]`
 
 #### Request Body
 No Request Body is needed for this mapping.

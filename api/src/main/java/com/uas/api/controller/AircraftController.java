@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/aircraft")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://uastest.herokuapp.com")
 public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
@@ -236,9 +236,9 @@ public class AircraftController {
      * @param tailNumber The tailnumber of the aircraft the parts are being searched for.
      * @return A response entity with the aircraft parts if ok or an error message if something went wrong.
      */
-    @PostMapping(value = "aircraft-parts-status", consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "aircraft-parts-status/{id}", produces = "application/json")
     @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> getAircraftParts(@RequestBody final String tailNumber) {
+    public ResponseEntity<?> getAircraftParts(@PathVariable("id") final String tailNumber) throws NotFoundException {
         return aircraftService.getAircraftParts(tailNumber);
     }
 
@@ -249,7 +249,7 @@ public class AircraftController {
      */
     @PostMapping("update-aircraft-status")
     @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) {
+    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) throws NotFoundException {
         return aircraftService.updateAircraftStatus(aircraftStatusDTO);
     }
 
@@ -260,7 +260,7 @@ public class AircraftController {
      */
     @PostMapping("update-aircraft-part")
     @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) {
+    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) throws NotFoundException {
         return aircraftService.updateAircraftPart(aircraftPartDTO);
     }
 
@@ -285,6 +285,17 @@ public class AircraftController {
     public ResponseEntity<List<AircraftDTO>> getAircraftFiltered(@RequestBody final AircraftFilterDTO aircraftFilterDTO) {
         List<AircraftDTO> aircraftDTOList = aircraftService.getFilteredAircraftList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses());
         return ResponseEntity.ok(aircraftDTOList);
+    }
+
+    /**
+     * Get aircraft by tail number.
+     * @param id the aircraft tail number
+     * @return the aircraft dto
+     * @throws NotFoundException
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<AircraftDTO> getAircraft(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraft(id));
     }
 
 }
