@@ -464,8 +464,9 @@ public class PartServiceTests {
         when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
         when(aircraftPartRepository.findAircraftPartByPart_PartNumber(1l)).thenReturn(aircraftPart);
 
-        String result = partService.updatePartStatus(1l,"OPERATIONAL");
-        assertEquals("Success from update","Success",result);
+        Assertions.assertDoesNotThrow(() -> {
+            partService.updatePartStatus(1l,"OPERATIONAL");
+        });
     }
 
     @Test
@@ -480,9 +481,9 @@ public class PartServiceTests {
 
         when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
         when(aircraftPartRepository.findAircraftPartByPart_PartNumber(1l)).thenReturn(aircraftPart);
-
-        String result = partService.updatePartStatus(1l,"invalid");
-        assertEquals("invalid part result expected","Invalid part status!",result);
+        Assertions.assertThrows(InvalidDTOAttributeException.class, () -> {
+            partService.updatePartStatus(1l,"invalid");
+        });
     }
 
     @Test
@@ -493,8 +494,9 @@ public class PartServiceTests {
 
         when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
 
-        String result = partService.updatePartPrice(1l,1200.0);
-        assertEquals("Success in updating part price","Success",result);
+        Assertions.assertDoesNotThrow(() -> {
+            partService.updatePartPrice(1l,1200.0);
+        });
     }
 
     @Test
@@ -517,9 +519,9 @@ public class PartServiceTests {
         Part part = new Part(1l, partType, "part name", localDateTime, BigDecimal.valueOf(1000),500l,1500l );
 
         when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
-
-        String result = partService.updateFailureTime(1l,500);
-        assertEquals("Success in updating part weight","Success",result);
+        Assertions.assertDoesNotThrow(() -> {
+            partService.updateFailureTime(1l,500);
+        });
     }
 
     @Test

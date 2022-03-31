@@ -1,5 +1,6 @@
 package com.uas.api.controller;
 
+import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
@@ -153,13 +154,9 @@ public class PartsController {
      */
     @PostMapping("update-part-status")
     @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> updatePartStatus(@RequestBody final UpdatePartStatusDTO updatePartStatusDTO) {
-        String result = partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
-        if (result.equals("Success")) {
-            return ResponseEntity.ok("");
-        } else {
-            return ResponseEntity.badRequest().body(result);
-        }
+    public ResponseEntity<?> updatePartStatus(@RequestBody final UpdatePartStatusDTO updatePartStatusDTO) throws NotFoundException, InvalidDTOAttributeException {
+        partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     /**
@@ -169,13 +166,9 @@ public class PartsController {
      */
     @PostMapping("update-part-price")
     @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> updatePartPrice(@RequestBody final UpdatePartPriceDTO updatePartPriceDTO) {
-        String result = partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());
-        if (result.equals("Success")) {
-            return ResponseEntity.ok("");
-        } else {
-            return ResponseEntity.badRequest().body(result);
-        }
+    public ResponseEntity<?> updatePartPrice(@RequestBody final UpdatePartPriceDTO updatePartPriceDTO) throws NotFoundException {
+        partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     /**
@@ -197,13 +190,9 @@ public class PartsController {
      */
     @PostMapping("update-part-failure-time")
     @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> updateFailureTime(@RequestBody final UpdatePartFailureTimeDTO updatePartFailureTimeDTO) {
-        String result = partService.updateFailureTime(updatePartFailureTimeDTO.getPartID(), updatePartFailureTimeDTO.getFailureTime());
-        if (result.equals("Success")) {
-            return ResponseEntity.ok("");
-        } else {
-            return ResponseEntity.badRequest().body(result);
-        }
+    public ResponseEntity<?> updateFailureTime(@RequestBody final UpdatePartFailureTimeDTO updatePartFailureTimeDTO) throws NotFoundException {
+        partService.updateFailureTime(updatePartFailureTimeDTO.getPartID(), updatePartFailureTimeDTO.getFailureTime());
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     /**

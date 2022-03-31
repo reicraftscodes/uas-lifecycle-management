@@ -28,8 +28,7 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -240,13 +239,12 @@ public class PartControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartStatusSuccess() throws Exception {
         UpdatePartStatusDTO updatePartStatusDTO = new UpdatePartStatusDTO(1l,"OPERATIONAL");
         String json = objectMapper.writeValueAsString(updatePartStatusDTO);
 
-        when(partService.updatePartStatus(updatePartStatusDTO.getPartID(),updatePartStatusDTO.getPartStatus())).thenReturn("Success");
         mockMvc.perform(post("/parts/update-part-status")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -254,13 +252,12 @@ public class PartControllerTests {
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartStatusInvalidPart() throws Exception {
         UpdatePartStatusDTO updatePartStatusDTO = new UpdatePartStatusDTO(1l,"OPERATIONAL");
         String json = objectMapper.writeValueAsString(updatePartStatusDTO);
-
-        when(partService.updatePartStatus(updatePartStatusDTO.getPartID(),updatePartStatusDTO.getPartStatus())).thenReturn("Part not found!");
+        doThrow(NotFoundException.class).when(partService).updatePartStatus(anyLong(), anyString());
         mockMvc.perform(post("/parts/update-part-status")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -268,13 +265,12 @@ public class PartControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartPriceSuccess() throws Exception {
         UpdatePartPriceDTO dto = new UpdatePartPriceDTO(1l,1000.0);
         String json = objectMapper.writeValueAsString(dto);
 
-        when(partService.updatePartPrice(dto.getPartID(),dto.getPrice())).thenReturn("Success");
         mockMvc.perform(post("/parts/update-part-price")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -282,13 +278,12 @@ public class PartControllerTests {
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartPriceInvalidPart() throws Exception {
         UpdatePartPriceDTO dto = new UpdatePartPriceDTO(1l,1000.0);
         String json = objectMapper.writeValueAsString(dto);
-
-        when(partService.updatePartPrice(dto.getPartID(),dto.getPrice())).thenReturn("Part not found!");
+        doThrow(NotFoundException.class).when(partService).updatePartPrice(anyLong(), anyDouble());
         mockMvc.perform(post("/parts/update-part-price")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -297,7 +292,7 @@ public class PartControllerTests {
 
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartWeightSuccess() throws Exception {
         UpdatePartWeightDTO dto = new UpdatePartWeightDTO(1l,1000);
@@ -309,12 +304,12 @@ public class PartControllerTests {
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartWeightInvalidPart() throws Exception {
         UpdatePartWeightDTO dto = new UpdatePartWeightDTO(1l,1000);
         String json = objectMapper.writeValueAsString(dto);
-
+        doThrow(NotFoundException.class).when(partService).updatePartWeight(anyLong(), anyLong());
         mockMvc.perform(post("/parts/update-part-weight")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -322,13 +317,12 @@ public class PartControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartFailureTimeSuccess() throws Exception {
         UpdatePartFailureTimeDTO dto = new UpdatePartFailureTimeDTO(1l,1000);
         String json = objectMapper.writeValueAsString(dto);
 
-        when(partService.updateFailureTime(dto.getPartID(),dto.getFailureTime())).thenReturn("Success");
         mockMvc.perform(post("/parts/update-part-failure-time")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -336,13 +330,12 @@ public class PartControllerTests {
                 .andExpect(status().isOk());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void setPartFailureTimeInvalidPart() throws Exception {
         UpdatePartFailureTimeDTO dto = new UpdatePartFailureTimeDTO(1l,1000);
         String json = objectMapper.writeValueAsString(dto);
-
-        when(partService.updateFailureTime(dto.getPartID(),dto.getFailureTime())).thenReturn("Part not found!");
+        doThrow(NotFoundException.class).when(partService).updateFailureTime(anyLong(), anyLong());
         mockMvc.perform(post("/parts/update-part-failure-time")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -350,7 +343,7 @@ public class PartControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void getPartInfo() throws Exception {
         PartInfoDTO partInfoDTO = new PartInfoDTO(1l, BigDecimal.valueOf(100), 1000l, 500l, "Operational");

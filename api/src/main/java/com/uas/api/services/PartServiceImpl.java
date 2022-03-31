@@ -394,17 +394,17 @@ public class PartServiceImpl implements PartService {
      * @return Returns the result of the status update.
      */
     @Override
-    public String updatePartStatus(final long partNumber, final String partStatus) {
+    public void updatePartStatus(final long partNumber, final String partStatus) throws NotFoundException, InvalidDTOAttributeException {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
-            return "Part not found!";
+            throw new NotFoundException("Part not found!");
         }
 
         //Checks if part is assigned to aircraft.
         Optional<AircraftPart> aircraftPart = Optional.ofNullable(aircraftPartRepository.findAircraftPartByPart_PartNumber(partNumber));
         if (aircraftPart.isEmpty()) {
-            return "Part not assigned to aircraft!";
+            throw new InvalidDTOAttributeException("Part not assigned to aircraft!");
         }
 
         //Part status from string to enum.
@@ -412,31 +412,28 @@ public class PartServiceImpl implements PartService {
         try {
             ps = PartStatus.valueOf(partStatus);
         } catch (Exception e) {
-            return "Invalid part status!";
+            throw new InvalidDTOAttributeException("Invalid part status!");
         }
 
         aircraftPart.get().setPartStatus(ps);
         aircraftPartRepository.save(aircraftPart.get());
-        return "Success";
     }
 
     /**
      * Updates a specified parts cost in the db.
      * @param partNumber The partID of the part having its price updated.
      * @param price The price it is being updated to.
-     * @return Returns the result of the status update.
      */
     @Override
-    public String updatePartPrice(final long partNumber, final double price) {
+    public void updatePartPrice(final long partNumber, final double price) throws NotFoundException {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
-            return "Part not found!";
+            throw new NotFoundException("Part not found!");
         }
 
         selectedPart.get().setPrice(BigDecimal.valueOf(price));
         partRepository.save(selectedPart.get());
-        return "Success";
     }
 
     /**
@@ -461,18 +458,16 @@ public class PartServiceImpl implements PartService {
      * Updates the failure time of a specified part in the db.
      * @param partNumber The partID of the part having its failure time updated.
      * @param failureTime The new typical failure time.
-     * @return Returns the result of the status update.
      */
     @Override
-    public String updateFailureTime(final long partNumber, final long failureTime) {
+    public void updateFailureTime(final long partNumber, final long failureTime) throws NotFoundException {
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
-            return "Part not found!";
+            throw new NotFoundException("Part not found!");
         }
 
         selectedPart.get().setTypicalFailureTime(failureTime);
         partRepository.save(selectedPart.get());
-        return "Success";
     }
 
     /**

@@ -78,7 +78,7 @@ public interface PartService {
      * @param partStatus The status that the part is being updated to.
      * @return Returns the result of the status update.
      */
-    String updatePartStatus(long partNumber, String partStatus);
+    void updatePartStatus(long partNumber, String partStatus) throws NotFoundException;
 
     /**
      * Updates a specified parts cost in the db.
@@ -86,7 +86,7 @@ public interface PartService {
      * @param price The price it is being updated to.
      * @return Returns the result of the status update.
      */
-    String updatePartPrice(long partNumber, double price);
+    void updatePartPrice(long partNumber, double price) throws NotFoundException;
 
     /**
      * Updates a specific part weight in the db.
@@ -99,9 +99,8 @@ public interface PartService {
      * Updates the failure time of a specified part in the db.
      * @param partNumber The partID of the part having its failure time updated.
      * @param failureTime The new typical failure time.
-     * @return Returns the result of the status update.
      */
-    String updateFailureTime(long partNumber, long failureTime);
+    void updateFailureTime(long partNumber, long failureTime) throws NotFoundException;
 
     /**
      * Gets the basic part information of a specific part.
