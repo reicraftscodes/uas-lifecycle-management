@@ -272,18 +272,46 @@ Takes a json request body: `{"userId":1,"aircraft":"G-001","flyTime":10}`<br>
     ### Request Body:
 ## GET - /ceo-aircraft-cost-full
     ### Mapping Information:
+localhost:8080/aircraft/ceo-aircraft-cost-full (DEV) <br>
+uastest.herokuapp.com/aircraft/ceo-aircraft-cost-full (UAT) <br>
+uasprod.herokuapp.com/aircraft/ceo-aircraft-cost-full (PROD) <br>
     ### What it does:
+This returns a json body containing the total amount spent overall on parts and repairs along with individual aircraft cost for its parts and the repairs performed on these parts.
     ### Responses:
     #### Successful:
+Returns a status 200 with a json body containing the cost data. 
     #### Error Responses and Meaning:
+A GET request so error responses are unlikely but could be thrown if there is a problem communicating with the database. 
     ### Request Body:
+No request body needed. 
 ## GET - /ceo-aircraft-cost
     ### Mapping Information:
+localhost:8080/aircraft/ceo-aircraft-cost (DEV) <br>
+uastest.herokuapp.com/aircraft/ceo-aircraft-cost (UAT) <br>
+uasprod.herokuapp.com/aircraft/ceo-aircraft-cost (PROD) <br>
     ### What it does:
+This returns a json body containing a list of aircraft with the total part, repair and overall costs.
     ### Responses:
     #### Successful:
+Returns a status 200 with a json body containing the cost data. 
     #### Error Responses and Meaning:
+A GET request so error responses are unlikely but could be thrown if there is a problem communicating with the database. 
     ### Request Body:
+No request body needed. 
+## GET - /ceo-aircraft-cost/{id}
+    ### Mapping Information:
+localhost:8080/aircraft/ceo-aircraft-cost/{id} (DEV) <br>
+uastest.herokuapp.com/aircraft/ceo-aircraft-cost/{id} (UAT) <br>
+uasprod.herokuapp.com/aircraft/ceo-aircraft-cost/{id} (PROD) <br>
+    ### What it does
+Gets the repair and part cost associated with a specific aircraft. 
+    ### Responses:
+    #### Successful:
+Returns a status 200 with a json body containing the costs associated with the given aircraft.
+    #### Error Responses and Meaning:
+A GET request so error responses are unlikely but could be thrown if there is a problem communicating with the database. 
+    ### Request Body:
+Takes an aircraft tailnumber as a path variable. 
 ## Assigning an User to an Aircraft - POST /assign-user
     ### Mapping Information:
     ### What it does:
