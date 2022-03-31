@@ -472,21 +472,14 @@ public class PartServiceImpl implements PartService {
      * Gets the basic part information of a specific part.
      * @param partNumber The partID of the part being searched for.
      * @return A partInfoDTO.
-     * @throws Exception Throws an exception if the part is not found.
+     * @throws NotFoundException Throws an exception if the part is not found.
      */
     @Override
-    public PartInfoDTO getPartInfo(final long partNumber) throws Exception {
-        PartInfoDTO partInfo = new PartInfoDTO();
-
+    public PartInfoDTO getPartInfo(final long partNumber) throws NotFoundException {
         Optional<Part> part = partRepository.findPartBypartNumber(partNumber);
         if (part.isEmpty()) {
-            throw new Exception("Part not found!");
+            throw new NotFoundException("Part not found!");
         }
-
-        partInfo.setPartID(partNumber);
-        partInfo.setWeight(part.get().getWeight());
-        partInfo.setPrice(part.get().getPrice());
-        partInfo.setFailureTime(part.get().getTypicalFailureTime());
         String status;
         try {
             status = aircraftPartRepository
@@ -496,8 +489,6 @@ public class PartServiceImpl implements PartService {
         } catch (Exception e) {
             status = "";
         }
-        partInfo.setStatus(status);
-
-        return partInfo;
+        return new PartInfoDTO(partNumber, part.get().getPrice(), part.get().getWeight(), part.get().getTypicalFailureTime(), status);
     }
 }

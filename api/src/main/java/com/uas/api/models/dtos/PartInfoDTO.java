@@ -2,34 +2,32 @@ package com.uas.api.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 public class PartInfoDTO {
     /**
      * The partID of the searched part.
      */
-    private long partID;
+    private final long partID;
     /**
      *  The price of the searched part.
      */
-    private BigDecimal price;
+    private final BigDecimal price;
     /**
      * The weight of the searched part.
      */
-    private long weight;
+    private final long weight;
     /**
      * The failure time of the searched part.
      */
-    private long failureTime;
+    private final long failureTime;
     /**
      * The status of the searched part.
      */
-    private String status;
+    private final String status;
 }
