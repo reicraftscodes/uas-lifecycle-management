@@ -2,6 +2,7 @@
 #build/
 #!build/reports
 *.json
+invoices/
 build/classes
 build/generated
 build/jacoco
