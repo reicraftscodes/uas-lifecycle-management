@@ -1,15 +1,7 @@
 package com.uas.api.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
-import com.uas.api.models.dtos.AddPartDTO;
-import com.uas.api.models.dtos.PartDTO;
-import com.uas.api.models.dtos.PartStockDTO;
-import com.uas.api.models.dtos.StockOrderDTO;
-import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.enums.PlatformStatus;
-import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.models.dtos.*;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
@@ -36,8 +28,6 @@ import java.util.List;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -312,8 +302,6 @@ public class PartControllerTests {
     public void setPartWeightSuccess() throws Exception {
         UpdatePartWeightDTO dto = new UpdatePartWeightDTO(1l,1000);
         String json = objectMapper.writeValueAsString(dto);
-
-        when(partService.updatePartWeight(dto.getPartID(),dto.getWeight())).thenReturn("Success");
         mockMvc.perform(post("/parts/update-part-weight")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -327,7 +315,6 @@ public class PartControllerTests {
         UpdatePartWeightDTO dto = new UpdatePartWeightDTO(1l,1000);
         String json = objectMapper.writeValueAsString(dto);
 
-        when(partService.updatePartWeight(dto.getPartID(),dto.getWeight())).thenReturn("Part not found!");
         mockMvc.perform(post("/parts/update-part-weight")
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)

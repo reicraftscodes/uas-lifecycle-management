@@ -152,6 +152,7 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-status")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<?> updatePartStatus(@RequestBody final UpdatePartStatusDTO updatePartStatusDTO) {
         String result = partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
         if (result.equals("Success")) {
@@ -167,6 +168,7 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-price")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<?> updatePartPrice(@RequestBody final UpdatePartPriceDTO updatePartPriceDTO) {
         String result = partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());
         if (result.equals("Success")) {
@@ -182,13 +184,10 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-weight")
-    public ResponseEntity<?> updatePartWeight(@RequestBody final UpdatePartWeightDTO updatePartWeightDTO) {
-        String result = partService.updatePartWeight(updatePartWeightDTO.getPartID(), updatePartWeightDTO.getWeight());
-        if (result.equals("Success")) {
-            return ResponseEntity.ok("");
-        } else {
-            return ResponseEntity.badRequest().body(result);
-        }
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> updatePartWeight(@RequestBody final UpdatePartWeightDTO updatePartWeightDTO) throws NotFoundException {
+        partService.updatePartWeight(updatePartWeightDTO.getPartID(), updatePartWeightDTO.getWeight());
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     /**
@@ -197,6 +196,7 @@ public class PartsController {
      * @return A response entity with an appropriate body and status depending on the outcome.
      */
     @PostMapping("update-part-failure-time")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<?> updateFailureTime(@RequestBody final UpdatePartFailureTimeDTO updatePartFailureTimeDTO) {
         String result = partService.updateFailureTime(updatePartFailureTimeDTO.getPartID(), updatePartFailureTimeDTO.getFailureTime());
         if (result.equals("Success")) {
@@ -212,6 +212,7 @@ public class PartsController {
      * @return returns a PartInfoDTO of part infomation.
      */
     @PostMapping("get-part")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<?> getPart(@RequestBody final long partNumber) {
         try {
             PartInfoDTO partInfo = partService.getPartInfo(partNumber);

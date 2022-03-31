@@ -446,16 +446,15 @@ public class PartServiceImpl implements PartService {
      * @return Returns the result of the status update.
      */
     @Override
-    public String updatePartWeight(final long partNumber, final long weight) {
+    public void updatePartWeight(final long partNumber, final long weight) throws NotFoundException {
         //Checks that part is present in db.
         Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
         if (selectedPart.isEmpty()) {
-            return "Part not found!";
+            throw new NotFoundException("Part not found!");
         }
 
         selectedPart.get().setWeight((long) weight);
         partRepository.save(selectedPart.get());
-        return "Success";
     }
 
     /**

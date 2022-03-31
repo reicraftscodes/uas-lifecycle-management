@@ -10,7 +10,6 @@ import com.uas.api.models.entities.enums.PlatformType;
 import com.uas.api.repositories.*;
 import com.uas.api.repositories.projections.PartFailureTimeProjection;
 import javassist.NotFoundException;
-import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -26,8 +25,6 @@ import org.springframework.test.util.AssertionErrors;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -508,8 +505,9 @@ public class PartServiceTests {
 
         when(partRepository.findPartBypartNumber(1l)).thenReturn(Optional.of(part));
 
-        String result = partService.updatePartWeight(1l,200);
-        assertEquals("Success in updating part weight","Success",result);
+        Assertions.assertDoesNotThrow(() -> {
+            partService.updatePartWeight(1L, 200);
+        });
     }
 
     @Test

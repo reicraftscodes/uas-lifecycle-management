@@ -92,9 +92,8 @@ public interface PartService {
      * Updates a specific part weight in the db.
      * @param partNumber The partID of the part having its price updated.
      * @param weight The new weight.
-     * @return Returns the result of the status update.
      */
-    String updatePartWeight(long partNumber, long weight);
+    void updatePartWeight(long partNumber, long weight) throws NotFoundException;
 
     /**
      * Updates the failure time of a specified part in the db.
