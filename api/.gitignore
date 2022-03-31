@@ -9,7 +9,7 @@ build/resources
 build/test-results
 build/tmp
 build/bootJarMainClassName
-*.json
+*.pdf
 build/
 !build/reports
 !gradle/wrapper/gradle-wrapper.jar
