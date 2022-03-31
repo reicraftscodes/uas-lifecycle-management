@@ -63,7 +63,7 @@ public class PartControllerTests {
     MockMvc mockMvc;
 
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithAllParams() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "G-001", "OPERATIONAL");
@@ -81,7 +81,7 @@ public class PartControllerTests {
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithAircraft() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "G-001", "OPERATIONAL");
@@ -98,7 +98,7 @@ public class PartControllerTests {
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithManufacture() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "", "");
@@ -117,7 +117,7 @@ public class PartControllerTests {
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithNeither() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "", 1000.0, 750L, "", "");
@@ -134,14 +134,14 @@ public class PartControllerTests {
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenLowStockIsCheckedThenAListOfLowStockShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/low-stock")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenAStockRequestIsMadeThenResponseShouldBeOK() throws Exception {
         ArrayList<Long> partTypes = new ArrayList<>();
@@ -156,13 +156,14 @@ public class PartControllerTests {
                         .content(json))
                 .andExpect(status().isOk());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenStockIsCheckedAtAllLocationsThenAListOfLowStockShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/stock")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenALocationsStockIsCheckedThenAListOfLowStockShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/location/stock")
@@ -170,18 +171,21 @@ public class PartControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenFailureTimeIsCheckedThenReturnListOfPartsWithFailureTime() throws Exception {
         mockMvc.perform(get("/parts/failuretime")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_CTO")
     @Test
     public void whenTopFailingPartsIsCheckedThenTopFailingPartsShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/most-failing/{topN}", "3")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenAPartTypeIsCheckedForBeingUnassignedThenAListOfAvailablePartsShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/get-by-type/{id}", "1")
@@ -192,7 +196,7 @@ public class PartControllerTests {
 
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllParts_ReturnList() throws Exception {
         List<PartDTO> partDTOList = new ArrayList<>();
@@ -229,7 +233,7 @@ public class PartControllerTests {
                 .andExpect(jsonPath("$[1].compatiblePlatforms", hasSize(2)))
                 .andReturn();
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllPartsThenThrowError() throws Exception {
         when(partService.getAllParts()).thenThrow(new NotFoundException("Parts not found."));
@@ -239,7 +243,7 @@ public class PartControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllPartStockOrders_ReturnList() throws Exception {
         List<StockOrderDTO> stockOrderDTOList = new ArrayList<>();
