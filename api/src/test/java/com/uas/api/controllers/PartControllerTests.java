@@ -243,7 +243,7 @@ public class PartControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllPartStockOrders_ReturnList() throws Exception {
         List<StockOrderDTO> stockOrderDTOList = new ArrayList<>();
