@@ -520,6 +520,7 @@ If the request is unsuccessful the response will show an error for bad request a
 ## Performance
 ## Automated Endpoint Testing
 All of the endpoints listed in the documentation have been tested using Postman's automated testing feature. You can run this on all three environments (dev, uat, prod) by using the link below and changing the url variable.<br>
+All of the tests check for a 200/201/202 response, and that it is responding in under 200ms. The only exception to the latter rule is Stock Request as this talks to an external service and so takes longer.<br>
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/63dbd0128b1a396d2994?action=collection%2Fimport)<br>
 
 # Deployment
