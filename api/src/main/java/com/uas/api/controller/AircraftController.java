@@ -150,7 +150,7 @@ public class AircraftController {
      * @return response entity of the platformStatusDTO list containing DTO's which display platform status data.
      */
     @GetMapping("/platform-status")
-    @PreAuthorize("hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
+    @PreAuthorize("hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') or hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWeb() {
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
         return ResponseEntity.ok(platformStatusDTOList);
@@ -174,7 +174,7 @@ public class AircraftController {
      * @return the platform status.
      */
     @GetMapping("/android/platform-status")
-    @PreAuthorize("hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
+    @PreAuthorize("hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') or hasRole('ROLE_USER_LOGISTIC') ")
     public ResponseEntity<PlatformStatusAndroidFullDTO> getPlatformStatusAndroid() {
         PlatformStatusAndroidFullDTO platformStatusAndroidDTOS = aircraftService.getPlatformStatusAndroid();
         return ResponseEntity.ok(platformStatusAndroidDTOS);
