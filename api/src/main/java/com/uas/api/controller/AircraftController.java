@@ -267,4 +267,15 @@ public class AircraftController {
         return ResponseEntity.ok(aircraftDTOList);
     }
 
+    /**
+     * Get aircraft by tail number.
+     * @param id the aircraft tail number
+     * @return the aircraft dto
+     * @throws NotFoundException
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<AircraftDTO> getAircraft(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraft(id));
+    }
+
 }

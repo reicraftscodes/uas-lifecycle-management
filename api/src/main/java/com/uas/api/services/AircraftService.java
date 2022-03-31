@@ -166,4 +166,12 @@ public interface AircraftService {
      * @return a list of AircraftDTOs that match the search criteria.
      */
     List<AircraftDTO> getFilteredAircraftList(List<String> locations, List<String> platformStatuses);
+
+    /**
+     * Get aircraft by tail number.
+     * @param tailNumber the aircraft tail number
+     * @return the aircraft dto
+     * @throws NotFoundException
+     */
+    AircraftDTO getAircraft(String tailNumber) throws NotFoundException;
 }

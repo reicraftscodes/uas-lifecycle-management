@@ -662,5 +662,26 @@ public class AircraftServiceImpl implements AircraftService {
         AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(aircraft.getTailNumber(), aircraft.getLocation().getLocationName(), aircraft.getPlatformStatus().getLabel(), aircraft.getPlatformType().getName(), savedAircraftUser.getUserFlyingHours(), aircraft.getFlyTimeHours());
         return aircraftUserDTO;
     }
+
+    /**
+     * Get aircraft by tail number.
+     * @param tailNumber the aircraft tail number
+     * @return the aircraft dto
+     * @throws NotFoundException
+     */
+    public AircraftDTO getAircraft(final String tailNumber) throws NotFoundException {
+        Optional<Aircraft> aircraftOpt = aircraftRepository.findById(tailNumber);
+        if (!aircraftOpt.isPresent()) {
+            throw new NotFoundException("Aircraft not found!");
+        } else {
+            Aircraft aircraft = aircraftOpt.get();
+            return new AircraftDTO(
+                    aircraft.getTailNumber(),
+                    aircraft.getLocation().getLocationName(),
+                    aircraft.getPlatformStatus().getLabel(),
+                    aircraft.getPlatformType().getName(),
+                    aircraft.getFlyTimeHours());
+        }
+    }
 }
 
