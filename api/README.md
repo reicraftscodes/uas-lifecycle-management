@@ -518,6 +518,10 @@ If the request is unsuccessful the response will show an error for bad request a
 # Testing
 ## Unit
 ## Performance
+## Automated Endpoint Testing
+All of the endpoints listed in the documentation have been tested using Postman's automated testing feature. You can run this on all three environments (dev, uat, prod) by using the link below and changing the url variable.<br>
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/63dbd0128b1a396d2994?action=collection%2Fimport)<br>
+
 # Deployment
 
 
