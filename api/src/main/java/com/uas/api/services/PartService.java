@@ -76,7 +76,6 @@ public interface PartService {
      * Updates a parts status in the aircraft part db table.
      * @param partNumber The part number of the part.
      * @param partStatus The status that the part is being updated to.
-     * @return Returns the result of the status update.
      */
     void updatePartStatus(long partNumber, String partStatus) throws NotFoundException;
 
@@ -84,7 +83,6 @@ public interface PartService {
      * Updates a specified parts cost in the db.
      * @param partNumber The partID of the part having its price updated.
      * @param price The price it is being updated to.
-     * @return Returns the result of the status update.
      */
     void updatePartPrice(long partNumber, double price) throws NotFoundException;
 

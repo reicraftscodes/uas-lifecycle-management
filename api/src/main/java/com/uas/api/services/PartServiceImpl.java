@@ -391,7 +391,6 @@ public class PartServiceImpl implements PartService {
      * Updates a parts status in the aircraft part db table.
      * @param partNumber The part number of the part.
      * @param partStatus The status that the part is being updated to.
-     * @return Returns the result of the status update.
      */
     @Override
     public void updatePartStatus(final long partNumber, final String partStatus) throws NotFoundException, InvalidDTOAttributeException {
@@ -440,7 +439,6 @@ public class PartServiceImpl implements PartService {
      * Updates a specific part weight in the db.
      * @param partNumber The partID of the part having its price updated.
      * @param weight The new weight.
-     * @return Returns the result of the status update.
      */
     @Override
     public void updatePartWeight(final long partNumber, final long weight) throws NotFoundException {
