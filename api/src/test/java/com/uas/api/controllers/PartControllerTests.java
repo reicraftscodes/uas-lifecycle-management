@@ -3,6 +3,10 @@ package com.uas.api.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
+import com.uas.api.models.dtos.AddPartDTO;
+import com.uas.api.models.dtos.PartDTO;
+import com.uas.api.models.dtos.PartStockDTO;
+import com.uas.api.models.dtos.StockOrderDTO;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.enums.PlatformStatus;
 import com.uas.api.models.entities.enums.PlatformType;
@@ -39,7 +43,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = PartsController.class)
@@ -67,7 +70,7 @@ public class PartControllerTests {
     MockMvc mockMvc;
 
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithAllParams() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "G-001", "OPERATIONAL");
@@ -85,7 +88,7 @@ public class PartControllerTests {
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithAircraft() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "G-001", "OPERATIONAL");
@@ -102,7 +105,7 @@ public class PartControllerTests {
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithManufacture() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "2022-02-20 11:00:00", 1000.0, 750L, "", "");
@@ -121,7 +124,7 @@ public class PartControllerTests {
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithNeither() throws Exception {
         AddPartDTO addPartDTO = new AddPartDTO(1L, "Mock Wing A", "Mock Location", "", 1000.0, 750L, "", "");
@@ -138,14 +141,14 @@ public class PartControllerTests {
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenLowStockIsCheckedThenAListOfLowStockShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/low-stock")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenAStockRequestIsMadeThenResponseShouldBeOK() throws Exception {
         ArrayList<Long> partTypes = new ArrayList<>();
@@ -160,13 +163,14 @@ public class PartControllerTests {
                         .content(json))
                 .andExpect(status().isOk());
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenStockIsCheckedAtAllLocationsThenAListOfLowStockShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/stock")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenALocationsStockIsCheckedThenAListOfLowStockShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/location/stock")
@@ -174,33 +178,32 @@ public class PartControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenFailureTimeIsCheckedThenReturnListOfPartsWithFailureTime() throws Exception {
         mockMvc.perform(get("/parts/failuretime")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_CTO")
     @Test
     public void whenTopFailingPartsIsCheckedThenTopFailingPartsShouldBeReturned() throws Exception {
         mockMvc.perform(get("/parts/most-failing/{topN}", "3")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenAPartTypeIsCheckedForBeingUnassignedThenAListOfAvailablePartsShouldBeReturned() throws Exception {
-        long id = 1;
-        String json = objectMapper.writeValueAsString(id);
-
-        mockMvc.perform(post("/parts/get-by-type")
+        mockMvc.perform(get("/parts/get-by-type/{id}", "1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(json))
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
     }
 
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllParts_ReturnList() throws Exception {
         List<PartDTO> partDTOList = new ArrayList<>();
@@ -237,7 +240,7 @@ public class PartControllerTests {
                 .andExpect(jsonPath("$[1].compatiblePlatforms", hasSize(2)))
                 .andReturn();
     }
-
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllPartsThenThrowError() throws Exception {
         when(partService.getAllParts()).thenThrow(new NotFoundException("Parts not found."));
@@ -268,11 +271,11 @@ public class PartControllerTests {
         String json = objectMapper.writeValueAsString(updatePartStatusDTO);
 
         when(partService.updatePartStatus(updatePartStatusDTO.getPartID(),updatePartStatusDTO.getPartStatus())).thenReturn("Part not found!");
-            mockMvc.perform(post("/parts/update-part-status")
-                            .accept(MediaType.APPLICATION_JSON)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(json))
-                    .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/parts/update-part-status")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isBadRequest());
     }
 
     @WithMockUser(value = "user")
@@ -283,9 +286,9 @@ public class PartControllerTests {
 
         when(partService.updatePartPrice(dto.getPartID(),dto.getPrice())).thenReturn("Success");
         mockMvc.perform(post("/parts/update-part-price")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isOk());
     }
 
@@ -297,9 +300,9 @@ public class PartControllerTests {
 
         when(partService.updatePartPrice(dto.getPartID(),dto.getPrice())).thenReturn("Part not found!");
         mockMvc.perform(post("/parts/update-part-price")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isBadRequest());
 
     }
@@ -312,9 +315,9 @@ public class PartControllerTests {
 
         when(partService.updatePartWeight(dto.getPartID(),dto.getWeight())).thenReturn("Success");
         mockMvc.perform(post("/parts/update-part-weight")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isOk());
     }
 
@@ -326,9 +329,9 @@ public class PartControllerTests {
 
         when(partService.updatePartWeight(dto.getPartID(),dto.getWeight())).thenReturn("Part not found!");
         mockMvc.perform(post("/parts/update-part-weight")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -340,9 +343,9 @@ public class PartControllerTests {
 
         when(partService.updateFailureTime(dto.getPartID(),dto.getFailureTime())).thenReturn("Success");
         mockMvc.perform(post("/parts/update-part-failure-time")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isOk());
     }
 
@@ -354,9 +357,9 @@ public class PartControllerTests {
 
         when(partService.updateFailureTime(dto.getPartID(),dto.getFailureTime())).thenReturn("Part not found!");
         mockMvc.perform(post("/parts/update-part-failure-time")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -367,9 +370,9 @@ public class PartControllerTests {
 
         when(partService.getPartInfo(1)).thenReturn(partInfoDTO);
         mockMvc.perform(post("/parts/get-part")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("1"))
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.partID").value(1))
                 .andExpect(jsonPath("$.price").value(100))
@@ -380,7 +383,7 @@ public class PartControllerTests {
         //{"partID":1,"price":100,"weight":1000,"failureTime":500,"status":"Operational"}
 
     }
-    @WithMockUser(value = "user")
+    @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenGetAllPartStockOrders_ReturnList() throws Exception {
         List<StockOrderDTO> stockOrderDTOList = new ArrayList<>();
