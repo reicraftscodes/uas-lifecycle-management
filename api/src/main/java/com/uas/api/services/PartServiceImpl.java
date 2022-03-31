@@ -387,6 +387,108 @@ public class PartServiceImpl implements PartService {
         return allPartDTOs;
     }
 
+    /**
+     * Updates a parts status in the aircraft part db table.
+     * @param partNumber The part number of the part.
+     * @param partStatus The status that the part is being updated to.
+     */
+    @Override
+    public void updatePartStatus(final long partNumber, final String partStatus) throws NotFoundException, InvalidDTOAttributeException {
+        //Checks that part is present in db.
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            throw new NotFoundException("Part not found!");
+        }
 
+        //Checks if part is assigned to aircraft.
+        Optional<AircraftPart> aircraftPart = Optional.ofNullable(aircraftPartRepository.findAircraftPartByPart_PartNumber(partNumber));
+        if (aircraftPart.isEmpty()) {
+            throw new InvalidDTOAttributeException("Part not assigned to aircraft!");
+        }
 
+        //Part status from string to enum.
+        PartStatus ps;
+        try {
+            ps = PartStatus.valueOf(partStatus);
+        } catch (Exception e) {
+            throw new InvalidDTOAttributeException("Invalid part status!");
+        }
+
+        aircraftPart.get().setPartStatus(ps);
+        aircraftPartRepository.save(aircraftPart.get());
+    }
+
+    /**
+     * Updates a specified parts cost in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param price The price it is being updated to.
+     */
+    @Override
+    public void updatePartPrice(final long partNumber, final double price) throws NotFoundException {
+        //Checks that part is present in db.
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            throw new NotFoundException("Part not found!");
+        }
+
+        selectedPart.get().setPrice(BigDecimal.valueOf(price));
+        partRepository.save(selectedPart.get());
+    }
+
+    /**
+     * Updates a specific part weight in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param weight The new weight.
+     */
+    @Override
+    public void updatePartWeight(final long partNumber, final long weight) throws NotFoundException {
+        //Checks that part is present in db.
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            throw new NotFoundException("Part not found!");
+        }
+
+        selectedPart.get().setWeight((long) weight);
+        partRepository.save(selectedPart.get());
+    }
+
+    /**
+     * Updates the failure time of a specified part in the db.
+     * @param partNumber The partID of the part having its failure time updated.
+     * @param failureTime The new typical failure time.
+     */
+    @Override
+    public void updateFailureTime(final long partNumber, final long failureTime) throws NotFoundException {
+        Optional<Part> selectedPart = partRepository.findPartBypartNumber(partNumber);
+        if (selectedPart.isEmpty()) {
+            throw new NotFoundException("Part not found!");
+        }
+
+        selectedPart.get().setTypicalFailureTime(failureTime);
+        partRepository.save(selectedPart.get());
+    }
+
+    /**
+     * Gets the basic part information of a specific part.
+     * @param partNumber The partID of the part being searched for.
+     * @return A partInfoDTO.
+     * @throws NotFoundException Throws an exception if the part is not found.
+     */
+    @Override
+    public PartInfoDTO getPartInfo(final long partNumber) throws NotFoundException {
+        Optional<Part> part = partRepository.findPartBypartNumber(partNumber);
+        if (part.isEmpty()) {
+            throw new NotFoundException("Part not found!");
+        }
+        String status;
+        try {
+            status = aircraftPartRepository
+                    .findAircraftPartByPart_PartNumber(partNumber)
+                    .getPartStatus()
+                    .getLabel();
+        } catch (Exception e) {
+            status = "";
+        }
+        return new PartInfoDTO(partNumber, part.get().getPrice(), part.get().getWeight(), part.get().getTypicalFailureTime(), status);
+    }
 }

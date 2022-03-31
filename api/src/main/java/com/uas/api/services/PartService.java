@@ -71,4 +71,40 @@ public interface PartService {
      * @return a list of part dtos.
      */
     List<PartDTO> getAllParts() throws NotFoundException;
+
+    /**
+     * Updates a parts status in the aircraft part db table.
+     * @param partNumber The part number of the part.
+     * @param partStatus The status that the part is being updated to.
+     */
+    void updatePartStatus(long partNumber, String partStatus) throws NotFoundException;
+
+    /**
+     * Updates a specified parts cost in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param price The price it is being updated to.
+     */
+    void updatePartPrice(long partNumber, double price) throws NotFoundException;
+
+    /**
+     * Updates a specific part weight in the db.
+     * @param partNumber The partID of the part having its price updated.
+     * @param weight The new weight.
+     */
+    void updatePartWeight(long partNumber, long weight) throws NotFoundException;
+
+    /**
+     * Updates the failure time of a specified part in the db.
+     * @param partNumber The partID of the part having its failure time updated.
+     * @param failureTime The new typical failure time.
+     */
+    void updateFailureTime(long partNumber, long failureTime) throws NotFoundException;
+
+    /**
+     * Gets the basic part information of a specific part.
+     * @param partNumber The partID of the part being searched for.
+     * @return A partInfoDTO.
+     * @throws Exception Throws an exception if the part is not found.
+     */
+    PartInfoDTO getPartInfo(long partNumber) throws Exception;
 }

@@ -1,5 +1,6 @@
 package com.uas.api.controller;
 
+import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
@@ -144,6 +145,70 @@ public class PartsController {
     public ResponseEntity<List<PartDTO>> getAllParts() throws NotFoundException {
         List<PartDTO> partDTOs = partService.getAllParts();
         return ResponseEntity.ok(partDTOs);
+    }
+
+    /**
+     * Updates the status of a given part.
+     * @param updatePartStatusDTO A dto containing partID and a new part status.
+     * @return A response entity with an appropriate body and status depending on the outcome.
+     */
+    @PostMapping("update-part-status")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> updatePartStatus(@RequestBody final UpdatePartStatusDTO updatePartStatusDTO) throws NotFoundException, InvalidDTOAttributeException {
+        partService.updatePartStatus(updatePartStatusDTO.getPartID(), updatePartStatusDTO.getPartStatus());
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    /**
+     * Updates the price of a given part.
+     * @param updatePartPriceDTO A dto containing the partID and new price.
+     * @return A response entity with an appropriate body and status depending on the outcome.
+     */
+    @PostMapping("update-part-price")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> updatePartPrice(@RequestBody final UpdatePartPriceDTO updatePartPriceDTO) throws NotFoundException {
+        partService.updatePartPrice(updatePartPriceDTO.getPartID(), updatePartPriceDTO.getPrice());
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    /**
+     * Updates the weight of a given part.
+     * @param updatePartWeightDTO A dto containing the partID and new weight.
+     * @return A response entity with an appropriate body and status depending on the outcome.
+     */
+    @PostMapping("update-part-weight")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> updatePartWeight(@RequestBody final UpdatePartWeightDTO updatePartWeightDTO) throws NotFoundException {
+        partService.updatePartWeight(updatePartWeightDTO.getPartID(), updatePartWeightDTO.getWeight());
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    /**
+     * Update the failure time of a given part.
+     * @param updatePartFailureTimeDTO A dto containing the partID and new failure time.
+     * @return A response entity with an appropriate body and status depending on the outcome.
+     */
+    @PostMapping("update-part-failure-time")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> updateFailureTime(@RequestBody final UpdatePartFailureTimeDTO updatePartFailureTimeDTO) throws NotFoundException {
+        partService.updateFailureTime(updatePartFailureTimeDTO.getPartID(), updatePartFailureTimeDTO.getFailureTime());
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    /**
+     * Gets the information on a given part.
+     * @param partNumber The partID of the part being searched for.
+     * @return returns a PartInfoDTO of part infomation.
+     */
+    @PostMapping("get-part")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> getPart(@RequestBody final long partNumber) {
+        try {
+            PartInfoDTO partInfo = partService.getPartInfo(partNumber);
+            return ResponseEntity.ok(partInfo);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     /**
