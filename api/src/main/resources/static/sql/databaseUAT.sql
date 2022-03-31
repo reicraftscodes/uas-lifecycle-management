@@ -259,7 +259,7 @@ INSERT INTO ROLES (NAME) VALUES ("ROLE_USER_COO");
 
 #Users
 INSERT INTO `users` (`email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('logisticOne@snc.ac.uk', 'Logistic', 'One', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'logisticOne@snc.ac.uk');
-INSERT INTO `users` (`email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('userOne@snc.ac.uk', 'Thomas', 'Anderson', '$2a$10$X1KqzKsRpkhXIfFPE1GJ5eqgE2VH/UJx8l0M.2QF4w6hmsbROCol.', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'userOne@snc.ac.uk');
+INSERT INTO `users` (`email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('userOne@snc.ac.uk', 'Thomas', 'Anderson', '$2a$10$KC19qpTq.cPd3VZcp3zEp.Dc/BTijN5yyXTsrEvXcz3qQ75OnycpG', '4ed60a87-d858-4757-a10d-f7e97d23ee61', 'userOne@snc.ac.uk');
 # The password is password
 INSERT INTO `users` (`email`, `firstName`, `lastName`, `password`, `resetPasswordToken`, `username`) VALUES ('ceo@test.com', 'Ceo', 'Test', '$2a$10$4OJsYCo6zbcLTTPSmzpXIuoBMtZoilpF9L/FEknvvbRZovGE6PEfG', '26c07eb1-67ae-410d-83bf-1c4184b082ff', 'ceo@test.com');
 # The password is password
