@@ -294,6 +294,7 @@ public class AircraftController {
      * @throws NotFoundException
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<AircraftDTO> getAircraft(@PathVariable final String id) throws NotFoundException {
         return ResponseEntity.ok(aircraftService.getAircraft(id));
     }

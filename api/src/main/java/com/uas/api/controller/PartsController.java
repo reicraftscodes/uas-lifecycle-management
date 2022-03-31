@@ -151,6 +151,7 @@ public class PartsController {
      * @return a list of stock order dtos.
      */
     @GetMapping("/stock-order/all")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<StockOrderDTO>> getAllStockOrders() throws NotFoundException {
         List<StockOrderDTO> stockOrderDTOs = stockControlService.getAllPreviousStockOrders();
         return ResponseEntity.ok(stockOrderDTOs);
