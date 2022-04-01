@@ -772,7 +772,9 @@ No Request Body is needed for this mapping.
 
 # Testing
 ## Unit
+Unit testing has been carried out on all services and controllers, with both acceptance and failure testing taking place. The code has a code coverage of over 70%.
 ## Performance
+Performance testing has been carried out, and response times have been checked. All our methods with the exception of sending a stock request respond in under 200ms.
 ## Automated Endpoint Testing
 All of the endpoints listed in the documentation have been tested using Postman's automated testing feature. You can run this on all three environments (dev, uat, prod) by using the link below and changing the url variable.<br>
 All of the tests check for a 200/201/202 response, and that it is responding in under 200ms. The only exception to the latter rule is Stock Request as this talks to an external service and so takes longer.<br>
