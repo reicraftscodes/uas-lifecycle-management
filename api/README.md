@@ -23,7 +23,7 @@ Profile | Associated Properties File | Abbreviation | Database Details | API Url
 --- | --- | --- | --- | --- |
 Development | application-dev.properties | dev | localhost:3306 | localhost:8080
 UAT | application-uat.properties | uat | eu-cdbr-west-02.cleardb.net/heroku_79993a57f62c974 | uastest.herokuapp.com
-Production | application-prod.properties | prod | <update me> | uasprod.herokuapp.com <br>
+Production | application-prod.properties | prod | eu-cdbr-west-02.cleardb.net/heroku_b6aaae960a11e20 | uasprod.herokuapp.com <br>
 # Set Up
 Before running the project, please make sure you have the following installed on your machine:
 1. [IntelliJ](#intellij) (or another IDE - please see Installing Gradle if not using IntelliJ)
@@ -92,8 +92,7 @@ CEO | ceo@test.com | password
 COO | coo@test.com | password | 
 CTO | cto@test.com | password | 
 LO | logistic@test.com | password |
-General User | HEHE | password
-Admin | HEHE | HEHE
+General User | user@test.com | password
 
 # Libraries and Tools Used
 - Spring Boot
@@ -107,6 +106,10 @@ Admin | HEHE | HEHE
 - Project Lombok
 - GSON
 - JWT Token
+- ITextPDF
+- Java Mail
+# Email configuration
+By default the API is setup with the email address `sncmsuktestemail@gmail.com` for sending emails in this prototype. This can be changes to your own email in the InvoiceServiceImpl file in the emailInvoice method by changing the PasswordAuthentication username and password fields to your own email and the password to that email. 
 # Framework Diagrams - C4 Model
 ## Context
 ![](api/structure_diagrams/structurizr-72910-context.png)
@@ -188,89 +191,212 @@ JSON names are case sensitive and must be written as shown:
 - `platformStatus` - must be written as one of these options: "DESIGN" "PRODUCTION" "OPERATION" "REPAIR"; or an error will be returned.
 - `platformType` - can only take 2 different inputs, either "Platform_A" or "Plaform_B" or an error will be returned.<br>
 ## GET - /user/{id}
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/user/{id}<br>
+uastest.herokuapp.com/aircraft/user/{id}<br>
+uasprod.herokuapp.com/aircraft/user/{id}
+### What it does:
+This mapping retrieves all of the aircraft assigned to that particular user.
+### Responses:
+#### Successful:
+A 200 response should return on a successful request.
+#### Error Responses and Meaning:
+If the user is not found, then a 400 error for bad request will occur with the body:<br>
+`{"message":"User not found!","status":"BAD_REQUEST"}`
+
+If the user is found, but does not have any aircraft assigned to them, a 200 OK response will return with an empty list.
 ## POST - /log-flight
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/log-flight (DEV)<br>
+uastest.herokuapp.com/aircraft/add (UAT)<br>
+uasprod.herokuapp.com/aircraft/add (PROD)<br>
+### What it does:
+This method is logs flight hours for an aircraft flight and updates the flight time of the aircraft and the parts associated with that aircraft and the pilot. <br>
+### Responses:
+#### Successful:
+A 200 response should return on a successful request.<br>
+#### Error Responses and Meaning:
+If an invalid user is selected to be piloting the aircraft, then a 400 error for bad request will occur with the body: <br>
+`{
+    "message": "Aircraft user does not exist!",
+    "status": "BAD_REQUEST"
+}`<br>
+If the aircraft is not found, then a 400 error for a bad request will occur with the body: <br>
+`{
+    "message": "Aircraft not found!",
+    "status": "BAD_REQUEST"
+}`<br>
+### Request Body:
+Takes a json request body: `{"userId":1,"aircraft":"G-001","flyTime":10}`<br>
+-The `userId` is the ID of the user who was piloting the aircraft.<br>
+-The `aircraft` is the tail number of the aircraft that was being pilotted.<br>
+-The `flyTime` is the amount of time it was pilotted. <br>
 ## GET - /total-repairs/{tail-number}
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/total-repairs/{tail-number}<br>
+uastest.herokuapp.com/aircraft/total-repairs/{tail-number}<br>
+uasprod.herokuapp.com/aircraft/total-repairs/{tail-number}<br>
+### What it does:
+This method gets the total number of repairs carried out on a particular aircraft.
+### Responses:
+#### Successful:
+A successful response should return a 200 OK.
+#### Error Responses and Meaning:
+Error responses from this method include:
+- 400 Bad Request: this will be caused by the aircraft not being found.
+- 401 Unauthorised: the current logged in user does not have access to this resource.
+- 403 Forbidden: potentially caused by cross origins if called from the web. Check the value it is assigned to.
 ## GET - /needing-repair
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/needing-repair<br>
+uastest.herokuapp.com/aircraft/needing-repair<br>
+uasprod.herokuapp.com/aircraft/needing-repair<br>
+### What it does:
+This method gets the aircraft that need to be repaired.
+### Responses:
+#### Successful:
+A successful response will return a 200 OK.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
 ## GET - /time-operational
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/time-operational<br>
+uastest.herokuapp.com/aircraft/time-operational<br>
+uasprod.herokuapp.com/aircraft/time-operational<br>
+### What it does:
+This method gets all the aircraft and the total number of hours it has been operational.
+### Responses:
+#### Successful:
+A 200 OK response will be returned upon success.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
 ## POST - /time-operational
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/time-operational<br>
+uastest.herokuapp.com/aircraft/time-operational<br>
+uasprod.herokuapp.com/aircraft/time-operational<br>
+### What it does:
+This method updates the number of hours an aircraft has been operational for.
+### Responses:
+#### Successful:
+A successful response will return a 200 OK.
+#### Error Responses and Meaning:
+An error response will return a 400 Bad Request based on the following:
+- Aircraft Not Found
+- Invalid DTO Attribute - this means that a value of your request body is invalid, i.e. a negative hours operational integer. 
+  
+An error response with the following codes will be returned on other errors:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
+
+### Request Body:
+The request body looks as follows:
+
+`{
+"tailNumber":"G-005",
+"hoursToAdd":110
+}`
+
+JSON names are case sensitive.
 ## GET - /platform-status
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/platform-status<br>
+uastest.herokuapp.com/aircraft/platform-status<br>
+uasprod.herokuapp.com/aircraft/platform-status<br>
+### What it does:
+This method fetches a list of the aircraft and group them by their platform status.
+### Responses:
+#### Successful:
+A 200 OK response should be returned upon success.
+#### Error Responses and Meaning:
+Possible error responses from this mapping include:
+- 403 Forbidden: If this has come from the web, this might be to do with the cross origins, so check.
+- 401 Unauthorised: This means that the particular user account signed in does not have access to this mapping. Update the mapping with the required user role if needed.
 ## POST - /platform-status/filter
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/platform-status/filter<br>
+uastest.herokuapp.com/aircraft/platform-status/filter<br>
+uasprod.herokuapp.com/aircraft/platform-status/filter<br>
+### What it does:
+This method returns a list of aircraft filtered by their platform status.
+### Responses:
+#### Successful:
+A 200 OK response should be returned with a list of aircraft and their data.
+#### Error Responses and Meaning:
+A 400 Bad Request should be returned if:
+- Platform Status does not exist.
+### Request Body:
+
 ## GET - /android/platform-status
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/android/platform-status<br>
+uastest.herokuapp.com/aircraft/android/platform-status<br>
+uasprod.herokuapp.com/aircraft/android/platform-status<br>
+### What it does:
+### Responses:
+#### Successful:
+#### Error Responses and Meaning:
 ## GET - /ceo-aircraft-cost-full
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/ceo-aircraft-cost-full (DEV) <br>
+uastest.herokuapp.com/aircraft/ceo-aircraft-cost-full (UAT) <br>
+uasprod.herokuapp.com/aircraft/ceo-aircraft-cost-full (PROD) <br>
+### What it does:
+This returns a json body containing the total amount spent overall on parts and repairs along with individual aircraft cost for its parts and the repairs performed on these parts.
+### Responses:
+#### Successful:
+Returns a status 200 with a json body containing the cost data. 
+#### Error Responses and Meaning:
+A GET request so error responses are unlikely but could be thrown if there is a problem communicating with the database. 
+### Request Body:
+No request body needed. 
 ## GET - /ceo-aircraft-cost
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/ceo-aircraft-cost (DEV) <br>
+uastest.herokuapp.com/aircraft/ceo-aircraft-cost (UAT) <br>
+uasprod.herokuapp.com/aircraft/ceo-aircraft-cost (PROD) <br>
+### What it does:
+This returns a json body containing a list of aircraft with the total part, repair and overall costs.
+### Responses:
+#### Successful:
+Returns a status 200 with a json body containing the cost data. 
+#### Error Responses and Meaning:
+A GET request so error responses are unlikely but could be thrown if there is a problem communicating with the database. 
+### Request Body:
+No request body needed. 
+## GET - /ceo-aircraft-cost/{id}
+### Mapping Information:
+localhost:8080/aircraft/ceo-aircraft-cost/{id} (DEV) <br>
+uastest.herokuapp.com/aircraft/ceo-aircraft-cost/{id} (UAT) <br>
+uasprod.herokuapp.com/aircraft/ceo-aircraft-cost/{id} (PROD) <br>
+### What it does
+Gets the repair and part cost associated with a specific aircraft. 
+### Responses:
+#### Successful:
+Returns a status 200 with a json body containing the costs associated with the given aircraft.
+#### Error Responses and Meaning:
+A GET request so error responses are unlikely but could be thrown if there is a problem communicating with the database. 
+### Request Body:
+Takes an aircraft tailnumber as a path variable. 
 ## Assigning an User to an Aircraft - POST /assign-user
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/assign-user<br>
+uastest.herokuapp.com/aircraft/assign-user<br>
+uasprod.herokuapp.com/aircraft/assign-user<br>
+### What it does:
+This method assigns the selected user to the selected aircraft.
+### Responses:
+#### Successful:
+On success, a 200 OK response should be returned.
+#### Error Responses and Meaning:
+On failure a 400 Bad_Request should be returned, with either the error of:
+- Aircraft Not Found
+- User not Found
+### Request Body:
 A pre-existing user in the database can be assigned to a pre-existing aircraft in the database to form an AircraftUser entity
 
 The POST request should be sent to /aircraft/assign-user.
@@ -279,42 +405,87 @@ Example of JSON body:
 
 `{"userID":"2", "tailNumber":"G-004"}`
 
--Both the userID and tailNumber must reference pre-existing entities in the database.
-## POST - /aircraft-parts-status
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+- Both the userID and tailNumber must reference pre-existing entities in the database.
+## GET - /aircraft-parts-status/{id}
+### Mapping Information:
+localhost:8080/aircraft/aircraft-parts-status/{id} (DEV) <br>
+uastest.herokuapp.com/aircraft/aircraft-parts-status/{id} (UAT) <br>
+uasprod.herokuapp.com/aircraft/aircraft-parts-status/{id} (PROD) <br>
+### What it does:
+A GET method that returns the parts and their status for a specific given aircraft.
+### Responses:
+#### Successful:
+200 Response for a successful request with a json body containing the aircraft status and a list of parts with their part number, part type, and part status.
+#### Error Responses and Meaning:
+Not found exception can be returned if the given aircraft isn't present in the database.<br>
+### Request Body:
+Path variable {id} for the aircraft tail number of the aircraft the parts are being searched for.
 ## POST - /update-aircraft-status
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/update-aircraft-status (DEV) <br>
+uastest.herokuapp.com/aircraft/update-aircraft-status (UAT) <br>
+uasprod.herokuapp.com/aircraft/update-aircraft-status (PROD) <br>
+### What it does:
+It is used to update the status of a given aircraft in the database.
+### Responses:
+#### Successful:
+If it is successful it will return a 200 response. 
+#### Error Responses and Meaning:
+If the aircraft status is invalid it will return a 400 response with the body: <br>
+`{
+    "message": "Invalid aircraft status!",
+    "status": "BAD_REQUEST"
+}` <br>
+If the aircraft cannot be found it will return a 400 response with the body: <br>
+`{
+    "message": "Aircraft not found!",
+    "status": "BAD_REQUEST"
+}`
+### Request Body:
+Takes a request body with the tail number and status. The status can be any one of these 4 and is case sensitive:<br>
+`OPERATION` `PRODUCTION` `DESIGN` `REPAIR`<br>
+`{"tailNumber":"G-001","status":"OPERATION"}`
 ## POST - /update-aircraft-part
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/update-aircraft-part (DEV) <br>
+uastest.herokuapp.com/aircraft/update-aircraft-part (UAT) <br>
+uasprod.herokuapp.com/aircraft/update-aircraft-part (PROD) <br>
+### What it does:
+A post mapping that updates the part of a specified aircraft to a new specified part. If the aircraft already has a part of the same time assigned to it then it will unassign that part before assigning the given new part.
+### Responses:
+#### Successful:
+If successful it will respond with a status 200.
+#### Error Responses and Meaning:
+if the part is already assigned to an aircraft then it will respond with a 400 status error with the error body of: <br>
+`Part already assigned to aircraft` <br>
+### Request Body:
+Takes a request body with the aircraft tailnumber and the new partID. <br>
+`{"tailNumber":"G-002","newPartNumber":16}`
 ## GET - /all
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/all<br>
+uastest.herokuapp.com/aircraft/all<br>
+uasprod.herokuapp.com/aircraft/all<br>
+### What it does:
+This fetches all the aircraft from the application.
+### Responses:
+#### Successful:
+A 200 OK response should be returned upon success, with a list of the aircraft.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
+### Request Body:
 ## POST - /all/filter
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/aircraft/all/filter<br>
+uastest.herokuapp.com/aircraft/all/filter<br>
+uasprod.herokuapp.com/aircraft/all/filter<br>
+### What it does:
+### Responses:
+#### Successful:
+#### Error Responses and Meaning:
+### Request Body:
 # Auth Controller:
 Mappings and features to do with the addition and authentication of users in the system.
 ## Logging in - POST /signin
@@ -395,20 +566,6 @@ The request body needed for this mapping is as follows:<br>
 }`
 The Java POJO to match this can be seen [here]()<br>
 JSON names are case-sensitive.
-##POST - /getJwtInfo
-### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
-##GET - /getUserInfo
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
 # Parts Controller 
 ### Adding a part through the API
 
@@ -447,57 +604,107 @@ If the request is unsuccessful the response will show an error for bad request a
     "response": "Invalid part status."
 }`
 ## GET - /low-stock
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/parts/low-stock<br>
+uastest.herokuapp.com/parts/low-stock<br>
+uasprod.herokuapp.com/parts/low-stock<br>
+### What it does:
+This method gets the low stock across all locations.
+### Responses:
+#### Successful:
+A 200 OK response should be returned with a list of low stock (less than 40%) across the different locations.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
 ## POST - /stockrequest
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/parts/stockrequest (DEV)<br>
+uastest.herokuapp.com/parts/stockrequest (UAT)<br>
+uasprod.herokuapp.com/parts/stockrequest (PROD)<br>
+### What it does:
+Post request for ordering more stock. It adds the stock order to the database and generates a pdf invoice which is sent to the given part supplier email address.
+### Responses:
+#### Successful:
+Returns a 200 status response with no body. 
+#### Error Responses and Meaning:
+It could return errors for a location that isn't present in the database, or if the partID and quantities arrays are not the same size.
+### Request Body:
+`{"location":"Cardiff","supplierEmail":"replace@withsupplier.email","partIDs":[1,2],"quantities":[2,2]}`
 ## GET - /stock
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/parts/stock<br>
+uastest.herokuapp.com/parts/stock<br>
+uasprod.herokuapp.com/parts/stock<br>
+### What it does:
+This gets the stock levels for all locations.
+### Responses:
+#### Successful:
+A 200 OK response should be returned on success with a list of stock.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
 ## GET - /location/stock
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/parts/location/stock<br>
+uastest.herokuapp.com/parts/location/stock<br>
+uasprod.herokuapp.com/parts/location/stock<br>
+### What it does:
+This method fetches stock from the different locations
+### Responses:
+#### Successful:
+A 200 OK response should be returned sorting stock by locations.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
 ## GET - /failuretime
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
+### Mapping Information:
+localhost:8080/parts/failure-time<br>
+uastest.herokuapp.com/parts/failure-time<br>
+uasprod.herokuapp.com/parts/failure-time<br>
+### What it does:
+This method gets the failure time for all of the parts.
+### Responses:
+#### Successful:
+A 200 OK response should return with a list of the parts and their failure times.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
 ## GET - /most-failing/{topN}
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
-## POST - /get-by-type
-    ### Mapping Information:
-    ### What it does:
-    ### Responses:
-    #### Successful:
-    #### Error Responses and Meaning:
-    ### Request Body:
-
+### Mapping Information:
+localhost:8080/parts/most-failing/{topN}<br>
+uastest.herokuapp.com/parts/most-failing/{topN}<br>
+uasprod.herokuapp.com/parts/most-failing/{topN}<br>
+### What it does:
+This method gets the top failing parts and is adjustable by the topN path variable.
+### Responses:
+#### Successful:
+A 200 OK response should be returned on success, with a list of the parts, their failure time and cost.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
+### Request Body:
+## GET - /get-by-type/{id}
+### Mapping Information:
+localhost:8080/parts/get-by-type/{id} (DEV)<br>
+uastest.herokuapp.com/parts/get-by-type/{id} (UAT)<br>
+uasprod.herokuapp.com/parts/get-by-type/{id} (PROD)
+### What it does:
+Gets all parts for a specific part type that are not assigned to an aircraft. It is used to display available parts on the front end for a user to choose to assign to an aircraft.
+### Responses:
+#### Successful:
+A 200 response with an array of partIDs for parts that are available of that type.
+#### Error Responses and Meaning:
+Could return an error if the API cannot communicate with the database.
+An error response with the following codes will be returned on error:
+- 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
+- 401 Unauthorised: The current logged in user does not have access to this resource.
 ## GET - /parts/all
-### Mapping Information: 
+### Mapping Information:
 localhost:8080/parts/all (DEV)<br>
 uastest.herokuapp.com/parts/all (UAT)<br>
 uasprod.herokuapp.com/parts/all (PROD)<br>
@@ -562,11 +769,27 @@ A 200 OK Response should return JSON in the following format upon a successful r
 #### Request Body
 No Request Body is needed for this mapping.
 
-
 # Testing
 ## Unit
+Unit testing has been carried out on all services and controllers, with both acceptance and failure testing taking place. The code has a code coverage of over 70%.
 ## Performance
+Performance testing has been carried out, and response times have been checked. All our methods with the exception of sending a stock request respond in under 200ms.
+## Automated Endpoint Testing
+All of the endpoints listed in the documentation have been tested using Postman's automated testing feature. You can run this on all three environments (dev, uat, prod) by using the link below and changing the url variable.<br>
+All of the tests check for a 200/201/202 response, and that it is responding in under 200ms. The only exception to the latter rule is Stock Request as this talks to an external service and so takes longer.<br>
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/63dbd0128b1a396d2994?action=collection%2Fimport)<br>
 # Deployment
+The API has been deployed using Gitlab CI. When deploying to UAT or PROD, the pipeline goes through the following stages:
+- Build
+- Publish
+- Connect-to-uat (or prod)
+- Deploy-to-uat (or prod)
 
+The build stage will build the project using Java 11 and gradle. It will then check for any checkstyle errors (and will fail if any are found), it will run all the tests (and will fail if any tests fail), then finally it will check the code coverage (and will fail if less than 60%) and generate results files for all of these stages.
 
+The publish stage will then publish these tests results as artifacts, after the build stage has passed. You can download these under the publish job.
+
+The connect to uat works only on the uat branch. Prod has it's own connect-to-prod which works on prod only. This connects to the external database and takes a dump of the current data and publishes it as an sql file in the artifact. This is so that if there are any errors upon deploying, the database can be rolled back.
+
+The deploy-to-uat works only on the uat branch. Prod has its own deploy to prod which works on prod only. This uses Ruby to deploy the application to heroku.
 
