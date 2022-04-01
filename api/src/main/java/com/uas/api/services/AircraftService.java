@@ -2,10 +2,10 @@ package com.uas.api.services;
 
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Aircraft;
+import javassist.NotFoundException;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AircraftService {
     /**
@@ -14,13 +14,6 @@ public interface AircraftService {
      * @return returns a string with any errors encountered adding the aircraft.
      */
     String addAircraftFromJson(AircraftAddNewDTO requestData);
-
-    /**
-     * trys to find an aircraft from the database.
-     * @param id The tailnumber id of the aircraft.
-     * @return returns an aircraft object if found.
-     */
-    Optional<Aircraft> findAircraftById(String id);
 
     /** Calculates the total number of repairs for an aircraft.
      * @param tailNumber of the aircraft.
@@ -41,17 +34,17 @@ public interface AircraftService {
      */
     void updateAircraftFlyTime(Aircraft aircraft, int flyTime);
     /**
-     * Gets the number of hours operational as a list.
+     * Gets the number of flytimehours as a list.
      * @return the list.
      */
-    List<Integer> getHoursOperational();
+    List<Integer> getFlyTimeHours();
 
     /**
      * Updates the number of operational hours.
-     * @param aircraftAddHoursOperationalDTO the aircraft and the hours.
+     * @param aircraftAddFlyTimeHoursDTO the aircraft and the hours.
      * @return the number of hours total.
      */
-    AircraftHoursOperationalDTO updateHoursOperational(AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO);
+    AircraftFlyTimeHoursDTO updateFlyTimeHours(AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTO);
     /**
      * Gets a list of platform status dto objects, with useful data.
      * @return the dto list.
@@ -114,6 +107,12 @@ public interface AircraftService {
      * @return returns a list of aircraft dtos.
      */
     List<AircraftCostsOverviewDTO> getAircraftForCEOReturnMinimised();
+    /**
+     * Method for creating an aircraft DTO with just their repair and parts cost.
+     * @param aircraftId the aircraft id.
+     * @return returns aircraft dto.
+     */
+    AircraftCostsOverviewDTO getAircraftForCEOReturnMinimisedIdParam(String aircraftId) throws NotFoundException;
 
     /**
      * Used to update the user flytime of an aircraft in the database.
@@ -121,27 +120,27 @@ public interface AircraftService {
      * @param userId The user Id whose personal flight time is being updated.
      * @param flyTime The fly time to be added to the hours field.
      */
-    void updateUserAircraftFlyTime(String tailNumber, long userId, int flyTime);
+    void updateUserAircraftFlyTime(Aircraft tailNumber, long userId, int flyTime) throws NotFoundException;
     /**
      * Updates the given aircrafts' status.
      * @param aircraftStatusDTO A dto with the aircraft being updates and the status it is being changed to.
      * @return a response entity with and message if there was any problems.
      */
-    ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO);
+    ResponseEntity<?> updateAircraftStatus(UpdateAircraftStatusDTO aircraftStatusDTO) throws NotFoundException;
 
     /**
      * Gets the parts and their status for the aircraft given.
      * @param tailNumber The aircraft that the parts are being searched for.
      * @return Returns a response entity with a body containing the list of parts with their statuses.
      */
-    ResponseEntity<?> getAircraftParts(String tailNumber);
+    ResponseEntity<?> getAircraftParts(String tailNumber) throws NotFoundException;
 
     /**
      * Updates an aircraft with a new part.
      * @param aircraftPartDTO a dto with the part being replaced and the new part number.
      * @return a response entity with and message if there was any problems.
      */
-    ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO);
+    ResponseEntity<?> updateAircraftPart(UpdateAircraftPartDTO aircraftPartDTO) throws NotFoundException;
 
 
 
@@ -167,4 +166,12 @@ public interface AircraftService {
      * @return a list of AircraftDTOs that match the search criteria.
      */
     List<AircraftDTO> getFilteredAircraftList(List<String> locations, List<String> platformStatuses);
+
+    /**
+     * Get aircraft by tail number.
+     * @param tailNumber the aircraft tail number
+     * @return the aircraft dto
+     * @throws NotFoundException
+     */
+    AircraftDTO getAircraft(String tailNumber) throws NotFoundException;
 }

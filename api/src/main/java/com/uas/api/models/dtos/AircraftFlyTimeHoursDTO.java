@@ -8,11 +8,11 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class AircraftHoursOperationalDTO {
+public class AircraftFlyTimeHoursDTO {
 
     /**
      * The hours operational.
      */
-    private List<Integer> hoursOperational;
+    private List<Integer> flyTimeHours;
 
 }

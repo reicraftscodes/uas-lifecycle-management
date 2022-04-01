@@ -1,8 +1,7 @@
-image: openjdk:11-jdk
-
 stages:
   - build
   - publish
+  - connect
   - deploy
 before_script:
   - echo $GRADLE_HOME
@@ -16,12 +15,19 @@ before_script:
   - chmod +x gradlew
 build:gradle:
   stage: build
+  image: openjdk:11-jdk
   tags:
     - general-docker
+  variables:
+    JACOCO_CSV_LOCATION: '$CI_PROJECT_DIR/api/build/reports/test/jacocoTestReport.csv'
   only:
     - dev
+    - uat
+    - main
   script:
     - ./gradlew buildAndReport
+    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' $JACOCO_CSV_LOCATION
+  coverage: '/([0-9]{1,3}.[0-9]*).%.covered/'
   artifacts:
     name: "$CI_JOB_NAME"
     paths:
@@ -34,6 +40,7 @@ build:gradle:
 pages:
 
   stage: publish
+  image: openjdk:11-jdk
   tags:
     - general-docker
 
@@ -48,7 +55,80 @@ pages:
   artifacts:
     paths:
       - api/public
+    expire_in: 1 week
 
   only:
     - dev
+    - uat
+    - main
+
+connect-uat:
+  stage: connect
+  image: ubuntu:latest
+  tags: 
+    - general-docker
+  environment: uat
+  variables:
+    MYSQL_DATABASE: $HEROKU_UAT_DB
+    MYSQL_ROOT_PASSWORD:  $HEROKU_UAT_DB_PASSWORD
+    MYSQL_USER: $HEROKU_UAT_DB_USER
+    MYSQL_PASSWORD:  $HEROKU_UAT_DB_PASSWORD
+    MYSQL_HOST: eu-cdbr-west-02.cleardb.net  
+  script:
+    - apt update -qy
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server mysql-client libmysqlclient-dev
+    - echo `ls`
+    - echo 'Making backup folder if not there'
+    - mkdir -p backups
+    - cd backups
+    - touch backup-pipeline.sql
+    - echo `ls`
+    - echo 'Checking mysql version'
+    - mysql --version
+    - echo 'Attempt to connect'
+    - echo "SELECT 'OK';" | mysql --user="$MYSQL_USER" --password="$MYSQL_ROOT_PASSWORD" --host="${MYSQL_HOST}"
+    - echo 'Getting dump'
+    - mysqldump  --column-statistics=0 --no-tablespaces --user="$MYSQL_USER" --password="$MYSQL_ROOT_PASSWORD" --host="${MYSQL_HOST}" --databases heroku_79993a57f62c974 > backup-pipeline.sql
+    - echo `pwd`
+    - echo `ls`
+    - ls -la $CI_PROJECT_DIR/api/backups
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - api/backups/*
+    untracked: false
+    expire_in: never 
+  only:
+     - uat  
+
+
+deploy-to-uat:
+  stage: deploy
+  tags: 
+    - general-docker
+  image: ruby:latest
+  environment: uat
+  dependencies:
+    - connect-uat
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev 
+    - gem install dpl
+    - echo 'Deploying to uat'
+    - dpl --provider=heroku --app=uastest --api-key=$HEROKU_API_KEY
+  only:
+    - uat
+deploy-to-production:
+  stage: deploy
+  image: ruby:latest
+  environment: production
+  variables:
+    SPRING_PROFILES_ACTIVE: prod
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - echo 'Deploying to prod'
+    - dpl --provider=heroku --app=uasprod --api-key=$HEROKU_API_KEY
+  only:
     - main

@@ -1,11 +1,21 @@
 .gradle
+#build/
+#!build/reports
 *.json
+invoices/
+build/classes
+build/generated
+build/jacoco
+build/resources
+build/test-results
+build/tmp
+build/bootJarMainClassName
+*.pdf
 build/
 !build/reports
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-
 ### STS ###
 .apt_generated
 .classpath
@@ -17,6 +27,7 @@ build/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+*.log
 
 ### IntelliJ IDEA ###
 .idea

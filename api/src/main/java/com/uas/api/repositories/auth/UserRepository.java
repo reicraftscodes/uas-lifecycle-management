@@ -3,7 +3,6 @@ package com.uas.api.repositories.auth;
 
 import com.uas.api.models.auth.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 

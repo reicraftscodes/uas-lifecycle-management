@@ -153,6 +153,7 @@ By default the API is setup with the email address `sncmsuktestemail@gmail.com` 
   - [GET - /failuretime]()
   - [GET - /most-failing/{topN}]()
   - [POST - /get-by-type]()
+  - [GET - /all]()
 
 # Aircraft Controller
 Mappings and features to do with the addition, modification, deletion and fetching information about aircraft.
@@ -703,6 +704,72 @@ Could return an error if the API cannot communicate with the database.
 An error response with the following codes will be returned on error:
 - 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
 - 401 Unauthorised: The current logged in user does not have access to this resource.
+## GET - /parts/all
+### Mapping Information:
+localhost:8080/parts/all (DEV)<br>
+uastest.herokuapp.com/parts/all (UAT)<br>
+uasprod.herokuapp.com/parts/all (PROD)<br>
+
+### What it does:
+This mapping allows the logged in user to retrieve all parts from the database. Plus their stock locations and compatible platforms.
+### Responses:
+#### Successful:
+A 200 OK Response should return JSON in the following format upon a successful request:<br>
+`[
+{
+"partNumber": 1,`<br>
+`"partType": "Wing A",`<br>
+`"cost": 200.00,`<br>
+`"weight": 50000,`<br>
+`"typicalFailureHours": 600,`<br>
+`"stockLocations":[
+{
+"partNumber": 1,
+"location": "Cardiff",
+"stockCount": 10
+},
+{
+"partNumber": 1,
+"location": "London",
+"stockCount": 10
+}
+],`<br>
+`"compatiblePlatforms":[
+"Platform A",
+"Platform B"
+]
+}]`
+#### Error Responses and Meaning:
+A 400 Bad Request Response will be returned with the JSON in the following formats:
+
+`{"response": "Parts not found!"}`
+
+#### Request Body
+No Request Body is needed for this mapping.
+
+
+## GET - /parts/stock-order/all
+### Mapping Information:
+localhost:8080/parts/stock-order/all (DEV)<br>
+uastest.herokuapp.com/parts/stock-order/all (UAT)<br>
+uasprod.herokuapp.com/parts/stock-order/all (PROD)<br>
+
+### What it does:
+This mapping allows the logged in user to retrieve all previous part stock orders.
+### Responses:
+#### Successful:
+A 200 OK Response should return JSON in the following format upon a successful request:<br>
+`[{"locationName": "Cardiff",`<br>
+`"supplierEmail": "supplierOne@test.com",`<br>
+`"totalCost": 2000.0,`<br>
+`"orderDateTime": "2022-01-29T11:17:43.000+00:00",`<br>
+`"partName": "Wing A",`<br>
+`"quantity": 20
+}]`
+
+#### Request Body
+No Request Body is needed for this mapping.
+
 # Testing
 ## Unit
 ## Performance

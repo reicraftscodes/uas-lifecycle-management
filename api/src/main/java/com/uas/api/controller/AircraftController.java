@@ -1,21 +1,22 @@
 package com.uas.api.controller;
 
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.Aircraft;
-import com.uas.api.models.entities.Part;
+import com.uas.api.repositories.PartRepository;
 import com.uas.api.services.AircraftService;
 import com.uas.api.services.PartService;
 import com.uas.api.services.UserService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/aircraft")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://uastest.herokuapp.com")
 public class AircraftController {
     /**
      * Aircraft service used to communicate with the db about the aircraft table.
@@ -29,18 +30,24 @@ public class AircraftController {
      * User service for communication between controller and DB.
      */
     private final UserService userService;
+    /**
+     * Repository for communication between service and Part table in DB.
+     */
+    private final PartRepository partRepository;
 
     /**
      * Constructor.
      * @param aircraftService Aircraft service for db communication.
      * @param partService
      * @param userService User service for communication between controller and DB.
+     * @param partRepository communication between service and part table in DB.
      */
     @Autowired
-    public AircraftController(final AircraftService aircraftService, final PartService partService, final UserService userService) {
+    public AircraftController(final AircraftService aircraftService, final PartService partService, final UserService userService, final PartRepository partRepository) {
         this.aircraftService = aircraftService;
         this.partService = partService;
         this.userService = userService;
+        this.partRepository = partRepository;
     }
 
     /**
@@ -49,6 +56,7 @@ public class AircraftController {
      * @return A response to the request with either a confirmation or the error received.
      */
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
+    @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_LOGISTIC') ")
     ResponseEntity<?> addAircraft(@RequestBody final AircraftAddNewDTO requestData) {
         //takes data as hashmap to manually create aircraft as couldn't automatically create it from the json
         // as enums weren't created from the json strings.
@@ -68,6 +76,7 @@ public class AircraftController {
      * @return response entity with response.
      */
     @GetMapping("/user/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_LOGISTIC') ")
     public ResponseEntity<?> getUserAircraft(@PathVariable("id") final long userId) {
         if (!userService.userExistsById(userId)) {
             return ResponseEntity.badRequest().body("Failed to retrieve aircraft for user because user does not exist.");
@@ -83,51 +92,10 @@ public class AircraftController {
      * @return returns a response with ok for no errors or a bad request with a body with the error message.
      */
     @PostMapping(value = "/log-flight", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> updateFlightHours(@RequestBody final LogFlightDTO request) {
-        // A request body example that a post would have
-        //{
-        //    "userId: 2,
-        //    "aircraft":"G-001",
-        //    "flyTime":12
-        //}
-        String error = null;
-        //Gets the aircraft entity from the post request body
-        Optional<Aircraft> aircraft = aircraftService.findAircraftById(request.getAircraft());
-
-        //checks that an aircraft has been found from the aircraft input and if not sets the error variable.
-        if (aircraft.isPresent()) {
-            //gets all parts associated with the aircraft and stores them in the list.
-            List<Part> parts = partService.findPartsAssociatedWithAircraft(aircraft.get());
-            //Uses a try and catch statement to check if the user input hours is an integer.
-            try {
-                int hoursInput = request.getFlyTime();
-
-                //checks the user input is positive and if not sets error variable
-                if (hoursInput < 0) {
-                    error = "Fly time value cannot be negative!";
-                } else {
-                    //updates the part flight hours for all parts associated with the aircraft.
-                    partService.updatePartFlyTime(parts, hoursInput);
-                    //updates the aircraft flight hours
-                    aircraftService.updateAircraftFlyTime(aircraft.get(), hoursInput);
-
-                    aircraftService.updateUserAircraftFlyTime(request.getAircraft(), request.getUserId(), request.getFlyTime());
-                }
-            } catch (Exception e) {
-                error = "Unable to update flight time.";
-            }
-        } else {
-            error = "Aircraft not found!";
-        }
-
-        //checks for errors and if no errors then returns and okay response
-        if (error == null) {
-            return ResponseEntity.ok("");
-        } else {
-            //if there are errors then it returns a bad request with a response of the error.
-            return ResponseEntity.badRequest().body("response: " + error);
-        }
-
+    @PreAuthorize("hasRole('USER') ")
+    public ResponseEntity<?> updateFlightHours(@RequestBody final LogFlightDTO request) throws NotFoundException {
+        partService.updateAllFlightHours(request);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
     /**
      * Gets a the cumulative total repairs for each platform.
@@ -135,6 +103,7 @@ public class AircraftController {
      * @return Response entity representing aircraftotalrepairs dto.
      */
     @GetMapping("/total-repairs/{tailNumber}")
+    @PreAuthorize("hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
     public ResponseEntity<AircraftTotalRepairsDTO> getTotalRepairs(@PathVariable final String tailNumber) {
         Integer aircraftRepairsCount = aircraftService.calculateTotalRepairs(tailNumber);
         AircraftTotalRepairsDTO aircraftTotalRepairsDTO = new AircraftTotalRepairsDTO(aircraftRepairsCount);
@@ -146,31 +115,34 @@ public class AircraftController {
      * @return a DTO representing the number of aircraft with at least one part with the status of 'Awaiting Repair'.
      */
     @GetMapping("/needing-repair")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') ")
     public ResponseEntity<AircraftNeedingRepairsDTO> getNumberOfAircraftWithPartsNeedingRepair() {
         Integer aircraftNeedingRepair = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
         AircraftNeedingRepairsDTO aircraftNeedingRepairsDTO = new AircraftNeedingRepairsDTO(aircraftNeedingRepair);
         return ResponseEntity.ok(aircraftNeedingRepairsDTO);
     }
     /**
-     * Gets the cumulative total repairs for each platform.
-     * @return list of integers which represent the number of repairs done to each platform.
+     * Gets the fly time hours of each platform.
+     * @return list of integers which represent the fly time hours of each platform.
      */
     @GetMapping("/time-operational")
-    public ResponseEntity<AircraftHoursOperationalDTO> getHoursOperational() {
-        List<Integer> hoursOperational = aircraftService.getHoursOperational();
-        AircraftHoursOperationalDTO aircraftTotalRepairsDTO = new AircraftHoursOperationalDTO(hoursOperational);
+    @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
+    public ResponseEntity<AircraftFlyTimeHoursDTO> getAircraftFlyTimeHours() {
+        List<Integer> flyTimeHours = aircraftService.getFlyTimeHours();
+        AircraftFlyTimeHoursDTO aircraftFlyTimeHoursDTO = new AircraftFlyTimeHoursDTO(flyTimeHours);
 
-        return ResponseEntity.ok(aircraftTotalRepairsDTO);
+        return ResponseEntity.ok(aircraftFlyTimeHoursDTO);
     }
 
     /**
      * Updates the hours operational of an aircraft.
-     * @param aircraftAddHoursOperationalDTO request body.
+     * @param aircraftAddFlyTimeHoursDTOO request body.
      * @return response entity indicating success/failure.
      */
     @PostMapping("/time-operational")
-    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddHoursOperationalDTO aircraftAddHoursOperationalDTO) {
-        AircraftHoursOperationalDTO aircraft = aircraftService.updateHoursOperational(aircraftAddHoursOperationalDTO);
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> updateHoursOperational(@RequestBody final AircraftAddFlyTimeHoursDTO aircraftAddFlyTimeHoursDTOO) {
+        AircraftFlyTimeHoursDTO aircraft = aircraftService.updateFlyTimeHours(aircraftAddFlyTimeHoursDTOO);
         return ResponseEntity.ok(aircraft);
     }
     /**
@@ -178,6 +150,7 @@ public class AircraftController {
      * @return response entity of the platformStatusDTO list containing DTO's which display platform status data.
      */
     @GetMapping("/platform-status")
+    @PreAuthorize("hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') or hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWeb() {
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getPlatformStatus();
         return ResponseEntity.ok(platformStatusDTOList);
@@ -189,6 +162,7 @@ public class AircraftController {
      * @return response entity of the filtered platformStatusDTO list containing platform status data.
      */
     @PostMapping("/platform-status/filter")
+    @PreAuthorize("hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') ")
     public ResponseEntity<List<PlatformStatusDTO>> getPlatformStatusWebFiltered(@RequestBody final AircraftFilterDTO aircraftFilterDTO) {
         List<PlatformStatusDTO> platformStatusDTOList = aircraftService.getFilteredPlatformStatusList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses());
         return ResponseEntity.ok(platformStatusDTOList);
@@ -200,6 +174,7 @@ public class AircraftController {
      * @return the platform status.
      */
     @GetMapping("/android/platform-status")
+    @PreAuthorize("hasRole('ROLE_USER_CTO') or hasRole('ROLE_USER_CEO') or hasRole('ROLE_USER_COO') or hasRole('ROLE_USER_LOGISTIC') ")
     public ResponseEntity<PlatformStatusAndroidFullDTO> getPlatformStatusAndroid() {
         PlatformStatusAndroidFullDTO platformStatusAndroidDTOS = aircraftService.getPlatformStatusAndroid();
         return ResponseEntity.ok(platformStatusAndroidDTOS);
@@ -210,6 +185,7 @@ public class AircraftController {
      * @return returns a response entity with the dto object.
      */
     @GetMapping("/ceo-aircraft-cost-full")
+    @PreAuthorize("hasRole('ROLE_USER_CEO')")
     public ResponseEntity<?> getOverallRunningCost() {
         double spentOnParts = aircraftService.getAllTotalAircraftPartCost();
         double spentOnRepairs = aircraftService.getAllAircraftTotalRepairCost();
@@ -228,8 +204,19 @@ public class AircraftController {
      * @return returns a response entity with a dto object.
      */
     @GetMapping("ceo-aircraft-cost")
+    @PreAuthorize("hasRole('ROLE_USER_CEO')")
     public ResponseEntity<?> getStreamlinedRunningCost() {
         return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimised());
+    }
+    /**
+     * Get method that returns the repair cost for a particular aircraft.
+     * @param id the id of the aircraft.
+     * @return returns a response entity with the repair cost dto.
+     */
+    @GetMapping("ceo-aircraft-cost/{id}")
+    @PreAuthorize("hasRole('ROLE_USER_CEO')")
+    public ResponseEntity<?> getStreamlinedRunningCost(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraftForCEOReturnMinimisedIdParam(id));
     }
 
     /**
@@ -237,6 +224,7 @@ public class AircraftController {
      * @param aircraftUserKeyDTO request body.
      * @return response entity with a dto object.
      */
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     @PostMapping("/assign-user")
     public ResponseEntity<?> assignUserToAircraft(@RequestBody final AircraftUserKeyDTO aircraftUserKeyDTO) {
         AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(aircraftUserKeyDTO);
@@ -248,8 +236,9 @@ public class AircraftController {
      * @param tailNumber The tailnumber of the aircraft the parts are being searched for.
      * @return A response entity with the aircraft parts if ok or an error message if something went wrong.
      */
-    @PostMapping(value = "aircraft-parts-status", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> getAircraftParts(@RequestBody final String tailNumber) {
+    @GetMapping(value = "aircraft-parts-status/{id}", produces = "application/json")
+    @PreAuthorize("hasRole('USER') or hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> getAircraftParts(@PathVariable("id") final String tailNumber) throws NotFoundException {
         return aircraftService.getAircraftParts(tailNumber);
     }
 
@@ -259,7 +248,8 @@ public class AircraftController {
      * @return returns a response entity with an ok response or an error response with what the error was.
      */
     @PostMapping("update-aircraft-status")
-    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) {
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> updateAircraftStatus(@RequestBody final UpdateAircraftStatusDTO aircraftStatusDTO) throws NotFoundException {
         return aircraftService.updateAircraftStatus(aircraftStatusDTO);
     }
 
@@ -269,7 +259,8 @@ public class AircraftController {
      * @return returns a response entity with either ok response or an error response with what the error was.
      */
     @PostMapping("update-aircraft-part")
-    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) {
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> updateAircraftPart(@RequestBody final UpdateAircraftPartDTO aircraftPartDTO) throws NotFoundException {
         return aircraftService.updateAircraftPart(aircraftPartDTO);
     }
 
@@ -278,6 +269,7 @@ public class AircraftController {
      * @return list of all aircraft.
      */
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<AircraftDTO>> getAllAircraft() {
         List<AircraftDTO> aircraftDTOList = aircraftService.getAllAircraft();
         return ResponseEntity.ok(aircraftDTOList);
@@ -289,9 +281,22 @@ public class AircraftController {
      * @return response entity of the filtered platformStatusDTO list containing platform status data.
      */
     @PostMapping("/all/filter")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
     public ResponseEntity<List<AircraftDTO>> getAircraftFiltered(@RequestBody final AircraftFilterDTO aircraftFilterDTO) {
         List<AircraftDTO> aircraftDTOList = aircraftService.getFilteredAircraftList(aircraftFilterDTO.getLocations(), aircraftFilterDTO.getPlatformStatuses());
         return ResponseEntity.ok(aircraftDTOList);
+    }
+
+    /**
+     * Get aircraft by tail number.
+     * @param id the aircraft tail number
+     * @return the aircraft dto
+     * @throws NotFoundException
+     */
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<AircraftDTO> getAircraft(@PathVariable final String id) throws NotFoundException {
+        return ResponseEntity.ok(aircraftService.getAircraft(id));
     }
 
 }
