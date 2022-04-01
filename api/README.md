@@ -23,7 +23,7 @@ Profile | Associated Properties File | Abbreviation | Database Details | API Url
 --- | --- | --- | --- | --- |
 Development | application-dev.properties | dev | localhost:3306 | localhost:8080
 UAT | application-uat.properties | uat | eu-cdbr-west-02.cleardb.net/heroku_79993a57f62c974 | uastest.herokuapp.com
-Production | application-prod.properties | prod | <update me> | uasprod.herokuapp.com <br>
+Production | application-prod.properties | prod | eu-cdbr-west-02.cleardb.net/heroku_b6aaae960a11e20 | uasprod.herokuapp.com <br>
 # Set Up
 Before running the project, please make sure you have the following installed on your machine:
 1. [IntelliJ](#intellij) (or another IDE - please see Installing Gradle if not using IntelliJ)
@@ -92,8 +92,7 @@ CEO | ceo@test.com | password
 COO | coo@test.com | password | 
 CTO | cto@test.com | password | 
 LO | logistic@test.com | password |
-General User | HEHE | password
-Admin | HEHE | HEHE
+General User | user@test.com | password
 
 # Libraries and Tools Used
 - Spring Boot
