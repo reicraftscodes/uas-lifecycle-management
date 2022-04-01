@@ -88,7 +88,7 @@ connect-uat:
     - echo 'Attempt to connect'
     - echo "SELECT 'OK';" | mysql --user="$MYSQL_USER" --password="$MYSQL_ROOT_PASSWORD" --host="${MYSQL_HOST}"
     - echo 'Getting dump'
-    - mysqldump  --column-statistics=0 --no-tablespaces --user="$MYSQL_USER" --password="$MYSQL_ROOT_PASSWORD" --host="${MYSQL_HOST}" --databases heroku_79993a57f62c974 > backup-pipeline.sql
+    - mysqldump  --column-statistics=0 --no-tablespaces --user="$MYSQL_USER" --password="$MYSQL_ROOT_PASSWORD" --host="${MYSQL_HOST}" --databases MYSQL_DATABASE > backup-pipeline.sql
     - echo `pwd`
     - echo `ls`
     - ls -la $CI_PROJECT_DIR/api/backups
@@ -118,15 +118,59 @@ deploy-to-uat:
     - dpl --provider=heroku --app=uastest --api-key=$HEROKU_API_KEY
   only:
     - uat
+
+connect-prod:
+  stage: connect
+  image: ubuntu:latest
+  tags: 
+    - general-docker
+  environment: prod
+  variables:
+    MYSQL_DATABASE: $HEROKU_PROD_DB
+    MYSQL_ROOT_PASSWORD:  $HEROKU_PROD_DB_PASSWORD
+    MYSQL_USER: $HEROKU_PROD_DB_USER
+    MYSQL_PASSWORD:  $HEROKU_PROD_DB_PASSWORD
+    MYSQL_HOST: eu-cdbr-west-02.cleardb.net  
+  script:
+    - apt update -qy
+    - DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server mysql-client libmysqlclient-dev
+    - echo `ls`
+    - echo 'Making backup folder if not there'
+    - mkdir -p backups
+    - cd backups
+    - touch backup-pipeline.sql
+    - echo `ls`
+    - echo 'Checking mysql version'
+    - mysql --version
+    - echo 'Attempt to connect'
+    - echo "SELECT 'OK';" | mysql --user="$MYSQL_USER" --password="$MYSQL_ROOT_PASSWORD" --host="${MYSQL_HOST}"
+    - echo 'Getting dump'
+    - mysqldump  --column-statistics=0 --no-tablespaces --user="$MYSQL_USER" --password="$MYSQL_ROOT_PASSWORD" --host="${MYSQL_HOST}" --databases $MYSQL_DATABASE > backup-pipeline.sql
+    - echo `pwd`
+    - echo `ls`
+    - ls -la $CI_PROJECT_DIR/api/backups
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - api/backups/*
+    untracked: false
+    expire_in: never 
+  only:
+     - main  
+
+
+
 deploy-to-production:
   stage: deploy
+  tags: 
+    - general-docker
   image: ruby:latest
-  environment: production
-  variables:
-    SPRING_PROFILES_ACTIVE: prod
+  environment: prod
+  dependencies:
+    - connect-prod
   script:
     - apt-get update -qy
-    - apt-get install -y ruby-dev
+    - apt-get install -y ruby-dev 
     - gem install dpl
     - echo 'Deploying to prod'
     - dpl --provider=heroku --app=uasprod --api-key=$HEROKU_API_KEY
