@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Location;
+import com.uas.api.models.entities.Part;
+import com.uas.api.models.entities.Stock;
 import com.uas.api.repositories.LocationRepository;
+import com.uas.api.repositories.StockRepository;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
@@ -57,6 +60,9 @@ public class PartControllerTests {
     private LocationRepository locationRepository;
 
     @MockBean
+    private StockRepository stockRepository;
+
+    @MockBean
     AuthEntryPointJwt authEntryPointJwt;
 
     @MockBean
@@ -65,6 +71,70 @@ public class PartControllerTests {
     @Autowired
     MockMvc mockMvc;
 
+    @WithMockUser(roles = "USER_LOGISTIC")
+    @Test
+    public void transferPartNoLocation() throws Exception {
+        String msg = "Failure, one or both locations do not exist in the database.";
+
+        when(partService.transferPart("London","Cardiff", "Boeing Wing A", 1)).thenReturn(msg);
+
+        MvcResult mvcRes = mockMvc.perform(get("/parts/transfer/London/Cardiff/Boeing Wing A/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("{\"response\":\"Failure, one or both locations do not exist in the database.\"}", mvcRes.getResponse().getContentAsString());
+    }
+
+    @WithMockUser(roles = "USER_LOGISTIC")
+    @Test
+    public void transferPartNoStock() throws Exception {
+        String msg = "Failure, no stock to transfer.";
+        Location location = new Location();
+        location.setLocationName("London");
+        locationRepository.save(location);
+
+        Location location1 = new Location();
+        location1.setLocationName("Cardiff");
+        locationRepository.save(location1);
+
+        when(partService.transferPart("London","Cardiff", "Boeing Wing A", 1)).thenReturn(msg);
+
+        MvcResult mvcRes = mockMvc.perform(get("/parts/transfer/London/Cardiff/Boeing Wing A/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("{\"response\":\"Failure, no stock to transfer.\"}", mvcRes.getResponse().getContentAsString());
+    }
+
+    @WithMockUser(roles = "USER_LOGISTIC")
+    @Test
+    public void transferPartsWithStock() throws Exception {
+        String msg = "Success.";
+
+        Part part = new Part(1L, "Boeing Wing A");
+
+        Location location = new Location();
+        location.setLocationName("London");
+        locationRepository.save(location);
+
+        Location location1 = new Location();
+        location1.setLocationName("Cardiff");
+        locationRepository.save(location1);
+
+        Stock stock = new Stock(part, 6L, location);
+        Stock stock1 = new Stock(part, 0L, location1);
+        stockRepository.save(stock);
+        stockRepository.save(stock1);
+
+        when(partService.transferPart("London","Cardiff", "Boeing Wing A", 5)).thenReturn(msg);
+
+        MvcResult mvcRes = mockMvc.perform(get("/parts/transfer/London/Cardiff/Boeing Wing A/5")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("{\"response\":\"Success.\"}", mvcRes.getResponse().getContentAsString());
+
+    }
 
     @WithMockUser(roles = "USER_LOGISTIC")
     @Test

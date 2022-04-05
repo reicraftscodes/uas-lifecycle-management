@@ -517,7 +517,7 @@ public class PartServiceImpl implements PartService {
                 newLocationStock.get().setStockQuantity(newLocationStock.get().getStockQuantity() + quantity);
                 stockRepository.save(newLocationStock.get());
             }
-            return "Success";
+            return "Success.";
         }
         return "Failure, no stock to transfer.";
     }
