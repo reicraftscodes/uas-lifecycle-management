@@ -22,4 +22,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
      * @return a list of stock items.
      */
     List<Stock> getAllByPart_PartNumber(long partNumber);
+
+    Stock findByLocationAndPart_PartName(Location location, String partName);
+
 }

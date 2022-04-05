@@ -3,6 +3,7 @@ package com.uas.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
 import com.uas.api.models.dtos.*;
+import com.uas.api.models.entities.Location;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
@@ -20,6 +21,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.persistence.Column;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -58,7 +61,6 @@ public class PartControllerTests {
     @Autowired
     MockMvc mockMvc;
 
-
     @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void createPartWithAllParams() throws Exception {
@@ -72,7 +74,6 @@ public class PartControllerTests {
                 .content(json))
                 .andExpect(status().isOk())
                 .andReturn();
-
 
         assertEquals("{\"response\":\"Success\"}", mvcRes.getResponse().getContentAsString());
     }

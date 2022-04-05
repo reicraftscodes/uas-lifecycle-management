@@ -3,7 +3,10 @@ package com.uas.api.services;
 import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.AircraftPart;
+import com.uas.api.models.entities.Location;
 import javassist.NotFoundException;
+import org.apache.coyote.Response;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -107,4 +110,6 @@ public interface PartService {
      * @throws Exception Throws an exception if the part is not found.
      */
     PartInfoDTO getPartInfo(long partNumber) throws Exception;
+
+    String transferPart(Location location, Location newLocation, String partName, int quantity);
 }

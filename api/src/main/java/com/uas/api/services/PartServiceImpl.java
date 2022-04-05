@@ -491,4 +491,27 @@ public class PartServiceImpl implements PartService {
         }
         return new PartInfoDTO(partNumber, part.get().getPrice(), part.get().getWeight(), part.get().getTypicalFailureTime(), status);
     }
+
+    @Override
+    public String transferPart(Location location, Location newLocation, String partName, int quantity) {
+
+        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location, partName));
+        if (stock.get().getStockQuantity() >= 1) {
+            stock.get().setStockQuantity(stock.get().getStockQuantity() - quantity);
+            stockRepository.save(stock.get());
+
+            //If Stock with same part_partName doesn't exist in new location, create it and set = to quantity.
+            Optional<Stock> newLocationStock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(newLocation, partName));
+
+            if (newLocationStock.get() == null) {
+                Stock newStock = new Stock(stock.get().getPart(), 0L, newLocation);
+                stockRepository.save(newStock);
+            } else {
+                newLocationStock.get().setStockQuantity(newLocationStock.get().getStockQuantity() + quantity);
+                stockRepository.save(newLocationStock.get());
+            }
+            return "Success";
+        }
+        return "Failure, no stock to transfer.";
+    }
 }

@@ -2,6 +2,7 @@ package com.uas.api.controller;
 
 import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
+import com.uas.api.models.entities.Location;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
@@ -55,6 +56,21 @@ public class PartsController {
     ResponseEntity<?> addPart(@RequestBody final AddPartDTO requestData) throws NotFoundException {
         partService.addPartFromJSON(requestData);
         return new ResponseEntity<>("{\"response\":\"Success\"}", HttpStatus.OK);
+    }
+
+    /**
+     * Get mapping to retrieve all the top N most common failing parts.
+     * @param location the number of results to return.
+     * @param newLocation the number of results to return.
+     * @param partName the number of results to return.
+     * @return list containing the most common failing parts and their cost.
+     */
+    @GetMapping("/transfer/{location}/{newLocation}/{partName}/{quantity}")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> transferPart(@PathVariable("location") final Location location, @PathVariable("newLocation") final Location newLocation, @PathVariable("partName") final String partName, @PathVariable("quantity") final int quantity) {
+        String msg = partService.transferPart(location, newLocation, partName, quantity);
+        String response = "{\"response\":" + msg + "\"}";
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**

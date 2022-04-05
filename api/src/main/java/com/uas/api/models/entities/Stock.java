@@ -43,4 +43,9 @@ public class Stock {
     @JoinColumn(name = "locationName")
     private Location location;
 
+    public Stock(final Part part, final long stockQuantity, final Location location) {
+        this.part = part;
+        this.stockQuantity = stockQuantity;
+        this.location = location;
+    }
 }
