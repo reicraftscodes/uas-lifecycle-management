@@ -60,16 +60,16 @@ public class PartsController {
 
     /**
      * Get mapping to retrieve all the top N most common failing parts.
-     * @param location the number of results to return.
-     * @param newLocation the number of results to return.
-     * @param partName the number of results to return.
-     * @return list containing the most common failing parts and their cost.
+     * @param locationName the name of the location to transfer parts from.
+     * @param newLocationName the name of the location to transfer parts to.
+     * @param partName the name of the parts to send.
+     * @return response entity indicating success/failure.
      */
-    @GetMapping("/transfer/{location}/{newLocation}/{partName}/{quantity}")
+    @GetMapping("/transfer/{locationName}/{newLocationName}/{partName}/{quantity}")
     @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
-    public ResponseEntity<?> transferPart(@PathVariable("location") final Location location, @PathVariable("newLocation") final Location newLocation, @PathVariable("partName") final String partName, @PathVariable("quantity") final int quantity) {
-        String msg = partService.transferPart(location, newLocation, partName, quantity);
-        String response = "{\"response\":" + msg + "\"}";
+    public ResponseEntity<?> transferPart(@PathVariable("locationName") final String locationName, @PathVariable("newLocationName") final String newLocationName, @PathVariable("partName") final String partName, @PathVariable("quantity") final int quantity) {
+        String msg = partService.transferPart(locationName, newLocationName, partName, quantity);
+        String response = "{\"response\":\"" + msg + "\"}";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

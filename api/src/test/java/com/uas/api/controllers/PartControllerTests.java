@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uas.api.controller.PartsController;
 import com.uas.api.models.dtos.*;
 import com.uas.api.models.entities.Location;
+import com.uas.api.repositories.LocationRepository;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.security.jwt.AuthEntryPointJwt;
 import com.uas.api.security.jwt.JwtUtils;
@@ -53,6 +54,9 @@ public class PartControllerTests {
     UserDetailsServiceImpl userDetailsService;
 
     @MockBean
+    private LocationRepository locationRepository;
+
+    @MockBean
     AuthEntryPointJwt authEntryPointJwt;
 
     @MockBean
@@ -60,6 +64,7 @@ public class PartControllerTests {
 
     @Autowired
     MockMvc mockMvc;
+
 
     @WithMockUser(roles = "USER_LOGISTIC")
     @Test

@@ -493,18 +493,25 @@ public class PartServiceImpl implements PartService {
     }
 
     @Override
-    public String transferPart(Location location, Location newLocation, String partName, int quantity) {
+    public String transferPart(String locationName, String newLocationName, String partName, int quantity) {
 
-        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location, partName));
+        Optional<Location> location = locationRepository.findLocationByLocationName(locationName);
+        Optional<Location> newLocation = locationRepository.findLocationByLocationName(newLocationName);
+
+        if(location.get() == null || newLocation.get() == null) {
+            return "Failure, one or both locations do not exist in the database.";
+        }
+
+        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location.get(), partName));
         if (stock.get().getStockQuantity() >= 1) {
             stock.get().setStockQuantity(stock.get().getStockQuantity() - quantity);
             stockRepository.save(stock.get());
 
             //If Stock with same part_partName doesn't exist in new location, create it and set = to quantity.
-            Optional<Stock> newLocationStock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(newLocation, partName));
+            Optional<Stock> newLocationStock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(newLocation.get(), partName));
 
             if (newLocationStock.get() == null) {
-                Stock newStock = new Stock(stock.get().getPart(), 0L, newLocation);
+                Stock newStock = new Stock(stock.get().getPart(), 0L, newLocation.get());
                 stockRepository.save(newStock);
             } else {
                 newLocationStock.get().setStockQuantity(newLocationStock.get().getStockQuantity() + quantity);
