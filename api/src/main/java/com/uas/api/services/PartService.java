@@ -107,6 +107,13 @@ public interface PartService {
      * @throws Exception Throws an exception if the part is not found.
      */
     PartInfoDTO getPartInfo(long partNumber) throws Exception;
-
-    String transferPart(String location, String newLocation, String partName, int quantity);
+    /**
+     * Transfers parts from one stock to another.
+     * @param locationName The location to transfer parts from.
+     * @param newLocationName The location to transfer parts to.
+     * @param partName The name of the part to transfer.
+     * @param quantity The number of parts to transfer.
+     * @return A response entity indicating success/failure.
+     */
+    String transferPart(String locationName, String newLocationName, String partName, int quantity);
 }

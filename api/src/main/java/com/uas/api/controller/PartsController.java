@@ -2,7 +2,6 @@ package com.uas.api.controller;
 
 import com.uas.api.exceptions.InvalidDTOAttributeException;
 import com.uas.api.models.dtos.*;
-import com.uas.api.models.entities.Location;
 import com.uas.api.requests.MoreStockRequest;
 import com.uas.api.services.PartService;
 import com.uas.api.services.StockControlService;
@@ -63,6 +62,7 @@ public class PartsController {
      * @param locationName the name of the location to transfer parts from.
      * @param newLocationName the name of the location to transfer parts to.
      * @param partName the name of the parts to send.
+     * @param quantity the number of the parts to send.
      * @return response entity indicating success/failure.
      */
     @GetMapping("/transfer/{locationName}/{newLocationName}/{partName}/{quantity}")

@@ -23,6 +23,12 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
      */
     List<Stock> getAllByPart_PartNumber(long partNumber);
 
+    /**
+     * Finds a stock entity by location and part name.
+     * @param location the location of the stock.
+     * @param partName the name of the part.
+     * @return a stock entity.
+     */
     Stock findByLocationAndPart_PartName(Location location, String partName);
 
 }
