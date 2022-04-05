@@ -58,6 +58,22 @@ public class PartsController {
     }
 
     /**
+     * Get mapping to retrieve all the top N most common failing parts.
+     * @param locationName the name of the location to transfer parts from.
+     * @param newLocationName the name of the location to transfer parts to.
+     * @param partName the name of the parts to send.
+     * @param quantity the number of the parts to send.
+     * @return response entity indicating success/failure.
+     */
+    @GetMapping("/transfer/{locationName}/{newLocationName}/{partName}/{quantity}")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> transferPart(@PathVariable("locationName") final String locationName, @PathVariable("newLocationName") final String newLocationName, @PathVariable("partName") final String partName, @PathVariable("quantity") final int quantity) {
+        String msg = partService.transferPart(locationName, newLocationName, partName, quantity);
+        String response = "{\"response\":\"" + msg + "\"}";
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
      * Checks for low stock levels (40%>).
      * @return list of parts with low stock & response entity.
      */

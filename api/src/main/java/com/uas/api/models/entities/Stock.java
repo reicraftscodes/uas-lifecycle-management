@@ -43,4 +43,15 @@ public class Stock {
     @JoinColumn(name = "locationName")
     private Location location;
 
+    /**
+     *  Constructor for a stock.
+     * @param part part in stock.
+     * @param stockQuantity quantity of the part in stock.
+     * @param location location of the parts in stock.
+     */
+    public Stock(final Part part, final long stockQuantity, final Location location) {
+        this.part = part;
+        this.stockQuantity = stockQuantity;
+        this.location = location;
+    }
 }

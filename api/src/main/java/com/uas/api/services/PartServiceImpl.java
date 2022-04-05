@@ -491,4 +491,41 @@ public class PartServiceImpl implements PartService {
         }
         return new PartInfoDTO(partNumber, part.get().getPrice(), part.get().getWeight(), part.get().getTypicalFailureTime(), status);
     }
+    /**
+     * Transfers parts from one stock to another.
+     * @param locationName The location to transfer parts from.
+     * @param newLocationName The location to transfer parts to.
+     * @param partName The name of the part to transfer.
+     * @param quantity The number of parts to transfer.
+     * @return A response entity indicating success/failure.
+     */
+    @Override
+    public String transferPart(final String locationName, final String newLocationName, final String partName, final int quantity) {
+
+        Optional<Location> location = locationRepository.findLocationByLocationName(locationName);
+        Optional<Location> newLocation = locationRepository.findLocationByLocationName(newLocationName);
+
+        if (location.get() == null || newLocation.get() == null) {
+            return "Failure, one or both locations do not exist in the database.";
+        }
+
+        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location.get(), partName));
+        if (stock.get().getStockQuantity() >= 1) {
+            stock.get().setStockQuantity(stock.get().getStockQuantity() - quantity);
+            stockRepository.save(stock.get());
+
+            //If Stock with same part_partName doesn't exist in new location, create it and set = to quantity.
+            Optional<Stock> newLocationStock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(newLocation.get(), partName));
+
+            if (newLocationStock.get() == null) {
+                Stock newStock = new Stock(stock.get().getPart(), 0L, newLocation.get());
+                stockRepository.save(newStock);
+            } else {
+                newLocationStock.get().setStockQuantity(newLocationStock.get().getStockQuantity() + quantity);
+                stockRepository.save(newLocationStock.get());
+            }
+            return "Success.";
+        }
+        return "Failure, no stock to transfer.";
+    }
 }

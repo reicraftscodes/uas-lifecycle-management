@@ -62,8 +62,15 @@ public class Part {
         this.partType = partType;
         this.manufacture = LocalDateTime.now();
     }
-
-
+    /**
+     *  Constructor for a part.
+     * @param partName Name of part.
+     * @param partNumber Number id of the part.
+     */
+    public Part(final Long partNumber, final String partName) {
+        this.partNumber = partNumber;
+        this.partName = partName;
+    }
 
     /**
      * Constructor for a part.
