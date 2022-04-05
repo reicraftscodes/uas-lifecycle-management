@@ -58,6 +58,29 @@ public class PartServiceTests {
     private PartServiceImpl partService;
 
     @Test
+    public void given4TransferStockPartsUpdateBothStockEntities() throws NotFoundException {
+        Part part = new Part(1L, "Boeing Wing A");
+        Location location = new Location();
+        location.setLocationName("London");
+
+        Location location1 = new Location();
+        location1.setLocationName("Cardiff");
+
+        Stock stock = new Stock(part, 6L, location);
+        Stock stock1 = new Stock(part, 0L, location1);
+
+        when(locationRepository.findLocationByLocationName("London")).thenReturn(Optional.of(location));
+        when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(location1));
+
+        when(stockRepository.findByLocationAndPart_PartName(location, part.getPartName())).thenReturn(stock);
+        when(stockRepository.findByLocationAndPart_PartName(location1, part.getPartName())).thenReturn(stock1);
+
+        String msg = partService.transferPart(location.getLocationName(), location1.getLocationName(), part.getPartName(), 4);
+
+        assertEquals("Should return success", "Success.", msg);
+    }
+
+    @Test
     public void givenGetLowStockPartsReturn22Parts() throws NotFoundException {
         List<Location> locations = new ArrayList<>();
         Location locationCardiff = new Location();
