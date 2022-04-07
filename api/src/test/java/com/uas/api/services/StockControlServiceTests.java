@@ -49,11 +49,11 @@ public class StockControlServiceTests {
 
     @Test
     public void orderMoreStockWithBadLocation() {
-        ArrayList<Long> partTypes = new ArrayList<>();
-        partTypes.add(1L);
+        ArrayList<String> partNames = new ArrayList<>();
+        partNames.add("Boeing Wing A");
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Fake Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Fake Cardiff", "sncmsuktestemail@gmail.com", partNames, quantities);
         IllegalArgumentException thrown = Assertions.assertThrows(IllegalArgumentException.class, () -> {
             when(stockControlService.addMoreStock(newStock)).thenReturn(new StockControlServiceImpl.StockReceipt(String.valueOf(1000)));
             stockControlService.addMoreStock(newStock);
@@ -63,12 +63,12 @@ public class StockControlServiceTests {
 
     @Test
     public void orderMoreStockWithMoreQuantitiesThanTypes() {
-        ArrayList<Long> partTypes = new ArrayList<>();
-        partTypes.add(1L);
+        ArrayList<String> partNames = new ArrayList<>();
+        partNames.add("Boeing Wing A");
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
         quantities.add(10);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partNames, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         IndexOutOfBoundsException thrown = Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
@@ -78,12 +78,12 @@ public class StockControlServiceTests {
     }
     @Test
     public void orderMoreStockWithMoreTypesThanQuantities() {
-        ArrayList<Long> partTypes = new ArrayList<>();
-        partTypes.add(1L);
-        partTypes.add(111L);
+        ArrayList<String> partNames = new ArrayList<>();
+        partNames.add("Boeing Wing A");
+        partNames.add("Boeing Tail");
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partNames, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         IndexOutOfBoundsException thrown = Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {
@@ -96,14 +96,14 @@ public class StockControlServiceTests {
     public void validOrder() {
         PartType mockPartType = new PartType(1L, PartName.WING_A);
         Part mockPart = new Part(mockPartType, "Mock Wing A", BigDecimal.valueOf(1000L), 750, 0);//, BigDecimal.valueOf(100), 40L, 550L);
-        ArrayList<Long> partTypes = new ArrayList<>();
-        partTypes.add(1L);
+        ArrayList<String> partNames = new ArrayList<>();
+        partNames.add("Mock Wing A");
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partNames, quantities);
         Location mockLocation = new Location("Cardiff", "", "", "", "");
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
-        when(partRepository.findPartBypartNumber(anyLong())).thenReturn(Optional.of(mockPart));
+        when(partRepository.findByPartName("Mock Wing A")).thenReturn(Optional.of(mockPart));
         when(invoiceService.getInvoiceData(any())).thenReturn(new InvoiceDTO());
         when(invoiceService.generatePDF(any())).thenReturn("");
         when(invoiceService.emailInvoice(any(),any())).thenReturn(true);

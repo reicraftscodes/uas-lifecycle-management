@@ -216,11 +216,11 @@ public class PartControllerTests {
     @WithMockUser(roles = "USER_LOGISTIC")
     @Test
     public void whenAStockRequestIsMadeThenResponseShouldBeOK() throws Exception {
-        ArrayList<Long> partTypes = new ArrayList<>();
-        partTypes.add(1L);
+        ArrayList<String> partNames = new ArrayList<>();
+        partNames.add("Boeing Wing A");
         ArrayList<Integer> quantities = new ArrayList<>();
         quantities.add(1);
-        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partTypes, quantities);
+        MoreStockRequest newStock = new MoreStockRequest("Cardiff", "sncmsuktestemail@gmail.com", partNames, quantities);
         String json = objectMapper.writeValueAsString(newStock);
         mockMvc.perform(post("/parts/stockrequest")
                         .contentType(MediaType.APPLICATION_JSON)

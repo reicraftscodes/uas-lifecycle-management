@@ -66,24 +66,24 @@ public class StockControlServiceImpl implements StockControlService {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         double totalCost = 0;
 
-        ArrayList<Long> partTypes = moreStockRequest.getPartIDs();
+        ArrayList<String> partNames = moreStockRequest.getPartNames();
         ArrayList<Integer> quantities = moreStockRequest.getQuantities();
         Location orderLocation = checkLocation(moreStockRequest.getLocation());
         LocalDateTime orderTime = LocalDateTime.now();
         Timestamp ts = Timestamp.valueOf(orderTime.format(dtf));
 
-        checkPartTypesAndQuantities(partTypes, quantities);
+        checkPartNamesAndQuantities(partNames, quantities);
 
         Orders newOrder = new Orders(orderLocation, moreStockRequest.getSupplierEmail(), 0, ts);
         ordersRepository.save(newOrder);
 
-        for (int i = 0; i < partTypes.size(); i++) {
-            long part = partTypes.get(i);
-            Optional<Part> partType = partRepository.findPartBypartNumber(part);
+        for (int i = 0; i < partNames.size(); i++) {
+            String partName = partNames.get(i);
+            Optional<Part> part = partRepository.findByPartName(partName);
             int quantity = quantities.get(i);
-            StockToOrders newStockToOrder = new StockToOrders(newOrder, partType.get(), quantity);
+            StockToOrders newStockToOrder = new StockToOrders(newOrder, part.get(), quantity);
             stockToOrdersRepository.save(newStockToOrder);
-            totalCost += partType.get().getPrice().doubleValue() * quantity;
+            totalCost += part.get().getPrice().doubleValue() * quantity;
         }
         newOrder.setTotalCost(totalCost);
         ordersRepository.save(newOrder);
@@ -137,11 +137,11 @@ public class StockControlServiceImpl implements StockControlService {
 
     /**
      * Checks part types and quantities are the same length.
-     * @param partTypes
+     * @param partNames
      * @param quantities
      */
-    private void checkPartTypesAndQuantities(final ArrayList<Long> partTypes, final ArrayList<Integer> quantities) {
-        if (partTypes.size() != quantities.size()) {
+    private void checkPartNamesAndQuantities(final ArrayList<String> partNames, final ArrayList<Integer> quantities) {
+        if (partNames.size() != quantities.size()) {
             throw new IndexOutOfBoundsException("Missing quantity for part type in order!");
         }
     }
