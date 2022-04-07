@@ -126,7 +126,7 @@ public class PartControllerTests {
         stockRepository.save(stock);
         stockRepository.save(stock1);
 
-        when(partService.transferPart("London","Cardiff", "Boeing Wing A", 5)).thenReturn(msg);
+        when(partService.deletePart("London", "Boeing Wing A", 4)).thenReturn(msg);
 
         MvcResult mvcRes = mockMvc.perform(get("/parts/transfer/London/Cardiff/Boeing Wing A/5")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -134,6 +134,39 @@ public class PartControllerTests {
 
         assertEquals("{\"response\":\"Success.\"}", mvcRes.getResponse().getContentAsString());
 
+    }
+
+    @WithMockUser(roles = "USER_LOGISTIC")
+    @Test
+    public void deletePartsNoStock() throws Exception {
+        String msg = "Failure, no stock to delete.";
+        when(partService.deletePart("London", "Boeing Wing A", 4)).thenReturn(msg);
+
+        MvcResult mvcRes = mockMvc.perform(get("/parts/delete/London/Boeing Wing A/4")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("{\"response\":\"Failure, no stock to delete.\"}", mvcRes.getResponse().getContentAsString());
+    }
+
+    @WithMockUser(roles = "USER_LOGISTIC")
+    @Test
+    public void deletePartsWithStock() throws Exception {
+        String msg = "Success.";
+        Part part = new Part(1L, "Boeing Wing A");
+        Location location = new Location();
+        location.setLocationName("London");
+        locationRepository.save(location);
+        Stock stock = new Stock(part, 6L, location);
+        stockRepository.save(stock);
+
+        when(partService.deletePart("London", "Boeing Wing A", 4)).thenReturn(msg);
+
+        MvcResult mvcRes = mockMvc.perform(get("/parts/delete/London/Boeing Wing A/4")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        assertEquals("{\"response\":\"Success.\"}", mvcRes.getResponse().getContentAsString());
     }
 
     @WithMockUser(roles = "USER_LOGISTIC")
