@@ -396,7 +396,7 @@ public class AircraftControllerTest {
         Aircraft aircraft = new Aircraft("G-001",location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A,286);
 
         AircraftUserDTO aircraftUserDTO = new AircraftUserDTO(aircraft.getTailNumber(), aircraft.getLocation().getLocationName(), aircraft.getPlatformStatus().getLabel(), aircraft.getPlatformType().getName(), 0, aircraft.getFlyTimeHours());
-        AircraftUserKeyDTO aircraftUserKeyDTO = new AircraftUserKeyDTO(2L, "G-001");
+        AircraftUserKeyDTO aircraftUserKeyDTO = new AircraftUserKeyDTO("logisticOne@snc.ac.uk", "G-001");
 
         when(aircraftService.assignUserToAircraft(aircraftUserKeyDTO)).thenReturn(aircraftUserDTO);
 

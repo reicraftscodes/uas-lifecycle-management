@@ -654,8 +654,9 @@ public class AircraftServiceImpl implements AircraftService {
      */
     @Override
     public AircraftUserDTO assignUserToAircraft(final AircraftUserKeyDTO aircraftUserKeyDTO) {
-        AircraftUserKey aircraftUserKey = new AircraftUserKey(aircraftUserKeyDTO.getUserID(), aircraftUserKeyDTO.getTailNumber());
-        User user = userRepository.findById(aircraftUserKeyDTO.getUserID()).get();
+        User user = userRepository.findByEmail(aircraftUserKeyDTO.getEmail());
+        AircraftUserKey aircraftUserKey = new AircraftUserKey(user.getId(), aircraftUserKeyDTO.getTailNumber());
+
         Aircraft aircraft = aircraftRepository.findById(aircraftUserKeyDTO.getTailNumber()).get();
         AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user, aircraft, 0L);
         AircraftUser savedAircraftUser = aircraftUserRepository.save(aircraftUser);

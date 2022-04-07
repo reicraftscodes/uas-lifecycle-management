@@ -205,11 +205,11 @@ public class AircraftServiceTests {
         Aircraft aircraft = new Aircraft(tailNumber, location, PlatformStatus.DESIGN, PlatformType.PLATFORM_A, 286);
         AircraftUserKey aircraftUserKey = new AircraftUserKey(1L, "G-001");
         AircraftUser aircraftUser = new AircraftUser(aircraftUserKey, user, aircraftOne, 0L);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail("logisticOne@snc.ac.uk")).thenReturn(user);
         when(aircraftRepository.findById(tailNumber)).thenReturn(Optional.of(aircraftOne));
         when(aircraftUserRepository.save(any())).thenReturn(aircraftUser);
 
-        AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(new AircraftUserKeyDTO(1L, "G-001"));
+        AircraftUserDTO aircraftUserDTO = aircraftService.assignUserToAircraft(new AircraftUserKeyDTO("logisticOne@snc.ac.uk", "G-001"));
 
         assertEquals("Aircraft user should have 0 flight hours!", 0L, aircraftUserDTO.getUserAircraftFlyingHours());
         assertEquals("Aircraft user DTO should have the correct User entity", aircraftOne.getPlatformStatus().getLabel(), aircraftUserDTO.getPlatformStatus());
