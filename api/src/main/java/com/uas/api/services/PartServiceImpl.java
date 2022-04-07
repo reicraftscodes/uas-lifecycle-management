@@ -539,7 +539,6 @@ public class PartServiceImpl implements PartService {
     public String deletePart(final String locationName, final String partName, final int quantity) {
         Optional<Location> location = locationRepository.findLocationByLocationName(locationName);
         Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location.get(), partName));
-
         if (stock.get().getStockQuantity() >= 1) {
             stock.get().setStockQuantity(stock.get().getStockQuantity() - quantity);
             stockRepository.save(stock.get());
