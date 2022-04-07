@@ -58,7 +58,7 @@ public class PartsController {
     }
 
     /**
-     * Get mapping to retrieve all the top N most common failing parts.
+     * Get mapping to transfer parts from one stock location to another.
      * @param locationName the name of the location to transfer parts from.
      * @param newLocationName the name of the location to transfer parts to.
      * @param partName the name of the parts to send.
@@ -72,6 +72,22 @@ public class PartsController {
         String response = "{\"response\":\"" + msg + "\"}";
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    /**
+     * Get mapping to delete
+     * @param locationName the name of the location to delete parts from.
+     * @param partName the name of the parts to delete.
+     * @param quantity the number of the parts to delete.
+     * @return response entity indicating success/failure.
+     */
+    @GetMapping("/delete/{locationName}/{partName}/{quantity}")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    public ResponseEntity<?> deletePart(@PathVariable("locationName") final String locationName, @PathVariable("partName") final String partName, @PathVariable("quantity") final int quantity) {
+        String msg = partService.deletePart(locationName, partName, quantity);
+        String response = "{\"response\":\"" + msg + "\"}";
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     /**
      * Checks for low stock levels (40%>).

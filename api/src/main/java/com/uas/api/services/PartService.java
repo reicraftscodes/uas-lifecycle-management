@@ -116,4 +116,6 @@ public interface PartService {
      * @return A response entity indicating success/failure.
      */
     String transferPart(String locationName, String newLocationName, String partName, int quantity);
+
+    String deletePart(String locationName, String partName, int quantity);
 }
