@@ -74,7 +74,7 @@ public class PartsController {
     }
 
     /**
-     * Get mapping to delete
+     * Get mapping to delete.
      * @param locationName the name of the location to delete parts from.
      * @param partName the name of the parts to delete.
      * @param quantity the number of the parts to delete.

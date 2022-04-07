@@ -96,7 +96,7 @@ public class PartServiceTests {
 
         assertEquals("Should return success", "Success.", msg);
     }
-    
+
     @Test
     public void givenGetLowStockPartsReturn22Parts() throws NotFoundException {
         List<Location> locations = new ArrayList<>();

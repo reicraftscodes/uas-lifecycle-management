@@ -126,9 +126,9 @@ public class PartControllerTests {
         stockRepository.save(stock);
         stockRepository.save(stock1);
 
-        when(partService.deletePart("London", "Boeing Wing A", 4)).thenReturn(msg);
+        when(partService.transferPart("London", "Cardiff","Boeing Wing A", 4)).thenReturn(msg);
 
-        MvcResult mvcRes = mockMvc.perform(get("/parts/transfer/London/Cardiff/Boeing Wing A/5")
+        MvcResult mvcRes = mockMvc.perform(get("/parts/transfer/London/Cardiff/Boeing Wing A/4")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
