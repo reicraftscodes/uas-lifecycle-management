@@ -510,7 +510,8 @@ public class PartServiceImpl implements PartService {
         }
 
         Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location.get(), partName));
-        if (stock.get().getStockQuantity() >= 1) {
+
+        if (stock.get().getStockQuantity() >= 1 && stock.get().getStockQuantity() >= quantity) {
             stock.get().setStockQuantity(stock.get().getStockQuantity() - quantity);
             stockRepository.save(stock.get());
 
