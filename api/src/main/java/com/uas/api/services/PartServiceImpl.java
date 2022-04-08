@@ -252,7 +252,7 @@ public class PartServiceImpl implements PartService {
      * @return the stock level percentage for the part at the location
      */
     private double getPartStockPercentageAtLocation(final Part partName, final Location location) {
-        int partTypeCount = getPartStockLevelAtLocation(partName, location);
+        Long partTypeCount = getPartStockLevelAtLocation(partName, location);
         return (partTypeCount * 100) / maxStockCount;
     }
 
@@ -262,8 +262,12 @@ public class PartServiceImpl implements PartService {
      * @param location name of the location
      * @return the stock level count for the part at the location
      */
-    private int getPartStockLevelAtLocation(final Part partName, final Location location) {
-        return stockRepository.countAllByPartAndLocation(partName, location);
+    private Long getPartStockLevelAtLocation(final Part partName, final Location location) {
+        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByPartAndLocation(partName, location));
+        if (stock.isEmpty()) {
+            return stockRepository.save(new Stock(partName, 0L, location)).getStockQuantity();
+        }
+        return stock.get().getStockQuantity();
     }
 
     /**

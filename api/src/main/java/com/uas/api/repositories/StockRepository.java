@@ -14,8 +14,9 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
      * @param part part.
      * @return count.
      */
-    int countAllByPartAndLocation(Part part, Location location);
+    //int findAllByPartAndLocation(Part part, Location location);
 
+    Stock findByPartAndLocation(Part part, Location location);
     /**
      * Get a list of stock for a part.
      * @param partNumber the part number.
