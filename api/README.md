@@ -153,6 +153,8 @@ By default the API is setup with the email address `sncmsuktestemail@gmail.com` 
   - [GET - /most-failing/{topN}]()
   - [POST - /get-by-type]()
   - [GET - /all]()
+  - [GET - /delete/{locationName}/{partName}/{quantity}]()
+
 
 # Aircraft Controller
 Mappings and features to do with the addition, modification, deletion and fetching information about aircraft.
@@ -765,6 +767,26 @@ A 200 OK Response should return JSON in the following format upon a successful r
 `"partName": "Wing A",`<br>
 `"quantity": 20
 }]`
+
+#### Request Body
+No Request Body is needed for this mapping.
+
+## GET - /parts/delete/{locationName}/{partName}/{quantity}
+### Mapping Information:
+localhost:8080/parts/delete/{locationName}/{partName}/{quantity} (DEV)<br>
+uastest.herokuapp.com/parts/delete/{locationName}/{partName}/{quantity} (UAT)<br>
+uasprod.herokuapp.com/parts/delete/{locationName}/{partName}/{quantity} (PROD)<br>
+
+### What it does:
+This mapping allows the logistics officer to delete parts in stock from the database. 
+### Responses:
+#### Successful:
+A 200 OK Response should return JSON in the following format upon a successful request:<br>
+`{"response":"Success."}`
+#### Error Responses and Meaning:
+A 400 Bad Request Response will be returned with the JSON in the following formats:
+
+`{"response": "Failure, no stock to delete."}`
 
 #### Request Body
 No Request Body is needed for this mapping.
