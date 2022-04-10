@@ -166,6 +166,9 @@ public class PartServiceImpl implements PartService {
             for (Part partName : parts) {
                 double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, location);
                 if (partStockLevelPercentage < lowStockPercentage) {
+                    System.out.println(partName.getPartName());
+                    System.out.println(location.getLocationName());
+                    System.out.println(partStockLevelPercentage);
                     partStockLevelDTOs.add(new PartStockLevelDTO(partName.getPartName(), location.getLocationName(), partStockLevelPercentage));
                 }
             }
