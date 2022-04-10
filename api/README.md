@@ -619,6 +619,22 @@ A 200 OK response should be returned with a list of low stock (less than 40%) ac
 An error response with the following codes will be returned on error:
 - 403 Forbidden: If the request has been made from the web this is potentially cross origins, please check which one it is pointing to.
 - 401 Unauthorised: The current logged in user does not have access to this resource.
+
+## GET - /transfer/{locationName}/{newLocationName}/{partName}/{quantity}
+### Mapping Information:
+localhost:8080/parts/transfer/{locationName}/{newLocationName}/{partName}/{quantity}<br>
+uastest.herokuapp.com/parts/low-stock<br>
+uasprod.herokuapp.com/parts/low-stock<br>
+### What it does:
+This method transfers stock from one location to another.
+### Responses:
+#### Successful:
+A 200 OK response should be returned with a message indicating success.
+#### Error Responses and Meaning:
+An error response with the following codes will be returned on error:
+- 400: Failure, no stock to transfer OR "Failure, one or both locations do not exist in the database.".
+- 401 Unauthorised: The current logged in user does not have access to this resource.
+
 ## POST - /stockrequest
 ### Mapping Information:
 localhost:8080/parts/stockrequest (DEV)<br>
