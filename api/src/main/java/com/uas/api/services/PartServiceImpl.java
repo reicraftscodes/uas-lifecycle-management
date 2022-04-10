@@ -528,4 +528,22 @@ public class PartServiceImpl implements PartService {
         }
         return "Failure, no stock to transfer.";
     }
+    /**
+     * Deletes parts from one stock to another.
+     * @param locationName The location to delete parts from.
+     * @param partName The name of the parts to delete.
+     * @param quantity The number of parts to delete.
+     * @return A response entity indicating success/failure.
+     */
+    @Override
+    public String deletePart(final String locationName, final String partName, final int quantity) {
+        Optional<Location> location = locationRepository.findLocationByLocationName(locationName);
+        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location.get(), partName));
+        if (stock.get().getStockQuantity() >= 1) {
+            stock.get().setStockQuantity(stock.get().getStockQuantity() - quantity);
+            stockRepository.save(stock.get());
+            return "Success.";
+        }
+        return "Failure, no stock to delete.";
+    }
 }

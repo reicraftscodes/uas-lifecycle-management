@@ -116,4 +116,12 @@ public interface PartService {
      * @return A response entity indicating success/failure.
      */
     String transferPart(String locationName, String newLocationName, String partName, int quantity);
+    /**
+     * Deletes parts from stock.
+     * @param locationName The location to delete parts from.
+     * @param partName The name of the part to delete.
+     * @param quantity The number of parts to delete.
+     * @return A response entity indicating success/failure
+     */
+    String deletePart(String locationName, String partName, int quantity);
 }
