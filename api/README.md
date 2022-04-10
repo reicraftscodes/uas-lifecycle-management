@@ -405,9 +405,9 @@ The POST request should be sent to /aircraft/assign-user.
 
 Example of JSON body:
 
-`{"userID":"2", "tailNumber":"G-004"}`
+`{"email":"logisticOne@snc.ac.uk", "tailNumber":"G-004"}`
 
-- Both the userID and tailNumber must reference pre-existing entities in the database.
+- Both the email and tailNumber must reference pre-existing entities in the database.
 ## GET - /aircraft-parts-status/{id}
 ### Mapping Information:
 localhost:8080/aircraft/aircraft-parts-status/{id} (DEV) <br>
@@ -632,7 +632,8 @@ Returns a 200 status response with no body.
 #### Error Responses and Meaning:
 It could return errors for a location that isn't present in the database, or if the partID and quantities arrays are not the same size.
 ### Request Body:
-`{"location":"Cardiff","supplierEmail":"replace@withsupplier.email","partIDs":[1,2],"quantities":[2,2]}`
+`{"location":"Cardiff","supplierEmail":"replace@withsupplier.email","partNames":["Boeing Wing A", "Boeing Wing B"],"quantities":[2,2]}`
+
 ## GET - /stock
 ### Mapping Information:
 localhost:8080/parts/stock<br>

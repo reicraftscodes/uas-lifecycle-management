@@ -35,6 +35,12 @@ public interface PartRepository extends JpaRepository<Part, Integer> {
      */
     @Query(value = "SELECT PartID FROM parts WHERE PartTypeID = :partTypeID and PartID not in (select PartID from aircraftpart)", nativeQuery = true)
     List<String> findAllAvailableByType(@Param("partTypeID") long partTypeID);
+    /**
+     * Finds a the parts in the db using the partName.
+     * @param partName the part name being searched for.
+     * @return returns a part based on its name.
+     */
+    Optional<Part> findByPartName(String partName);
 
 //    /**
 //     * Finds all the parts in the db that have a specific.

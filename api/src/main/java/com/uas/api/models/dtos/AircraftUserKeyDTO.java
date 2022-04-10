@@ -10,9 +10,9 @@ import lombok.Setter;
 public class AircraftUserKeyDTO {
 
     /**
-     * The id of the user to be assigned to the aircraft.
+     * The email of the user to be assigned to the aircraft.
      */
-    private Long userID;
+    private String email;
 
     /**
      * The aircraft tailNumber to assign a user to.

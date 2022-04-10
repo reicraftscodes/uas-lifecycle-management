@@ -19,9 +19,9 @@ public class MoreStockRequest {
      */
     private String supplierEmail;
     /**
-     * All the part types.
+     * All the part names.
      */
-    private ArrayList<Long> partIDs;
+    private ArrayList<String> partNames;
     /**
      * Quantities for part types.
      */

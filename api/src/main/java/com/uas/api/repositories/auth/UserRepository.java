@@ -37,4 +37,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return boolean
      */
     boolean existsById(int userId);
+
+    /**
+     * Finds a user by email.
+     * @param email email.
+     * @return the user.
+     */
+    User findByEmail(String email);
 }

@@ -31,6 +31,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
@@ -102,18 +103,23 @@ public class PartServiceTests {
         List<Location> locations = new ArrayList<>();
         Location locationCardiff = new Location();
         locationCardiff.setLocationName("Cardiff");
-        Location locationBristol = new Location();
-        locationBristol.setLocationName("Bristol");
         locations.add(locationCardiff);
-        locations.add(locationBristol);
+        locationRepository.save(locationCardiff);
         PartType mockPartType = new PartType(1L, PartName.COMMUNICATIONS_RADIO);
-        Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
+        partTypeRepository.save(mockPartType);
+        Part part = new Part(1L, "Boeing Wing A");
+        Part part1 = new Part(2L, "Boeing Wing A");
         List<Part> parts = new ArrayList<>();
-        parts.add(mockPart);
+        parts.add(part);
+        parts.add(part1);
+        Stock stock = new Stock(part, 0L, locationCardiff);
+        Stock stock1 = new Stock(part1, 2L, locationCardiff);
+
 
         when(locationRepository.findAll()).thenReturn(locations);
         when(partRepository.findAll()).thenReturn(parts);
-        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(30);
+        when(stockRepository.findByPartAndLocation(part, locationCardiff)).thenReturn(stock);
+        when(stockRepository.findByPartAndLocation(part1, locationCardiff)).thenReturn(stock1);
 
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
 
@@ -133,10 +139,12 @@ public class PartServiceTests {
         Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
         List<Part> parts = new ArrayList<>();
         parts.add(mockPart);
+        Stock stock = new Stock(mockPart, 50L, locationCardiff);
+        stockRepository.save(stock);
 
         when(locationRepository.findAll()).thenReturn(locations);
         when(partRepository.findAll()).thenReturn(parts);
-        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(41);
+        when(stockRepository.findByPartAndLocation(any(), any())).thenReturn(stock);
 
         List<PartStockLevelDTO> partStockLevelDTOs = partService.getPartsAtLowStock();
 
@@ -178,9 +186,12 @@ public class PartServiceTests {
         Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
         List<Part> parts = new ArrayList<>();
         parts.add(mockPart);
+        Stock stock = new Stock(mockPart, 0L, locationCardiff);
 
         when(locationRepository.findAll()).thenReturn(locations);
         when(partRepository.findAll()).thenReturn(parts);
+        when(stockRepository.findByPartAndLocation(mockPart, locationCardiff)).thenReturn(stock);
+        when(stockRepository.save(any())).thenReturn(stock);
         List<LocationStockLevelsDTO> partStock = partService.getPartStockLevelsForAllLocations();
         Assertions.assertEquals(2, partStock.size());
         // Testing to make sure the length is bigger than zero rather than matching specific size,
@@ -214,10 +225,15 @@ public class PartServiceTests {
         Part mockPart = new Part(mockPartType, "Mock part name", BigDecimal.valueOf(1000L), 750L, 0);
         List<Part> parts = new ArrayList<>();
         parts.add(mockPart);
+        Part mockPart1 = new Part(mockPartType, "Mock part nomenclature", BigDecimal.valueOf(1000L), 750L, 0);
+        parts.add(mockPart);
+
+        Stock stock = new Stock(mockPart, 41L, mockLocation);
+        Stock stock1 = new Stock(mockPart1, 4L, mockLocation);
 
         when(locationRepository.findLocationByLocationName("Cardiff")).thenReturn(Optional.of(mockLocation));
         when(partRepository.findAll()).thenReturn(parts);
-        when(stockRepository.countAllByPartAndLocation(any(), any())).thenReturn(41);
+        when(stockRepository.findByPartAndLocation(mockPart, mockLocation)).thenReturn(stock);
         Assertions.assertDoesNotThrow(() -> partService.getPartStockLevelsAtLocation("Cardiff"));
         List<PartStockLevelDTO> stocks = partService.getPartStockLevelsAtLocation("Cardiff");
         assertTrue(stocks.size() > 0);

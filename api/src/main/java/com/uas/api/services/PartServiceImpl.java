@@ -166,6 +166,9 @@ public class PartServiceImpl implements PartService {
             for (Part partName : parts) {
                 double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, location);
                 if (partStockLevelPercentage < lowStockPercentage) {
+                    System.out.println(partName.getPartName());
+                    System.out.println(location.getLocationName());
+                    System.out.println(partStockLevelPercentage);
                     partStockLevelDTOs.add(new PartStockLevelDTO(partName.getPartName(), location.getLocationName(), partStockLevelPercentage));
                 }
             }
@@ -252,7 +255,7 @@ public class PartServiceImpl implements PartService {
      * @return the stock level percentage for the part at the location
      */
     private double getPartStockPercentageAtLocation(final Part partName, final Location location) {
-        int partTypeCount = getPartStockLevelAtLocation(partName, location);
+        Long partTypeCount = getPartStockLevelAtLocation(partName, location);
         return (partTypeCount * 100) / maxStockCount;
     }
 
@@ -262,8 +265,12 @@ public class PartServiceImpl implements PartService {
      * @param location name of the location
      * @return the stock level count for the part at the location
      */
-    private int getPartStockLevelAtLocation(final Part partName, final Location location) {
-        return stockRepository.countAllByPartAndLocation(partName, location);
+    private Long getPartStockLevelAtLocation(final Part partName, final Location location) {
+        Optional<Stock> stock = Optional.ofNullable(stockRepository.findByPartAndLocation(partName, location));
+        if (stock.isEmpty()) {
+            return stockRepository.save(new Stock(partName, 0L, location)).getStockQuantity();
+        }
+        return stock.get().getStockQuantity();
     }
 
     /**
@@ -510,7 +517,8 @@ public class PartServiceImpl implements PartService {
         }
 
         Optional<Stock> stock = Optional.ofNullable(stockRepository.findByLocationAndPart_PartName(location.get(), partName));
-        if (stock.get().getStockQuantity() >= 1) {
+
+        if (stock.get().getStockQuantity() >= 1 && stock.get().getStockQuantity() >= quantity) {
             stock.get().setStockQuantity(stock.get().getStockQuantity() - quantity);
             stockRepository.save(stock.get());
 
