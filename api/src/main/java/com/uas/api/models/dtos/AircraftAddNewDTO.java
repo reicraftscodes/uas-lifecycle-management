@@ -1,5 +1,8 @@
 package com.uas.api.models.dtos;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class AircraftAddNewDTO {
     /**
      * The platform status.
@@ -17,20 +20,6 @@ public class AircraftAddNewDTO {
      * The tail number of the platform.
      */
     private final String tailNumber;
-
-    /**
-     * Constructor.
-     * @param platformStatus
-     * @param location
-     * @param platformType
-     * @param tailNumber
-     */
-    public AircraftAddNewDTO(final String platformStatus, final String location, final String platformType, final String tailNumber) {
-        this.platformStatus = platformStatus;
-        this.location = location;
-        this.platformType = platformType;
-        this.tailNumber = tailNumber;
-    }
 
     /**
      * Gets the platform status of a platform.
