@@ -66,7 +66,7 @@ public class PartsController {
      * @return response entity indicating success/failure.
      */
     @GetMapping("/transfer/{locationName}/{newLocationName}/{partName}/{quantity}")
-    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_COO')")
     public ResponseEntity<?> transferPart(@PathVariable("locationName") final String locationName, @PathVariable("newLocationName") final String newLocationName, @PathVariable("partName") final String partName, @PathVariable("quantity") final int quantity) {
         String msg = partService.transferPart(locationName, newLocationName, partName, quantity);
         String response = "{\"response\":\"" + msg + "\"}";
@@ -81,7 +81,7 @@ public class PartsController {
      * @return response entity indicating success/failure.
      */
     @GetMapping("/delete/{locationName}/{partName}/{quantity}")
-    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_COO')")
     public ResponseEntity<?> deletePart(@PathVariable("locationName") final String locationName, @PathVariable("partName") final String partName, @PathVariable("quantity") final int quantity) {
         String msg = partService.deletePart(locationName, partName, quantity);
         String response = "{\"response\":\"" + msg + "\"}";
@@ -105,7 +105,7 @@ public class PartsController {
      * @return response entity with response.
      */
     @PostMapping("/stockrequest")
-    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC')")
+    @PreAuthorize("hasRole('ROLE_USER_LOGISTIC') or hasRole('ROLE_USER_COO')")
     public ResponseEntity<?> requestMoreStock(@RequestBody final MoreStockRequest moreStockRequest) {
         LocalDateTime localDateTime = LocalDateTime.now();
         LOGGER.info("Request for more stock made at: " + localDateTime + " by user: user");
