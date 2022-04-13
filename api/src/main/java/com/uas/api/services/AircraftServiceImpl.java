@@ -144,8 +144,6 @@ public class AircraftServiceImpl implements AircraftService {
                         + " Platform Status:" + requestData.getPlatformStatus()
                         + " Platform Type:" + requestData.getPlatformType();
                 LOG.info(msg);
-
-                return msg.toString();
             } catch (Exception e) {
                 //Catches any other exceptions and sets the error message to them.
                 errorMessage = e.getMessage();

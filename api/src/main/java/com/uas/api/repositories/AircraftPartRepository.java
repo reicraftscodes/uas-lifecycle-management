@@ -18,10 +18,10 @@ public interface AircraftPartRepository extends JpaRepository<AircraftPart, Stri
 
     /**
      *  Finds all parts associated with an aircraft.
-     * @param tailNumber The aircraft the parts are being searched for.
+     * @param aircraft The aircraft the parts are being searched for.
      * @return A list of all part entities.
      */
-    List<AircraftPart> findAircraftPartsByAircraft_TailNumber(String tailNumber);
+    List<AircraftPart> findAircraftPartsByAircraft(Aircraft aircraft);
 
     /**
      *  Finds all parts associated with an aircraft with a specific partStatus.
