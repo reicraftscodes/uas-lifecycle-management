@@ -244,6 +244,9 @@ INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) V
 INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "2", "Operational", 0);
 INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "3", "Operational", 0);
 INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "4", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "5", "Awaiting Repair", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "6", "Awaiting Repair", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-002", "7", "Awaiting Repair", 0);
 
 #Only a small number of repair examples as I am unsure if the table will change
 INSERT INTO Repairs (AircraftPartID, cost) VALUES ("1","200");

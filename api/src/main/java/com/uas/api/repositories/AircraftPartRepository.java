@@ -24,12 +24,9 @@ public interface AircraftPartRepository extends JpaRepository<AircraftPart, Stri
     List<AircraftPart> findAircraftPartsByAircraft_TailNumber(String tailNumber);
 
     /**
-     *  Finds all parts associated with an aircraft with a specific partStatus.
-     * @param partStatus The status of the part.
-     * @return A list of part entities with a partStatus equal to the parameter.
+     *  Counts the number of unique aircraft there are with an aircraft part needing repair.
+     * @return The number of unique aircraft needing repair.
      */
-    List<AircraftPart> findAircraftPartsByPartStatus(PartStatus partStatus);
-
     @Query(value = "SELECT COUNT(DISTINCT AircraftTailNumber) FROM aircraftpart where PartStatus=\"Awaiting Repair\"", nativeQuery = true)
     Integer countUniqueAircraftWithPartsNeedingRepair();
 
