@@ -3,6 +3,7 @@ package com.uas.api.repositories;
 import com.uas.api.models.entities.AircraftPart;
 import com.uas.api.models.entities.enums.PartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -28,5 +29,8 @@ public interface AircraftPartRepository extends JpaRepository<AircraftPart, Stri
      * @return A list of part entities with a partStatus equal to the parameter.
      */
     List<AircraftPart> findAircraftPartsByPartStatus(PartStatus partStatus);
+
+    @Query(value = "SELECT COUNT(DISTINCT AircraftTailNumber) FROM aircraftpart where PartStatus=\"Awaiting Repair\"", nativeQuery = true)
+    Integer countUniqueAircraftWithPartsNeedingRepair();
 
 }

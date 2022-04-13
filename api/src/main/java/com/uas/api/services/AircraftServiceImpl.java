@@ -347,17 +347,7 @@ public class AircraftServiceImpl implements AircraftService {
     @Override
     public Integer getNumberOfAircraftWithPartsNeedingRepair() {
         //Get all parts which are awaiting repair.
-        List<AircraftPart> aircraftParts = aircraftPartRepository.findAircraftPartsByPartStatus(PartStatus.AWAITING_REPAIR);
-        List<Aircraft> aircraftList = new ArrayList<>();
-        for (AircraftPart aircraftPart : aircraftParts) {
-
-            if (aircraftList.contains(aircraftPart.getAircraft())) {
-                continue;
-            } else {
-                aircraftList.add(aircraftPart.getAircraft());
-            }
-        }
-            return aircraftList.size();
+        return aircraftPartRepository.countUniqueAircraftWithPartsNeedingRepair();
     }
 
     /**
