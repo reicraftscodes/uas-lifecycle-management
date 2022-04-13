@@ -339,7 +339,7 @@ public class PartServiceImpl implements PartService {
         if (request.getFlyTime() < 0) {
             throw new InvalidDTOAttributeException("Fly time cannot be negative!");
         }
-        List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft(aircraft.get());
+        List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft_TailNumber(aircraft.get().getTailNumber());
         updatePartFlyTime(parts, request.getFlyTime());
         //updates the aircraft flight hours
         aircraftService.updateAircraftFlyTime(aircraft.get(), request.getFlyTime());

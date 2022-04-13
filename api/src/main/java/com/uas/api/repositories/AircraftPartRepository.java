@@ -1,6 +1,5 @@
 package com.uas.api.repositories;
 
-import com.uas.api.models.entities.Aircraft;
 import com.uas.api.models.entities.AircraftPart;
 import com.uas.api.models.entities.enums.PartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,10 +17,10 @@ public interface AircraftPartRepository extends JpaRepository<AircraftPart, Stri
 
     /**
      *  Finds all parts associated with an aircraft.
-     * @param aircraft The aircraft the parts are being searched for.
+     * @param tailNumber The aircraft tailNumber the parts are being searched for.
      * @return A list of all part entities.
      */
-    List<AircraftPart> findAircraftPartsByAircraft(Aircraft aircraft);
+    List<AircraftPart> findAircraftPartsByAircraft_TailNumber(String tailNumber);
 
     /**
      *  Finds all parts associated with an aircraft with a specific partStatus.
