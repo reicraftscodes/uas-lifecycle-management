@@ -299,11 +299,7 @@ public class PartServiceImpl implements PartService {
         }
         List<PartRepairsDTO> partRepairsDTOs = new ArrayList<>();
         for (Map<Object, Object> object : objects) {
-            int partNumber = (Integer) object.get("partNumber");
-            BigInteger repairCount = (BigInteger) object.get("repairCount");
-            BigDecimal totalCost = (BigDecimal) object.get("totalCost");
-            String partType = partTypeRepository.getPartTypeByPartNumber(partNumber);
-            partRepairsDTOs.add(new PartRepairsDTO(partNumber, partType, repairCount.longValue(), totalCost));
+            partRepairsDTOs.add(new PartRepairsDTO((Integer) object.get("partNumber"), partTypeRepository.getPartTypeByPartNumber((Integer) object.get("partNumber")), ((BigInteger) object.get("repairCount")).longValue(), (BigDecimal) object.get("totalCost")));
         }
         return partRepairsDTOs;
     }
@@ -437,7 +433,6 @@ public class PartServiceImpl implements PartService {
         if (selectedPart.isEmpty()) {
             throw new NotFoundException("Part not found!");
         }
-
         selectedPart.get().setPrice(BigDecimal.valueOf(price));
         partRepository.save(selectedPart.get());
     }

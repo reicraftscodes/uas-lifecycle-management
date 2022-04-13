@@ -139,10 +139,13 @@ public class AircraftServiceImpl implements AircraftService {
             try {
                 aircraftRepository.save(aircraft);
                 //Logs the aircraft added to the console.
-                LOG.info("Aircraft added by user. Tailnumber:" + requestData.getTailNumber()
+                String msg = "Aircraft added by user. Tailnumber:" + requestData.getTailNumber()
                         + " Location:" + requestData.getLocation()
                         + " Platform Status:" + requestData.getPlatformStatus()
-                        + " Platform Type:" + requestData.getPlatformType());
+                        + " Platform Type:" + requestData.getPlatformType();
+                LOG.info(msg);
+
+                return msg.toString();
             } catch (Exception e) {
                 //Catches any other exceptions and sets the error message to them.
                 errorMessage = e.getMessage();
@@ -151,7 +154,6 @@ public class AircraftServiceImpl implements AircraftService {
         //Returns either null meaning no errors or an error message about what went wrong.
         return errorMessage;
     }
-
 
     /**
      * For each aircraft saved in the DB, get the hours operational and add it to the list.
@@ -245,7 +247,7 @@ public class AircraftServiceImpl implements AircraftService {
 
     private PlatformStatusDTO getPlatformStatusForAircraft(final Aircraft aircraft) {
         //todo - implement get parts cost method (this involves changing the db and entity)
-        Integer repairsCount = repairRepository.findRepairsCountForAircraft(aircraft.getTailNumber());
+        Integer repairsCount = repairRepoFssitory.findRepairsCountForAircraft(aircraft.getTailNumber());
         double repairsCost = getTotalRepairCostForSpecificAircraft(aircraft);
         BigDecimal partsCost = BigDecimal.valueOf(3000);
         BigDecimal totalCost = partsCost.add(BigDecimal.valueOf(repairsCost));
