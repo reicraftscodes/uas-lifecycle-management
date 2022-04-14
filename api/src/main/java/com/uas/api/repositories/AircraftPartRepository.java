@@ -1,7 +1,6 @@
 package com.uas.api.repositories;
 
 import com.uas.api.models.entities.AircraftPart;
-import com.uas.api.models.entities.enums.PartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
