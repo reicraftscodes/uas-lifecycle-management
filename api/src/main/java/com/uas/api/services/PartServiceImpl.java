@@ -166,9 +166,6 @@ public class PartServiceImpl implements PartService {
             for (Part partName : parts) {
                 double partStockLevelPercentage = getPartStockPercentageAtLocation(partName, location);
                 if (partStockLevelPercentage < lowStockPercentage) {
-                    System.out.println(partName.getPartName());
-                    System.out.println(location.getLocationName());
-                    System.out.println(partStockLevelPercentage);
                     partStockLevelDTOs.add(new PartStockLevelDTO(partName.getPartName(), location.getLocationName(), partStockLevelPercentage));
                 }
             }
@@ -299,11 +296,7 @@ public class PartServiceImpl implements PartService {
         }
         List<PartRepairsDTO> partRepairsDTOs = new ArrayList<>();
         for (Map<Object, Object> object : objects) {
-            int partNumber = (Integer) object.get("partNumber");
-            BigInteger repairCount = (BigInteger) object.get("repairCount");
-            BigDecimal totalCost = (BigDecimal) object.get("totalCost");
-            String partType = partTypeRepository.getPartTypeByPartNumber(partNumber);
-            partRepairsDTOs.add(new PartRepairsDTO(partNumber, partType, repairCount.longValue(), totalCost));
+            partRepairsDTOs.add(new PartRepairsDTO((Integer) object.get("partNumber"), partTypeRepository.getPartTypeByPartNumber((Integer) object.get("partNumber")), ((BigInteger) object.get("repairCount")).longValue(), (BigDecimal) object.get("totalCost")));
         }
         return partRepairsDTOs;
     }
@@ -343,7 +336,7 @@ public class PartServiceImpl implements PartService {
         if (request.getFlyTime() < 0) {
             throw new InvalidDTOAttributeException("Fly time cannot be negative!");
         }
-        List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft(aircraft.get());
+        List<AircraftPart> parts = aircraftPartRepository.findAircraftPartsByAircraft_TailNumber(aircraft.get().getTailNumber());
         updatePartFlyTime(parts, request.getFlyTime());
         //updates the aircraft flight hours
         aircraftService.updateAircraftFlyTime(aircraft.get(), request.getFlyTime());
@@ -437,7 +430,6 @@ public class PartServiceImpl implements PartService {
         if (selectedPart.isEmpty()) {
             throw new NotFoundException("Part not found!");
         }
-
         selectedPart.get().setPrice(BigDecimal.valueOf(price));
         partRepository.save(selectedPart.get());
     }

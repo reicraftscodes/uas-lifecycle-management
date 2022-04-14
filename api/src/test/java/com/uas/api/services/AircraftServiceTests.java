@@ -93,17 +93,17 @@ public class AircraftServiceTests {
         aircraftParts.add(aircraftPart);
         aircraftParts.add(aircraftPart1);
 
-        when(aircraftPartRepository.findAircraftPartsByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(aircraftParts);
+        when(aircraftPartRepository.countUniqueAircraftWithPartsNeedingRepair()).thenReturn(2);
 
         Assertions.assertDoesNotThrow(() -> {
             aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
         });
         int total = aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
-        Assertions.assertTrue( total > 0, "Total is bigger than zero") ;
+        Assertions.assertTrue( total == 2, "Total is 2 as 2 parts needing repair on 2 different aircraft.") ;
     }
     @Test
     public void whenNoPartsNeedRepairThenListShouldBeEmpty() {
-        when(aircraftPartRepository.findAircraftPartsByPartStatus(PartStatus.AWAITING_REPAIR)).thenReturn(new ArrayList<>());
+        when(aircraftPartRepository.countUniqueAircraftWithPartsNeedingRepair()).thenReturn(0);
         Assertions.assertDoesNotThrow(() -> {
            aircraftService.getNumberOfAircraftWithPartsNeedingRepair();
         });
@@ -345,7 +345,7 @@ public class AircraftServiceTests {
         when(aircraftRepository.findAll()).thenReturn(aircrafts);
         when(aircraftRepository.getTotalPartCostofAircraft(anyString())).thenReturn(1000.0);
 
-        when(aircraftPartRepository.findAircraftPartsByAircraft(any())).thenReturn(aircraftParts);
+        when(aircraftPartRepository.findAircraftPartsByAircraft_TailNumber(any())).thenReturn(aircraftParts);
 
         when(repairRepository.findAllByAircraftPart(any())).thenReturn(repairs);
         when(repairRepository.findTotalRepairCostForAircraft(any())).thenReturn(1234.0);

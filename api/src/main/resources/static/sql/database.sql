@@ -95,7 +95,6 @@ CREATE TABLE Stock (
     FOREIGN KEY (LocationName) REFERENCES Aircraft(LocationName)
 );
 
-
 # Needed to store the orders for new parts.
 CREATE TABLE Orders (
 	OrderID INT NOT NULL AUTO_INCREMENT,
@@ -149,6 +148,23 @@ CREATE TABLE Aircraft_User(
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
     FOREIGN KEY (TailNumber) REFERENCES Aircraft(TailNumber)
 );
+
+ALTER TABLE users ADD INDEX user_userID_index(UserID);
+ALTER TABLE repairs ADD INDEX repairs_repairID_index(RepairID);
+ALTER TABLE repairs ADD INDEX repairs_aircraftPartID_index(AircraftPartID);
+ALTER TABLE AircraftPart ADD INDEX aircraftPart_aircraftPartID_index(AircraftPartID);
+ALTER TABLE AircraftPart ADD INDEX aircraftPart_aircraftTailNumber_index(AircraftTailNumber);
+ALTER TABLE parts ADD INDEX parts_partID_index(PartID);
+ALTER TABLE aircraft_user ADD INDEX aircraftUser_userID_index(UserID);
+ALTER TABLE aircraft ADD INDEX aircraft_tailNumber_index(TailNumber);
+ALTER TABLE aircraftpart ADD INDEX aircraftpart_partID_index(partID);
+ALTER TABLE locations ADD INDEX locations_locationName_index(LocationName);
+ALTER TABLE stock ADD INDEX stock_partID_index(PartID);
+ALTER TABLE stock ADD INDEX stock_locationName_index(LocationName);
+ALTER TABLE parttypes ADD INDEX partTypes_partTypeID_index(partTypeID);
+ALTER TABLE parts ADD INDEX parts_partTypeID_index(partTypeID);
+ALTER TABLE roles ADD INDEX roles_roleID_index(RoleID);
+ALTER TABLE orders ADD INDEX orders_orderID_index(OrderID);
 
 #Platform_A parts
 INSERT INTO PartTypes (PartTypeName) VALUES ("Wing A");
@@ -228,6 +244,9 @@ INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) V
 INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "2", "Operational", 0);
 INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "3", "Operational", 0);
 INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "4", "Operational", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "5", "Awaiting Repair", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-001", "6", "Awaiting Repair", 0);
+INSERT INTO AircraftPart (AircraftTailNumber, PartID, PartStatus, FlightHours) VALUES ("G-002", "7", "Awaiting Repair", 0);
 
 #Only a small number of repair examples as I am unsure if the table will change
 INSERT INTO Repairs (AircraftPartID, cost) VALUES ("1","200");
@@ -286,3 +305,4 @@ INSERT INTO `UserRoles` (`userid`, `roleid`) VALUES ('7', '1');
 #User assign Aircraft
 INSERT INTO aircraft_user (UserID, TailNumber, FlyingHours) VALUES (2, "G-001", 250);
 INSERT INTO aircraft_user (UserID, TailNumber, FlyingHours) VALUES (2, "G-002", 175);
+
