@@ -154,6 +154,7 @@ By default the API is setup with the email address `sncmsuktestemail@gmail.com` 
   - [POST - /get-by-type]()
   - [GET - /all]()
   - [GET - /delete/{locationName}/{partName}/{quantity}]()
+  - [GET - /transfer/{locationName}/{newLocationName}/{partName}/{quantity}]()
 
 
 # Aircraft Controller
